@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VaccineBooklet</string>
+
+    <string name="navigation_drawer_open">Apri il navigation drawer</string>
+    <string name="navigation_drawer_close">Chiudi il navigation drawer</string>
+
+    <string name="action_settings">Impostazioni</string>
+    <string name="title_activity_login">Login</string>
+
+    <string name="label_login">Accedi</string>
+
+    <!-- Strings related to login -->
+    <string name="hint_email">E-Mail</string>
+    <string name="hint_password">Password</string>
+    <string name="label_registration_question">Nuovo su VaccineBooklet? Registrati!</string>
+    <string name="dialog_title_attention">Attenzione</string>
+    <string name="dialog_response_ok">OK</string>
+</resources>
