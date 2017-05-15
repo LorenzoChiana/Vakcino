@@ -16,4 +16,7 @@
     <string name="label_registration_question">Nuovo su VaccineBooklet? Registrati!</string>
     <string name="dialog_title_attention">Attenzione</string>
     <string name="dialog_response_ok">OK</string>
+    <string name="login_successfully">Login effettuato con successo</string>
+    <string name="error_empty_form">Compilare correttamente tutti i campi</string>
+    <string name="login_autentication_error">Errore di autenticazione</string>
 </resources>

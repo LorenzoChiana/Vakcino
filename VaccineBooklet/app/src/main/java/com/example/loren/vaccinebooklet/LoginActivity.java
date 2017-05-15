@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     new AlertDialog.Builder(LoginActivity.this)
                             .setTitle(R.string.dialog_title_attention)
-                            .setMessage("Compilare correttamente tutti i campi!")
+                            .setMessage(R.string.error_empty_form)
                             .setPositiveButton(R.string.dialog_response_ok, null)
                             .setCancelable(false)
                             .show();
@@ -181,20 +181,20 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(result);
             pgbLoading.setVisibility(View.INVISIBLE);
 
-            /*if (!result) {
+           /* if (!result) {
                 Log.d("LoginAsyncTask", "Errore nel login");
 
                 new AlertDialog.Builder(LoginActivity.this)
                         .setCancelable(false)
                         .setTitle(R.string.dialog_title_attention)
-                        .setMessage(message != null ? message : "Errore nel processo di autenticazione")
+                        .setMessage(message != null ? message : getString(R.string.login_autentication_error))
                         .setPositiveButton(R.string.dialog_response_ok, null)
                         .show();
 
             } else {*/
             Log.d("LoginAsyncTask", "Login effettuato correttamente");
 
-            Toast.makeText(LoginActivity.this, message != null ? message : "Login effettuato con sucesso", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, message != null ? message : getString(R.string.login_successfully), Toast.LENGTH_SHORT).show();
 
             Utils.setLogged(LoginActivity.this, true);
             Intent openList = new Intent(LoginActivity.this, MainActivity.class);
