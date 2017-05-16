@@ -10,6 +10,8 @@
 
     <string name="label_login">Accedi</string>
 
+    <string name="double_back_exit">Clicca INDIETRO un\'altra volta per uscire</string>
+
     <!-- Strings related to login -->
     <string name="hint_email">E-Mail</string>
     <string name="hint_password">Password</string>

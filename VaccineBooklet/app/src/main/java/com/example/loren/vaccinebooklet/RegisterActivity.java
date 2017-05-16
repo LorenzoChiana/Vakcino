@@ -13,7 +13,7 @@ import org.json.JSONObject;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    @Override
+    /*@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
@@ -59,5 +59,5 @@ public class RegisterActivity extends AppCompatActivity {
                 queue.add(registerRequest);
             }
         });
-    }
+    }*/
 }
