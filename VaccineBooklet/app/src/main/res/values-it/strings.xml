@@ -21,4 +21,7 @@
     <string name="login_successfully">Login effettuato con successo</string>
     <string name="error_empty_form">Compilare correttamente tutti i campi</string>
     <string name="login_autentication_error">Errore di autenticazione</string>
+    <!-- Strings related to tabs -->
+    <string name="fragment1_main">Persone</string>
+    <string name="fragment2_main">Animali</string>
 </resources>

@@ -3,11 +3,6 @@ package com.example.loren.vaccinebooklet;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.ListFragment;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,7 +18,6 @@ public class MainActivity extends AppCompatActivity
 
     private boolean doubleBackToExitPressedOnce;
     private String message;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +39,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
 

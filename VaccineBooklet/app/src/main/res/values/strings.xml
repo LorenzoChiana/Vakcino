@@ -20,4 +20,7 @@
     <string name="login_successfully">Login successfully</string>
     <string name="error_empty_form">Please, fill out all fields</string>
     <string name="login_autentication_error">Autentication error</string>
+    <!-- Strings related to tabs -->
+    <string name="fragment1_main">People</string>
+    <string name="fragment2_main">Pets</string>
 </resources>
