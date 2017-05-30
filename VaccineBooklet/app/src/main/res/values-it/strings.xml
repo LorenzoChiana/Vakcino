@@ -24,4 +24,8 @@
     <!-- Strings related to tabs -->
     <string name="fragment1_main">Persone</string>
     <string name="fragment2_main">Animali</string>
+    <!-- String drawer -->
+    <string name="drawer_options">Opzioni</string>
+    <string name="add_user">Aggiungi utente</string>
+    <string name="log_out">Esci</string>
 </resources>
