@@ -5,7 +5,7 @@
 
         <item
             android:id="@+id/add_user"
-            android:icon="@android:drawable/ic_menu_add"
+            android:icon="@android:drawable/ic_input_add"
             android:title="@string/add_user" />
 
     </group>

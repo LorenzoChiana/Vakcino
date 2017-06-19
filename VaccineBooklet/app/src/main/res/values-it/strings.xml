@@ -21,6 +21,11 @@
     <string name="login_successfully">Login effettuato con successo</string>
     <string name="error_empty_form">Compilare correttamente tutti i campi</string>
     <string name="login_autentication_error">Errore di autenticazione</string>
+    <!-- String related to registration -->
+    <string name="confirm_email">Conferma l\'email</string>
+    <string name="confirm_password">Conferma la password</string>
+    <string name="label_registration">Registrati</string>
+    <string name="label_login_question">Hai già un account? Accedi!</string>
     <!-- Strings related to tabs -->
     <string name="fragment1_main">Persone</string>
     <string name="fragment2_main">Animali</string>
