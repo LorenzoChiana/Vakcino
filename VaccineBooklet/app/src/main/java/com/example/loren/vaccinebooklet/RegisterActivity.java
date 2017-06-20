@@ -78,7 +78,6 @@ public class RegisterActivity extends AppCompatActivity {
     public void onBackPressed() {
         // esco dopo il secondo click
         if (doubleBackToExitPressedOnce) {
-            //super.onBackPressed();
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_HOME);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

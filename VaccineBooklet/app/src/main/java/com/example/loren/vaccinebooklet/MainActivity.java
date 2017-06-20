@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.loren.vaccinebooklet.utils.Utils;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -83,7 +85,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.add_user) {
             // Handle the camera action
         } else if (id == R.id.log_out) {
-
+            Utils.setLogged(MainActivity.this, false);
+            Intent returnToLogin = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(returnToLogin);
         }
 
        /* } else if (id == R.id.nav_slideshow) {
@@ -95,6 +99,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }*/
+
+        Toast.makeText(MainActivity.this, message != null ? message : getString(R.string.logout_successfully), Toast.LENGTH_SHORT).show();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

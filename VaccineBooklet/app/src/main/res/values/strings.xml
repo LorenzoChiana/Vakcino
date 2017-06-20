@@ -20,6 +20,7 @@
     <string name="dialog_title_attention">Warning</string>
     <string name="dialog_response_ok">OK</string>
     <string name="login_successfully">Login successfully</string>
+    <string name="logout_successfully">Logout successfully</string>
     <string name="error_empty_form">Please, fill out all fields</string>
     <string name="login_autentication_error">Autentication error</string>
     <!-- String related to registration -->
