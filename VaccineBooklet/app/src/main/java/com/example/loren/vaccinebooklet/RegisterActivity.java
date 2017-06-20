@@ -1,33 +1,46 @@
 package com.example.loren.vaccinebooklet;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.widget.Toast;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    /*@Override
+    private boolean doubleBackToExitPressedOnce;
+    private String message;
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        final EditText etAge = (EditText) findViewById(R.id.etAge);
-        final EditText etName = (EditText) findViewById(R.id.etName);
-        final EditText etUsername = (EditText) findViewById(R.id.etUsername);
-        final EditText etPassword = (EditText) findViewById(R.id.etPassword);
-        final Button bRegister = (Button) findViewById(R.id.bRegister);
+        this.message = null;
+        this.doubleBackToExitPressedOnce = false;
 
-        bRegister.setOnClickListener(new View.OnClickListener() {
+        final EditText edtMail = (EditText) findViewById(R.id.edt_email);
+        final EditText edtConfirmMail = (EditText) findViewById(R.id.edt_confirm_email);
+        final EditText edtPassword = (EditText) findViewById(R.id.edt_password);
+        final EditText edtConfirmPassword = (EditText) findViewById(R.id.edt_confirm_password);
+        final Button btnRegister = (Button) findViewById(R.id.btn_register);
+        final Button btnLogin = (Button) findViewById(R.id.btn_login);
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+                RegisterActivity.this.startActivity(loginIntent);
+            }
+        });
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String name = etName.getText().toString();
+                /*final String name = etName.getText().toString();
                 final String username = etUsername.getText().toString();
                 final int age = Integer.parseInt(etAge.getText().toString());
                 final String password = etPassword.getText().toString();
@@ -56,8 +69,32 @@ public class RegisterActivity extends AppCompatActivity {
 
                 RegisterRequest registerRequest = new RegisterRequest(name, username, age, password, responseListener);
                 RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
-                queue.add(registerRequest);
+                queue.add(registerRequest);*/
             }
         });
-    }*/
+    }
+
+    @Override
+    public void onBackPressed() {
+        // esco dopo il secondo click
+        if (doubleBackToExitPressedOnce) {
+            //super.onBackPressed();
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+
+        Toast.makeText(RegisterActivity.this, message != null ? message : getString(R.string.double_back_exit), Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
+    }
 }

@@ -29,13 +29,13 @@
             android:textCursorDrawable="@android:color/white" />
 
         <EditText
-            android:id="@+id/edt_confim_email"
+            android:id="@+id/edt_confirm_email"
             style="@android:style/Widget.Material.AutoCompleteTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:backgroundTint="@android:color/white"
-            android:hint="@string/hint_email"
+            android:hint="@string/confirm_email"
             android:inputType="textEmailAddress"
             android:padding="16dp"
             android:textColor="@android:color/white"
@@ -57,13 +57,13 @@
             android:textCursorDrawable="@android:color/white" />
 
         <EditText
-            android:id="@+id/editText2"
+            android:id="@+id/edt_confirm_password"
             style="@android:style/Widget.Material.EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:backgroundTint="@android:color/white"
-            android:hint="@string/hint_password"
+            android:hint="@string/confirm_password"
             android:inputType="textPassword"
             android:padding="16dp"
             android:textColor="@android:color/white"
@@ -73,15 +73,15 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_login"
+        android:id="@+id/btn_register"
         style="@android:style/Widget.Material.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/button"
+        android:layout_above="@+id/btn_login"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="14dp"
-        android:text="@string/label_login" />
+        android:text="@string/label_registration" />
 
     <ProgressBar
         android:id="@+id/pgb_loading"
@@ -92,7 +92,7 @@
         android:visibility="invisible" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btn_login"
         style="@android:style/Widget.Material.Light.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="37dp"
-        android:text="@string/label_registration_question"
+        android:text="@string/label_login_question"
         android:textColor="@android:color/white" />
 
 </RelativeLayout>
