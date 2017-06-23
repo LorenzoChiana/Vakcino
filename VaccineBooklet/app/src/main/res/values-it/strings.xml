@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VaccineBooklet</string>
+    <string name="app_name">Vakcino</string>
 
     <string name="navigation_drawer_open">Apri il navigation drawer</string>
     <string name="navigation_drawer_close">Chiudi il navigation drawer</string>
@@ -13,6 +13,9 @@
     <string name="double_back_exit">Clicca INDIETRO un\'altra volta per uscire</string>
 
     <string name="title_activity_register">Registrazione</string>
+
+    <string name="type_user1">Persona</string>
+    <string name="type_user2">Animale</string>
 
     <!-- Strings related to login -->
     <string name="hint_email">E-Mail</string>
@@ -36,4 +39,5 @@
     <string name="drawer_options">Opzioni</string>
     <string name="add_user">Aggiungi utente</string>
     <string name="log_out">Esci</string>
+    <string name="choice_person_pet">Scegli la tipologia di utente</string>
 </resources>

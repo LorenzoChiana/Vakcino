@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VaccineBooklet</string>
+    <string name="app_name">Vakcino</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -12,6 +12,10 @@
     <string name="double_back_exit">Please click BACK again to exit</string>
 
     <string name="title_activity_register">Registration</string>
+
+
+    <string name="type_user1">Person</string>
+    <string name="type_user2">Pet</string>
 
     <!-- Strings related to login -->
     <string name="hint_email">E-Mail</string>
@@ -35,4 +39,5 @@
     <string name="drawer_options">Options</string>
     <string name="add_user">Add user</string>
     <string name="log_out">Log out</string>
+    <string name="choice_person_pet">Choose a typology of user</string>
 </resources>
