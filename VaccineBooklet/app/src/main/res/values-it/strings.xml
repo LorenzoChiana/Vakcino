@@ -10,7 +10,7 @@
 
     <string name="label_login">Accedi</string>
 
-    <string name="double_back_exit">Clicca INDIETRO un\'altra volta per uscire</string>
+    <string name="double_back_exit">Premi nuovamente indietro per uscire</string>
 
     <string name="title_activity_register">Registrazione</string>
 

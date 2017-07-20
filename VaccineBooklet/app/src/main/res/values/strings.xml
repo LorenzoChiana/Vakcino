@@ -9,7 +9,7 @@
 
     <string name="label_login">Login</string>
 
-    <string name="double_back_exit">Please click BACK again to exit</string>
+    <string name="double_back_exit">Press back again to exit</string>
 
     <string name="title_activity_register">Registration</string>
 
