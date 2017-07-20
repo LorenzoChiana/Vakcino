@@ -1,264 +1,139 @@
 package com.example.loren.vaccinebooklet;
 
-
-
-import android.content.Intent;
-import android.os.AsyncTask;
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.loren.vaccinebooklet.utils.Utils;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
+import butterknife.ButterKnife;
+import butterknife.Bind;
 
 public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = "LoginActivity";
+    private static final int REQUEST_SIGNUP = 0;
+    private static final int MIN_PW_LENGTH = 8;
 
-    private EditText edtUsername;
-    private EditText edtPassword;
-    private Button btnLogin;
-    private ProgressBar pgbLoading;
-    private Button btnRegister;
-
-    private boolean doubleBackToExitPressedOnce;
-    private String message;
+    @Bind(R.id.input_email) EditText _emailText;
+    @Bind(R.id.input_password) EditText _passwordText;
+    @Bind(R.id.btn_login) Button _loginButton;
+    @Bind(R.id.link_signup) TextView _signupLink;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
 
-        this.message = null;
-        this.doubleBackToExitPressedOnce = false;
+        _loginButton.setOnClickListener(new View.OnClickListener() {
 
-        edtUsername = (EditText) findViewById(R.id.edt_email);
-        edtPassword = (EditText) findViewById(R.id.edt_password);
-        btnLogin = (Button) findViewById(R.id.btn_login);
-        pgbLoading = (ProgressBar) findViewById(R.id.pgb_loading);
-
-        btnRegister = (Button) findViewById(R.id.btn_register);
-
-        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                LoginActivity.this.startActivity(registerIntent);
+            public void onClick(View v) {
+                login();
             }
         });
 
-        if (Utils.getLogged(this)) {
-            Intent openList = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(openList);
-        }
+        _signupLink.setOnClickListener(new View.OnClickListener() {
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = edtUsername.getText().toString();
-                String password = edtPassword.getText().toString();
-                if (!username.equals("") && !password.equals("")) {
-                    new LoginAsyncTask().execute(username, password);
-                } else {
-                    new AlertDialog.Builder(LoginActivity.this)
-                            .setTitle(R.string.dialog_title_attention)
-                            .setMessage(R.string.error_empty_form)
-                            .setPositiveButton(R.string.dialog_response_ok, null)
-                            .setCancelable(false)
-                            .show();
-                }
+                // Start the Signup activity
+                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                startActivityForResult(intent, REQUEST_SIGNUP);
+                finish();
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
     }
 
+    public void login() {
+        Log.d(TAG, String.valueOf(R.string.label_login));
+
+        if (!validate()) {
+            onLoginFailed();
+            return;
+        }
+
+        _loginButton.setEnabled(false);
+
+        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(String.valueOf(R.string.login_autentication));
+        progressDialog.show();
+
+        String email = _emailText.getText().toString();
+        String password = _passwordText.getText().toString();
+
+        // TODO: Implement your own authentication logic here.
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        // On complete call either onLoginSuccess or onLoginFailed
+                        onLoginSuccess();
+                        // onLoginFailed();
+                        progressDialog.dismiss();
+                    }
+                }, 3000);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_SIGNUP) {
+            if (resultCode == RESULT_OK) {
+
+                // TODO: Implement successful signup logic here
+                // By default we just finish the Activity and log them in automatically
+                this.finish();
+            }
+        }
+    }
 
     @Override
     public void onBackPressed() {
-        // esco dopo il secondo click
-        if (doubleBackToExitPressedOnce) {
-            //super.onBackPressed();
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_HOME);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        }
-
-        this.doubleBackToExitPressedOnce = true;
-
-        Toast.makeText(LoginActivity.this, message != null ? message : getString(R.string.double_back_exit), Toast.LENGTH_SHORT).show();
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce = false;
-            }
-        }, 2000);
+        // Disable going back to the MainActivity
+        moveTaskToBack(true);
     }
 
-    /**
-     * Classe che estende AsyncTask per la gestione della chiamata al server.
-     * Per dettagli sull'AsyncTask vedere: async-example.
-     */
-    private class LoginAsyncTask extends AsyncTask<String, Void, Boolean> {
+    public void onLoginSuccess() {
+        _loginButton.setEnabled(true);
+        finish();
+    }
 
-        private static final String CONN_USERNAME = "username";
-        private static final String CONN_PASSWORD = "password";
+    public void onLoginFailed() {
+        Toast.makeText(getBaseContext(), getText(R.string.login_autentication_error), Toast.LENGTH_LONG).show();
 
-        //Nome dei parametri del json di risposta
-        private static final String JSON_MESSAGE = "message";
-        private static final String JSON_SUCCESS = "success";
+        _loginButton.setEnabled(true);
+    }
 
-        //URL su cui effettuare la chiamata
-        private static final String URL = "http://demoweb.labinfo.net/univ/auth.php";
+    public boolean validate() {
+        boolean valid = true;
 
-        private String message;
+        String email = _emailText.getText().toString();
+        String password = _passwordText.getText().toString();
 
-
-        @Override
-        protected void onPreExecute() {
-            pgbLoading.setVisibility(View.VISIBLE);
-            super.onPreExecute();
+        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            _emailText.setError(getText(R.string.login_wrong_email));
+            valid = false;
+        } else {
+            _emailText.setError(null);
         }
 
-        @Override
-        protected Boolean doInBackground(String... params) {
-
-            Log.d("LoginAsyncTask", "urlToConnect: " + URL);
-
-            /**
-             * Creazione delle strutture Java per una chiamata al server.
-             */
-            String username = "";
-            String password = "";
-            if (params.length > 0) {
-                username = params[0];
-                if (params.length > 1) {
-                    password = params[1];
-                }
-            }
-
-            BufferedReader bufferedReader = null;
-            HttpURLConnection connection = null;
-            try {
-                //Impostazioni della connessione Http
-                java.net.URL url = new URL(URL);
-                connection = (HttpURLConnection) url.openConnection();
-                connection.setReadTimeout(60 * 1000);
-                connection.setRequestMethod("POST");
-                connection.setConnectTimeout(60 * 1000);
-                connection.setDoInput(true);
-                connection.setUseCaches(false);
-
-                Map<String, String> connParams = new HashMap<>();
-                connParams.put(CONN_USERNAME, username);
-                connParams.put(CONN_PASSWORD, password);
-                OutputStream os = connection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getPostDataString(connParams));
-                writer.flush();
-                writer.close();
-                os.close();
-
-                //Gestione del codice di risposta del server
-                int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-
-                    StringBuilder response = new StringBuilder();
-                    InputStream inputStream = connection.getInputStream();
-                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line = "";
-                    while ((line = bufferedReader.readLine()) != null) {
-                        response.append(line);
-                    }
-
-                    JSONObject responseJson = new JSONObject(response.toString());
-                    message = responseJson.optString(JSON_MESSAGE);
-                    return responseJson.has(JSON_SUCCESS) && responseJson.getBoolean(JSON_SUCCESS);
-                }
-                //Gestione delle eccezioni
-            } catch (MalformedURLException e) {
-                Log.e("LoginAsyncTask", "L'url non è formattato correttamente", e);
-            } catch (IOException e) {
-                Log.e("LoginAsyncTask", "Errore durante la connessione con il server", e);
-            } catch (JSONException e) {
-                Log.e("LoginAsyncTask", "Errore durante la deserializzazioen della risposta", e);
-            } finally {
-                //Chiusura della connessione e del BufferedReader
-                if (connection != null)
-                    connection.disconnect();
-                try {
-                    if (bufferedReader != null)
-                        bufferedReader.close();
-                } catch (Exception ignored) {
-                }
-            }
-            return false;
+        if (password.isEmpty() || password.length() < MIN_PW_LENGTH) {
+            _passwordText.setError(getText(R.string.login_wrong_pw));
+            valid = false;
+        } else {
+            _passwordText.setError(null);
         }
 
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-            pgbLoading.setVisibility(View.INVISIBLE);
-
-           /* if (!result) {
-                Log.d("LoginAsyncTask", "Errore nel login");
-
-                new AlertDialog.Builder(LoginActivity.this)
-                        .setCancelable(false)
-                        .setTitle(R.string.dialog_title_attention)
-                        .setMessage(message != null ? message : getString(R.string.login_autentication_error))
-                        .setPositiveButton(R.string.dialog_response_ok, null)
-                        .show();
-
-            } else {*/
-            Log.d("LoginAsyncTask", "Login effettuato correttamente");
-
-            Toast.makeText(LoginActivity.this, message != null ? message : getString(R.string.login_successfully), Toast.LENGTH_SHORT).show();
-
-            Utils.setLogged(LoginActivity.this, true);
-            Intent openList = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(openList);
-            //}
-        }
-
-
-        /**
-         * Metodo per la composizione dei parametri da inserire poi all'interno della chiamata
-         */
-        private String getPostDataString(Map<String, String> params) throws UnsupportedEncodingException {
-            StringBuilder result = new StringBuilder();
-            boolean first = true;
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                if (first) first = false;
-                else result.append("&");
-                result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-                result.append("=");
-                result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-            }
-            return result.toString();
-        }
+        return valid;
     }
 }

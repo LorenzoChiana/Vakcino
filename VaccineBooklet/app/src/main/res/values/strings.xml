@@ -20,13 +20,16 @@
     <!-- Strings related to login -->
     <string name="hint_email">E-Mail</string>
     <string name="hint_password">Password</string>
-    <string name="label_registration_question">New to VaccineBooklet? Sign up here!</string>
+    <string name="label_registration_question">No account yet? Create one</string>
     <string name="dialog_title_attention">Warning</string>
     <string name="dialog_response_ok">OK</string>
     <string name="login_successfully">Login successfully</string>
     <string name="logout_successfully">Logout successfully</string>
     <string name="error_empty_form">Please, fill out all fields</string>
-    <string name="login_autentication_error">Autentication error</string>
+    <string name="login_autentication_error">Authentication error</string>
+    <string name="login_autentication">Authenticating...</string>
+    <string name="login_wrong_email">Enter a valid email address</string>
+    <string name="login_wrong_pw">Wrong password</string>
     <!-- String related to registration -->
     <string name="confirm_email">Confirm email</string>
     <string name="confirm_password">Confirm password</string>
