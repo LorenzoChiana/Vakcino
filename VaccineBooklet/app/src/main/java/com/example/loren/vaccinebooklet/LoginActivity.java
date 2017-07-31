@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = _passwordText.getText().toString();
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError(getText(R.string.login_wrong_email));
+            _emailText.setError(getText(R.string.wrong_email));
             valid = false;
         } else {
             _emailText.setError(null);

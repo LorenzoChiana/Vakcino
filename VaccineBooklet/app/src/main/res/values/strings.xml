@@ -17,6 +17,9 @@
     <string name="type_user1">Person</string>
     <string name="type_user2">Pet</string>
 
+
+    <string name="wrong_email">Enter a valid email address</string>
+
     <!-- Strings related to login -->
     <string name="hint_email">E-Mail</string>
     <string name="hint_password">Password</string>
@@ -28,13 +31,19 @@
     <string name="error_empty_form">Please, fill out all fields</string>
     <string name="login_autentication_error">Authentication error</string>
     <string name="login_autentication">Authenticating...</string>
-    <string name="login_wrong_email">Enter a valid email address</string>
     <string name="login_wrong_pw">Wrong password</string>
     <!-- String related to registration -->
-    <string name="confirm_email">Confirm email</string>
+    <string name="confirm_email">Confirm e-mail</string>
     <string name="confirm_password">Confirm password</string>
-    <string name="label_registration">Register</string>
-    <string name="label_login_question">Do you have an account? Login!</string>
+    <string name="label_registration">Create Account</string>
+    <string name="label_name">Name</string>
+    <string name="registration_creating_account">Creating Account...</string>
+    <string name="label_login_question">Already a member? Login!</string>
+    <string name="registration_failed">Registration failed!</string>
+    <string name="length_min_name">At least 3 characters</string>
+    <string name="length_min_pw">At least 8 characters</string>
+    <string name="error_pw_no_match">Password do not match</string>
+    <string name="error_email_no_match">E-Mail do not match</string>
     <!-- Strings related to tabs -->
     <string name="fragment1_main">People</string>
     <string name="fragment2_main">Pets</string>

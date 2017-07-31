@@ -29,23 +29,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:hint="Name" />
+                android:hint="@string/label_name" />
         </android.support.design.widget.TextInputLayout>
-
-        <!-- Address Label -->
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/input_address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPostalAddress"
-                android:hint="Address" />
-        </android.support.design.widget.TextInputLayout>
-
-
 
         <!--  Email Label -->
         <android.support.design.widget.TextInputLayout
@@ -57,21 +42,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"
-                android:hint="Email" />
+                android:hint="@string/hint_email" />
         </android.support.design.widget.TextInputLayout>
 
 
-        <!-- mobile number -->
+        <!-- Confirm Email Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/input_mobile"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/input_confirm_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:hint="Mobile Number" />
+                android:hint="@string/confirm_email"
+                android:inputType="textEmailAddress|number" />
         </android.support.design.widget.TextInputLayout>
 
         <!-- Password Label -->
@@ -84,23 +71,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:hint="Password"/>
+                android:hint="@string/hint_password"/>
         </android.support.design.widget.TextInputLayout>
 
-        <!-- Password Re-enter Label -->
+        <!-- Confirm Password Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
-            <EditText android:id="@+id/input_reEnterPassword"
+
+            <EditText
+                android:id="@+id/input_confirm_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:hint="Re-enter Password"/>
+                android:hint="@string/confirm_password"
+                android:inputType="textPassword" />
         </android.support.design.widget.TextInputLayout>
 
-        <!-- Signup Button -->
+        <!-- Registration Button -->
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_signup"
             android:layout_width="fill_parent"
@@ -108,13 +97,13 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:padding="12dp"
-            android:text="Create Account"/>
+            android:text="@string/label_registration"/>
 
         <TextView android:id="@+id/link_login"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="Already a member? Login"
+            android:text="@string/label_login_question"
             android:gravity="center"
             android:textSize="16dip"/>
 

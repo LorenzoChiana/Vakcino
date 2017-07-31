@@ -17,6 +17,8 @@
     <string name="type_user1">Persona</string>
     <string name="type_user2">Animale</string>
 
+    <string name="wrong_email">Usa un indirizzo E-Mail valido</string>
+
     <!-- Strings related to login -->
     <string name="hint_email">E-Mail</string>
     <string name="hint_password">Password</string>
@@ -27,11 +29,20 @@
     <string name="logout_successfully">Logout effettuato con successo</string>
     <string name="error_empty_form">Compilare correttamente tutti i campi</string>
     <string name="login_autentication_error">Errore di autenticazione</string>
+    <string name="login_autentication">Autenticazione...</string>
+    <string name="login_wrong_pw">Password sbagliata</string>
     <!-- String related to registration -->
-    <string name="confirm_email">Conferma l\'email</string>
+    <string name="confirm_email">Conferma l\'E-Mail</string>
     <string name="confirm_password">Conferma la password</string>
     <string name="label_registration">Registrati</string>
     <string name="label_login_question">Hai già un account? Accedi!</string>
+    <string name="label_name">Nome</string>
+    <string name="registration_creating_account">Creazione account...</string>
+    <string name="registration_failed">Registrazione fallita!</string>
+    <string name="length_min_name">Minimo 3 caratteri</string>
+    <string name="length_min_pw">Minimo 8 caratteri</string>
+    <string name="error_pw_no_match">Password non corrisponde</string>
+    <string name="error_email_no_match">E-Mail non corrisponde</string>
     <!-- Strings related to tabs -->
     <string name="fragment1_main">Persone</string>
     <string name="fragment2_main">Animali</string>
