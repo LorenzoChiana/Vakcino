@@ -12,9 +12,9 @@
 -- Database Section
 -- ________________ 
 
-create database VACCINEBOOKLET;
+create database my_vakcinoapp;
 
-use VACCINEBOOKLET;
+use my_vakcinoapp;
 
 
 -- DBSpace Section
@@ -30,7 +30,7 @@ create table ACCOUNT (
      constraint ID_ACCOUNT_ID primary key (email));
 
 create table DEVE_FARE (
-     ID numeric(1) not null,
+     ID int not null,
      Antigeni varchar(20) not null,
      constraint ID_DEVE_FARE_ID primary key (ID, Antigeni));
 
@@ -41,7 +41,7 @@ create table DOVE (
      constraint ID_DOVE_ID primary key (Antigeni, COD_STATO));
 
 create table HA_FATTO (
-     ID numeric(1) not null,
+     ID int not null,
      Antigeni varchar(20) not null,
      in_data date not null,
      constraint ID_HA_FATTO_ID primary key (ID, Antigeni));
@@ -52,13 +52,13 @@ create table PAESE (
      constraint ID_PAESE_ID primary key (COD_STATO));
 
 create table TEMPO (
-     ID numeric(1) not null,
-     anni numeric(1) not null,
+     ID int not null,
+     anni int not null,
      Antigeni varchar(20) not null,
      constraint ID_TEMPO_ID primary key (ID));
 
 create table UTENTE (
-     ID numeric(1) not null,
+     ID int not null,
      nome varchar(30) not null,
      cognome varchar(30) not null,
      dataNascita date not null,

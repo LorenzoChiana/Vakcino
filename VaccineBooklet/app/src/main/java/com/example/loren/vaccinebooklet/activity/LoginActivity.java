@@ -1,6 +1,8 @@
-package com.example.loren.vaccinebooklet;
+package com.example.loren.vaccinebooklet.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -11,6 +13,31 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+import com.example.loren.vaccinebooklet.R;
+import com.example.loren.vaccinebooklet.request.LoginRequest;
+import com.example.loren.vaccinebooklet.utils.Utils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.Bind;
@@ -65,23 +92,61 @@ public class LoginActivity extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage(String.valueOf(R.string.login_autentication));
+        progressDialog.setMessage(getString(R.string.login_autentication));
         progressDialog.show();
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        final String email = _emailText.getText().toString();
+        final String password = _passwordText.getText().toString();
 
         // TODO: Implement your own authentication logic here.
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
+
+        // Response received from the server
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+
+                    if (success) {
+                       /* String name = jsonResponse.getString("name");
+                        int age = jsonResponse.getInt("age");
+*/
+
+                        new android.os.Handler().postDelayed(
+                                new Runnable() {
+                                    public void run() {
+                                        // On complete call either onLoginSuccess or onLoginFailed
+                                        onLoginSuccess();
+                                        progressDialog.dismiss();
+                                    }
+                                }, 3000);
+
+                        Utils.setLogged(LoginActivity.this, true);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        /*intent.putExtra("name", name);
+                        intent.putExtra("age", age);*/
+                        //intent.putExtra("email", email);
+                        startActivity(intent);
+                    } else {
+                        // autenticazione fallita
                         progressDialog.dismiss();
+                        onLoginFailed();
                     }
-                }, 3000);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+
+        LoginRequest loginRequest = new LoginRequest(email, password, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+        queue.add(loginRequest);
+
+
     }
 
 
@@ -117,8 +182,8 @@ public class LoginActivity extends AppCompatActivity {
     public boolean validate() {
         boolean valid = true;
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+        final String email = _emailText.getText().toString();
+        final String password = _passwordText.getText().toString();
 
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError(getText(R.string.wrong_email));
@@ -136,4 +201,5 @@ public class LoginActivity extends AppCompatActivity {
 
         return valid;
     }
+
 }

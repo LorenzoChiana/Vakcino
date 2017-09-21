@@ -1,4 +1,4 @@
-package com.example.loren.vaccinebooklet;
+package com.example.loren.vaccinebooklet.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.loren.vaccinebooklet.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
