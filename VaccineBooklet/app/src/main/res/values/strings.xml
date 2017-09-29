@@ -19,6 +19,7 @@
 
 
     <string name="wrong_email">Enter a valid email address</string>
+    <string name="password_info">Password must be 6 characters including uppercase and lowercase letters and numbers</string>
 
     <!-- Strings related to login -->
     <string name="hint_email">E-Mail</string>
@@ -45,8 +46,8 @@
     <string name="error_pw_no_match">Password do not match</string>
     <string name="error_email_no_match">E-Mail do not match</string>
     <!-- Strings related to tabs -->
-    <string name="fragment1_main">People</string>
-    <string name="fragment2_main">Pets</string>
+    <string name="title_fragment_people">People</string>
+    <string name="title_fragment_pets">Pets</string>
     <!-- String drawer -->
     <string name="drawer_options">Options</string>
     <string name="add_user">Add user</string>

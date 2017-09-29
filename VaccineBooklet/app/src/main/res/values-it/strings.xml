@@ -18,6 +18,7 @@
     <string name="type_user2">Animale</string>
 
     <string name="wrong_email">Usa un indirizzo E-Mail valido</string>
+    <string name="password_info">La password deve essere di almeno 6 caratteri con numeri, lettere e maiuscole</string>
 
     <!-- Strings related to login -->
     <string name="hint_email">E-Mail</string>
@@ -44,8 +45,8 @@
     <string name="error_pw_no_match">Password non corrisponde</string>
     <string name="error_email_no_match">E-Mail non corrisponde</string>
     <!-- Strings related to tabs -->
-    <string name="fragment1_main">Persone</string>
-    <string name="fragment2_main">Animali</string>
+    <string name="title_fragment_people">Persone</string>
+    <string name="title_fragment_pets">Animali</string>
     <!-- String drawer -->
     <string name="drawer_options">Opzioni</string>
     <string name="add_user">Aggiungi utente</string>

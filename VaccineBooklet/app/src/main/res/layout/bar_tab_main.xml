@@ -6,28 +6,31 @@
     android:orientation="vertical">
 
     <android.support.design.widget.TabLayout
-        android:id="@+id/tab_layout"
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_below="@+id/toolbar"
         android:background="@color/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:tabIndicatorColor="@android:color/white" >
+        app:tabIndicatorColor="@android:color/white">
 
         <android.support.design.widget.TabItem
             android:layout_width="match_parent"
 
             android:layout_height="?attr/actionBarSize"
-            android:text="@string/fragment1_main" />
+            android:text="@string/title_fragment_people" />
 
         <android.support.design.widget.TabItem
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:text="@string/fragment2_main"/>
+            android:text="@string/title_fragment_pets" />
     </android.support.design.widget.TabLayout>
 
-
-    <include layout="@layout/content_main"/>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </LinearLayout>

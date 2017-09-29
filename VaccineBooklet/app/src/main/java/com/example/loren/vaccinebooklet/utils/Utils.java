@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 
 public class Utils {
 
-    private static final String SP = "final_example_sp";
+    private static final String SP = "vakcino_sp";
     private static final String SP_LOGGED = "sp_logged";
 
 
@@ -25,6 +25,5 @@ public class Utils {
     public static boolean getLogged(Context context) {
         return getPref(context).getBoolean(SP_LOGGED, false);
     }
-
 }
 

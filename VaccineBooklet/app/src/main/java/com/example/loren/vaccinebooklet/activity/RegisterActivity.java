@@ -1,5 +1,6 @@
 package com.example.loren.vaccinebooklet.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +12,18 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
 import com.example.loren.vaccinebooklet.R;
+import com.example.loren.vaccinebooklet.request.RegisterRequest;
+import com.example.loren.vaccinebooklet.utils.Utils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,7 +32,6 @@ public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
     private static final int MIN_PW_LENGTH = 8;
 
-    @Bind(R.id.input_name) EditText nameText;
     @Bind(R.id.input_email) EditText emailText;
     @Bind(R.id.input_confirm_email) EditText confirmEmailText;
     @Bind(R.id.input_password) EditText passwordText;
@@ -74,19 +85,46 @@ public class RegisterActivity extends AppCompatActivity {
         String confirmEmail = confirmEmailText.getText().toString();
         String password = passwordText.getText().toString();
         String confirmPassword = confirmPasswordText.getText().toString();*/
+        final String email = emailText.getText().toString();
+        final String password = passwordText.getText().toString();
 
         // TODO: Implement your own signup logic here.
-
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
+        Response.Listener<String> responseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    if (success) {
+                        new android.os.Handler().postDelayed(
+                                new Runnable() {
+                                    public void run() {
+                                        // On complete call either onSignupSuccess or onSignupFailed
+                                        // depending on success
+                                        onSignupSuccess();
+                                        // onSignupFailed();
+                                        progressDialog.dismiss();
+                                    }
+                                }, 3000);
+                        Utils.setLogged(RegisterActivity.this, true);
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    } else {
                         progressDialog.dismiss();
+                        onSignupFailed();
                     }
-                }, 3000);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        RegisterRequest registerRequest = new RegisterRequest(email, password, responseListener);
+        RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
+        queue.add(registerRequest);
+
+
+
     }
 
 
@@ -102,45 +140,50 @@ public class RegisterActivity extends AppCompatActivity {
         registrationButton.setEnabled(true);
     }
 
+    private boolean isEmailValid(String email) {
+        Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(email);
+        return matcher.find();
+    }
+
+    private boolean isPasswordValid(String password) {
+        Pattern VALID_PASSWORD_REGEX = Pattern.compile("((?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,20})");
+        Matcher matcher = VALID_PASSWORD_REGEX .matcher(password);
+        return matcher.find();
+    }
+
     public boolean validate() {
         boolean valid = true;
 
-        String name = nameText.getText().toString();
         String email = emailText.getText().toString();
         String confirmEmail = confirmEmailText.getText().toString();
         String password = passwordText.getText().toString();
         String confirmPassword = confirmPasswordText.getText().toString();
 
-        if (name.isEmpty() || name.length() < 3) {
-            nameText.setError(getString(R.string.length_min_name));
-            valid = false;
-        } else {
-            nameText.setError(null);
-        }
 
 
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        if (email.isEmpty() || !isEmailValid(email) /*!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()*/) {
             emailText.setError(getString(R.string.wrong_email));
             valid = false;
         } else {
             emailText.setError(null);
         }
 
-        if (confirmEmail.isEmpty() || !(confirmEmail.equals(password))) {
+        if (confirmEmail.isEmpty() || !(confirmEmail.equals(email))) {
             confirmEmailText.setError(getString(R.string.error_email_no_match));
             valid = false;
         } else {
             confirmPasswordText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < MIN_PW_LENGTH) {
-            passwordText.setError(getString(R.string.length_min_pw));
+        if (password.isEmpty() || !isPasswordValid(password)/*password.length() < MIN_PW_LENGTH*/) {
+            passwordText.setError(getString(R.string.password_info));
             valid = false;
         } else {
             passwordText.setError(null);
         }
 
-        if (confirmPassword.isEmpty() || confirmPassword.length() < MIN_PW_LENGTH || !(confirmPassword.equals(password))) {
+        if (confirmPassword.isEmpty() || !(confirmPassword.equals(password))) {
             confirmPasswordText.setError(getString(R.string.error_pw_no_match));
             valid = false;
         } else {

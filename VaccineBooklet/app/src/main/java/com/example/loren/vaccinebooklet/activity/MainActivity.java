@@ -6,11 +6,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +27,8 @@ import android.widget.Toast;
 
 import com.example.loren.vaccinebooklet.Item;
 import com.example.loren.vaccinebooklet.R;
+import com.example.loren.vaccinebooklet.fragment.PersonFragment;
+import com.example.loren.vaccinebooklet.fragment.PetFragment;
 import com.example.loren.vaccinebooklet.utils.Utils;
 
 public class MainActivity extends AppCompatActivity
@@ -28,6 +36,11 @@ public class MainActivity extends AppCompatActivity
 
     private boolean doubleBackToExitPressedOnce;
     private String message;
+
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
+
+    TextView twEmailUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +62,29 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerView = navigationView.getHeaderView(0);
+        twEmailUser = (TextView) headerView.findViewById(R.id.tw_email);
+        twEmailUser.setText(getIntent().getExtras().getString("email"));
+
+
+        /* Setting up the three main Pages (Fragment) of the MainActivity */
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        //mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+        mViewPager.setCurrentItem(1);
+
+        /*
+        setContentView(R.layout.nav_header_main);
+        twEmailUser = (TextView) findViewById(R.id.tw_email);
+        //final Bundle extras = getIntent().getExtras();
+        String prova = twEmailUser.getText().toString();
+        twEmailUser.setText(extras.getString("email"));
+        //twEmailUser.getText();*/
 
     }
 
@@ -81,7 +117,6 @@ public class MainActivity extends AppCompatActivity
             }, 2000);
         }
     }
-
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -159,4 +194,73 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+        private static final int MAX_TAB = 2;
+        Fragment[] mainViewFragments;
+        FragmentManager fm;
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+            this.fm = fm;
+
+            mainViewFragments = new Fragment[MAX_TAB];
+
+            mainViewFragments[0] = PersonFragment.newInstance(/*dataModel.getLoggedUser().getFavorites()*/);
+            mainViewFragments[1] = PetFragment.newInstance();
+
+        /*if (dataModel.hasOpenOrder()){
+            mainViewFragments[1] = OrderFragment.newInstance(dataModel.getOrder());
+        } else {
+            mainViewFragments[1] = NewOrderFragment.newInstance(dataModel.getRestaurants());
+        }
+
+        if (dataModel.hasOpenOrder()){
+            mainViewFragments[2] = CompletedFragment.newInstance(dataModel.getOrder());
+        } else {
+            mainViewFragments[2] = CompletedFragment.newInstance();
+        }*/
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mainViewFragments[position];
+        }
+
+        /* Override that permits to refresh the fragments on change */
+        @Override
+        public int getItemPosition(Object object) {
+            if (object instanceof PersonFragment || object instanceof PetFragment) {
+                return POSITION_NONE;
+            } else {
+                return POSITION_UNCHANGED;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return mainViewFragments.length;
+        }
+
+        @Override
+        public String getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return getString(R.string.title_fragment_people);
+                case 1:
+                    return getString(R.string.title_fragment_pets);
+            }
+            return null;
+        }
+
+        /**
+         * Method tha can replace one fragment inside the Adapter and can refresh the data
+         *
+         * @param i index of the fragment.
+         * @param f new {@link Fragment} that is inserted inside the adapter.
+         */
+        public void replaceFragment(int i, Fragment f) {
+            mainViewFragments[i] = f;
+            notifyDataSetChanged();
+        }
+    }
 }

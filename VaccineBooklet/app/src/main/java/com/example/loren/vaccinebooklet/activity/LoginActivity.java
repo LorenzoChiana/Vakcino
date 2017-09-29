@@ -58,6 +58,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
+        //Se sono già loggato passo direttamente al main activity
+        if (Utils.getLogged(this)) {
+            Intent openList = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(openList);
+        }
+
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -125,8 +131,8 @@ public class LoginActivity extends AppCompatActivity {
 
                         Utils.setLogged(LoginActivity.this, true);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        /*intent.putExtra("name", name);
-                        intent.putExtra("age", age);*/
+                        intent.putExtra("email", email);
+                        //intent.putExtra("age", age);*/
                         //intent.putExtra("email", email);
                         startActivity(intent);
                     } else {
