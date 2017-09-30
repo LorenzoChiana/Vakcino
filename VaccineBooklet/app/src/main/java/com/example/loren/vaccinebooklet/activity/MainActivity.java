@@ -65,8 +65,19 @@ public class MainActivity extends AppCompatActivity
 
         View headerView = navigationView.getHeaderView(0);
         twEmailUser = (TextView) headerView.findViewById(R.id.tw_email);
-        twEmailUser.setText(getIntent().getExtras().getString("email"));
-
+        /*
+            Se ho appena fatto il login/sign up
+            allora setto la sharedpreference con l'email dell'account
+            altrimenti prendo l'email direttamente dal sharedpreference
+         */
+        final String extraEmail;
+        try {
+            extraEmail = getIntent().getExtras().getString("email");
+            Utils.setAccount(MainActivity.this, extraEmail);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        twEmailUser.setText(Utils.getAccount(MainActivity.this));
 
         /* Setting up the three main Pages (Fragment) of the MainActivity */
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -172,6 +183,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.log_out) {
             // logout
             Utils.setLogged(MainActivity.this, false);
+            Utils.setAccount(MainActivity.this, "");
             Intent returnToLogin = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(returnToLogin);
             Toast.makeText(MainActivity.this, message != null ? message : getString(R.string.logout_successfully), Toast.LENGTH_SHORT).show();

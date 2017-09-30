@@ -108,6 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 }, 3000);
                         Utils.setLogged(RegisterActivity.this, true);
                         Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        intent.putExtra("email", email);
                         startActivity(intent);
                     } else {
                         progressDialog.dismiss();
