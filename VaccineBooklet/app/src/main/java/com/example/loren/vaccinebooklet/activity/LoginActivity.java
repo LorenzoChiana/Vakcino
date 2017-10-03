@@ -60,8 +60,8 @@ public class LoginActivity extends AppCompatActivity {
 
         //Se sono già loggato passo direttamente al main activity
         if (Utils.getLogged(this)) {
-            Intent openList = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(openList);
+            Intent openVakcino = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(openVakcino);
         }
 
         _loginButton.setOnClickListener(new View.OnClickListener() {

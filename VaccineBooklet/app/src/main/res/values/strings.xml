@@ -53,4 +53,12 @@
     <string name="add_user">Add user</string>
     <string name="log_out">Log out</string>
     <string name="choice_person_pet">Choose a typology of user</string>
+    <!-- New User -->
+    <string name="hint_name">Name</string>
+    <string name="hint_surname">Surname</string>
+    <string name="hint_birth_date">Date of birth</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_add_new_user">Create</string>
+    <string name="operation_cancelled">The operation was cancelled</string>
+    <string name="operation_successful">Done!</string>
 </resources>

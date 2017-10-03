@@ -52,4 +52,12 @@
     <string name="add_user">Aggiungi utente</string>
     <string name="log_out">Esci</string>
     <string name="choice_person_pet">Scegli la tipologia di utente</string>
+    <!-- New User -->
+    <string name="hint_name">Nome</string>
+    <string name="hint_surname">Cognome</string>
+    <string name="hint_birth_date">Data di nascita</string>
+    <string name="label_cancel">Annulla</string>
+    <string name="label_add_new_user">Crea</string>
+    <string name="operation_cancelled">L\'operazione è stata annullata</string>
+    <string name="operation_successful">datto!</string>
 </resources>

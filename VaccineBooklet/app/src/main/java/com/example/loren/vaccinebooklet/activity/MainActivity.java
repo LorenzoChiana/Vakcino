@@ -16,7 +16,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,13 +33,16 @@ import com.example.loren.vaccinebooklet.utils.Utils;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String EXTRA_TYPE = "type";
     private boolean doubleBackToExitPressedOnce;
     private String message;
 
-    private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
 
     TextView twEmailUser;
+
+
+    private SectionsPagerAdapter mSectionsPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -134,6 +137,7 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        // Sezione aggiunta utente
         if (id == R.id.add_user) {
 
             final Item[] items;
@@ -177,11 +181,15 @@ public class MainActivity extends AppCompatActivity
                     .setTitle(getString(R.string.choice_person_pet))
                     .setAdapter(adapter, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int item) {
-                            //...
+                            //0 = persona, 1 = animale
+                            Intent intent = new Intent(MainActivity.this, NewUserActivity.class);
+                            intent.putExtra(EXTRA_TYPE, item);
+                            startActivity(intent);
+
                         }
                     }).show();
-        } else if (id == R.id.log_out) {
-            // logout
+        } // sezione logout
+        else if (id == R.id.log_out) {
             Utils.setLogged(MainActivity.this, false);
             Utils.setAccount(MainActivity.this, "");
             Intent returnToLogin = new Intent(MainActivity.this, LoginActivity.class);
