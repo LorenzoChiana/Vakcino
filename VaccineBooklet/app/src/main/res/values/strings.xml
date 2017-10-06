@@ -20,6 +20,7 @@
 
     <string name="wrong_email">Enter a valid email address</string>
     <string name="password_info">Password must be 6 characters including uppercase and lowercase letters and numbers</string>
+    <string name="waiting">Please, wait...</string>
 
     <!-- Strings related to login -->
     <string name="hint_email">E-Mail</string>
@@ -48,6 +49,7 @@
     <!-- Strings related to tabs -->
     <string name="title_fragment_people">People</string>
     <string name="title_fragment_pets">Pets</string>
+    <string name="empty_container">To add a new user, open the navigation drawer on the left.</string>
     <!-- String drawer -->
     <string name="drawer_options">Options</string>
     <string name="add_user">Add user</string>

@@ -19,6 +19,7 @@
 
     <string name="wrong_email">Usa un indirizzo E-Mail valido</string>
     <string name="password_info">La password deve essere di almeno 6 caratteri con numeri, lettere e maiuscole</string>
+    <string name="waiting">Attendere prego...</string>
 
     <!-- Strings related to login -->
     <string name="hint_email">E-Mail</string>
@@ -47,6 +48,7 @@
     <!-- Strings related to tabs -->
     <string name="title_fragment_people">Persone</string>
     <string name="title_fragment_pets">Animali</string>
+    <string name="empty_container">Per aggiungere un nuovo utente, apri il navigation drawer sulla sinistra.</string>
     <!-- String drawer -->
     <string name="drawer_options">Opzioni</string>
     <string name="add_user">Aggiungi utente</string>

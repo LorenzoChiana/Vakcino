@@ -132,8 +132,6 @@ public class LoginActivity extends AppCompatActivity {
                         Utils.setLogged(LoginActivity.this, true);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         intent.putExtra("email", email);
-                        //intent.putExtra("age", age);*/
-                        //intent.putExtra("email", email);
                         startActivity(intent);
                     } else {
                         // autenticazione fallita

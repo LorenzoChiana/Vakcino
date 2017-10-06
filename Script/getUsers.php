@@ -31,7 +31,7 @@
 		$b["Tipo"] = $type;
 		array_push($a,$b);
 	}
-	echo json_encode($a);
+	print_r(json_encode($a));
 	mysqli_stmt_close($result); 
 	mysqli_free_result($result);
 	mysqli_close($conn);

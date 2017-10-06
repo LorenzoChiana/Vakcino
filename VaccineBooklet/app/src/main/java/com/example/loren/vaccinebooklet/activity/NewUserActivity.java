@@ -35,7 +35,6 @@ public class NewUserActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_new_user);
 
         /* Components setup */
-        //type = getIntent().getIntExtra(MainActivity.EXTRA_TYPE);
         etName = (EditText) findViewById(R.id.input_name);
         etSurname = (EditText) findViewById(R.id.input_surname);
         etBirthDate = (EditText) findViewById(R.id.input_birth_date);
@@ -89,9 +88,7 @@ public class NewUserActivity extends AppCompatActivity implements
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
-
                         etBirthDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-
                     }
                 }, year, month, day);
         datePickerDialog.show();

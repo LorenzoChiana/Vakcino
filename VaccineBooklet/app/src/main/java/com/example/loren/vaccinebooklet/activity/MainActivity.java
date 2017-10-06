@@ -1,8 +1,10 @@
 package com.example.loren.vaccinebooklet.activity;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -28,18 +30,23 @@ import com.example.loren.vaccinebooklet.Item;
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.fragment.PersonFragment;
 import com.example.loren.vaccinebooklet.fragment.PetFragment;
+import com.example.loren.vaccinebooklet.utils.HTTPHelper;
 import com.example.loren.vaccinebooklet.utils.Utils;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String EXTRA_TYPE = "type";
+    public static final String URL_GET_USER = "http://vakcinoapp.altervista.org/getUsers.php";
     private boolean doubleBackToExitPressedOnce;
     private String message;
+    private String email;
 
     private ViewPager mViewPager;
 
-    TextView twEmailUser;
+    private TextView twEmailUser;
 
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -79,7 +86,8 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
-        twEmailUser.setText(Utils.getAccount(MainActivity.this));
+        email = Utils.getAccount(MainActivity.this);
+        twEmailUser.setText(email);
 
         /* Setting up the three main Pages (Fragment) of the MainActivity */
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -91,15 +99,33 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.setCurrentItem(1);
 
-        /*
-        setContentView(R.layout.nav_header_main);
-        twEmailUser = (TextView) findViewById(R.id.tw_email);
-        //final Bundle extras = getIntent().getExtras();
-        String prova = twEmailUser.getText().toString();
-        twEmailUser.setText(extras.getString("email"));
-        //twEmailUser.getText();*/
+        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(getString(R.string.waiting));
+        progressDialog.show();
 
+        new AsyncTask<String, Void, String>(){
+            @Override
+            protected String doInBackground(String... strings) {
+                HashMap<String,String> hm = new HashMap<>();
+                hm.put("email", email);
+                String result = HTTPHelper.connectPost(URL_GET_USER, hm);
+                return result;
+            }
+            @Override
+            protected void onPostExecute(String result) {
+                progressDialog.dismiss();
+                Toast.makeText(getApplicationContext(), result,
+                        Toast.LENGTH_LONG).show();
+            }
+        }.execute();
     }
+
+    /* Override of the 2 Fragment Listeners Interaction Methods */
+
+
+
 
 
     @Override

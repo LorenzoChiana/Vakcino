@@ -15,4 +15,8 @@ public class VakcinoDbManager {
     public VakcinoDbManager(Context context) {
         dbHelper = new VakcinoDbHelper(context);
     }
+
+    public void getRemoteUsersInfo(String email) {
+
+    }
 }
