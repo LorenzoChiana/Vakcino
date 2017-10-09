@@ -18,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,9 +31,12 @@ import com.example.loren.vaccinebooklet.Item;
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.fragment.PersonFragment;
 import com.example.loren.vaccinebooklet.fragment.PetFragment;
+import com.example.loren.vaccinebooklet.model.ActionModel;
+import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.utils.HTTPHelper;
 import com.example.loren.vaccinebooklet.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
@@ -108,16 +112,33 @@ public class MainActivity extends AppCompatActivity
         new AsyncTask<String, Void, String>(){
             @Override
             protected String doInBackground(String... strings) {
-                HashMap<String,String> hm = new HashMap<>();
+                /*HashMap<String,String> hm = new HashMap<>();
                 hm.put("email", email);
-                String result = HTTPHelper.connectPost(URL_GET_USER, hm);
-                return result;
+                String result = HTTPHelper.connectPost(URL_GET_USER, hm);*/
+                /*ArrayList<Utente> list = new ActionModel(getApplicationContext()).getUsers();
+                String listString = "";
+
+                for (Utente u : list)
+                {
+                    listString += u.getName() + "\t";
+                }
+                return listString;*/
+                int remoteDbVersion = new ActionModel(getApplicationContext()).getRemoteDBVersion();
+                int localDbVersion = Utils.getDBVersion(getApplicationContext());
+                Log.d("DBVersion", Integer.toString(remoteDbVersion));
+                if(localDbVersion < remoteDbVersion) {
+                    //aggiorno il db locale
+                } else if(localDbVersion > remoteDbVersion) {
+                    //aggiorno il db remoto
+                }
+                //return "";
+                return null;
             }
             @Override
             protected void onPostExecute(String result) {
                 progressDialog.dismiss();
-                Toast.makeText(getApplicationContext(), result,
-                        Toast.LENGTH_LONG).show();
+                /*Toast.makeText(getApplicationContext(), result,
+                        Toast.LENGTH_LONG).show();*/
             }
         }.execute();
     }
@@ -218,6 +239,7 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.log_out) {
             Utils.setLogged(MainActivity.this, false);
             Utils.setAccount(MainActivity.this, "");
+            Utils.setDBVersion(MainActivity.this, -1);
             Intent returnToLogin = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(returnToLogin);
             Toast.makeText(MainActivity.this, message != null ? message : getString(R.string.logout_successfully), Toast.LENGTH_SHORT).show();

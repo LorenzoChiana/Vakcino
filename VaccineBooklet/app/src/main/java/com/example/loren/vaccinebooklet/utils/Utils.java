@@ -9,6 +9,7 @@ public class Utils {
     private static final String SP = "vakcino_sp";
     private static final String SP_LOGGED = "sp_logged";
     private static final String SP_ACCOUNT = "email";
+    private static final String SP_VERSION = "sp_version";
 
     private Utils() {
     }
@@ -24,6 +25,14 @@ public class Utils {
 
     public static boolean getLogged(Context context) {
         return getPref(context).getBoolean(SP_LOGGED, false);
+    }
+
+    public static void setDBVersion(Context context, int version) {
+        getPref(context).edit().putInt(SP_VERSION, version).apply();
+    }
+
+    public static int getDBVersion(Context context) {
+        return getPref(context).getInt(SP_VERSION, -1);
     }
 
     public static void setAccount(Context context, String email) {

@@ -13,6 +13,7 @@ public class Utente implements BaseColumns, Serializable {
     public static final String TABLE_NAME = "utente";
 
     //Nomi delle colonne della relativa tabella
+    public static final String COLUMN_ID = "ID";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_SURNAME = "surname";
     public static final String COLUMN_BIRTHDAY_DATE = "birthdayDate";
@@ -30,7 +31,8 @@ public class Utente implements BaseColumns, Serializable {
 
 
     //Costruttore "standard"
-    public Utente(String name, String surname, String birthdayDate, String type, String email) {
+    public Utente(int ID, String name, String surname, String birthdayDate, String type, String email) {
+        this.id = ID;
         this.name = name;
         this.surname = surname;
         this.birthdayDate = birthdayDate;
@@ -47,7 +49,7 @@ public class Utente implements BaseColumns, Serializable {
      * @param cursor oggetto cursore
      */
     public Utente(Cursor cursor) {
-        this.id = cursor.getInt(cursor.getColumnIndex(Utente._ID));
+        this.id = cursor.getInt(cursor.getColumnIndex(Utente.COLUMN_ID));
         this.name = cursor.getString(cursor.getColumnIndex(Utente.COLUMN_NAME));
         this.surname = cursor.getString(cursor.getColumnIndex(Utente.COLUMN_SURNAME));
         this.birthdayDate = cursor.getString(cursor.getColumnIndex(Utente.COLUMN_BIRTHDAY_DATE));

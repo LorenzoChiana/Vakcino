@@ -14,22 +14,17 @@
 	$email = $_POST["email"];
 
 
-	$result = mysqli_prepare($conn, "SELECT * FROM UTENTE WHERE email = (?)");    
+	$result = mysqli_prepare($conn, "SELECT version FROM SYNC WHERE email = (?)");    
 	    mysqli_stmt_bind_param($result, "s", $email);
 	    mysqli_stmt_execute($result);
 	    mysqli_stmt_store_result($result);
 
 
-	    mysqli_stmt_bind_result($result, $id, $first_name, $last_name, $birthday, $type, $email);
+	    mysqli_stmt_bind_result($result, $version);
 		$a = array();
 		$b = array();
 	while (mysqli_stmt_fetch($result)) {
-	    $b["ID"] = $id;
-		$b["Nome"] = $first_name;
-		$b["Cognome"] = $last_name;
-		$b["DataNascita"] = $birthday;
-		$b["Tipo"] = $type;
-		$b["Email"] = $email;
+		$b["Version"] = $version;
 		array_push($a,$b);
 	}
 	print_r(json_encode($a));
