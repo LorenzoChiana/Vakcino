@@ -4,6 +4,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.loren.vaccinebooklet.model.DeveFare;
+import com.example.loren.vaccinebooklet.model.HaFatto;
+import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
 
@@ -172,6 +175,141 @@ public class VakcinoDbManager {
         }
 
         return vaccinations;
+    }
+
+        /*
+    *
+    * --------- TIPO VACCINAZIONE ---------
+    *
+    * */
+    /**
+     * Metodo di aggiunta di una vaccinazione nel database; l'oggetto viene passato come parametro.
+     * Viene poi innanzitutto recuperato il riferimento al database (modalità scrittura),
+     * dopodiché viene richamato il metodo insert, a cui viene passato il nome della tabella in cui effettuare
+     * l'inserimento, valore null in corrispondenza di nullColumnHack, e il ContentValues dell'oggetto che si
+     * vuole inserire.
+     *
+     * @param typeVaccination riferimento all'oggetto che si vuole inserire nel database
+     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
+     */
+    public boolean addTypeVaccination(TipoVaccinazione typeVaccination) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        long row = db.insert(TipoVaccinazione.TABLE_NAME, null, typeVaccination.getContentValues());
+        return row > 1;
+    }
+
+    /**
+     * Metodo di lettura di tutti i vaccini dal database.
+     * Viene poi innanzitutto recuperato il riferimento al database (modalità lettura); viene poi predisposto un oggetto di tipo Cursor
+     * che osipterà il risultato della query e una lista che conterrà le persone lette dal database.
+     * In una stringa viene composta la query e tramite il riferimento al database viene eseguita, ponendo il risultato all'interno
+     * del cursore. Il cursore, tramite il metodo moveToNext() viene ciclato e per ogni "riga" di risultato viene creato un oggetto di tipo
+     * Person che viene poi aggiunto alla lista.
+     *
+     * @return lista contenente i vaccini letti dal database
+     */
+    public List<TipoVaccinazione> getTypeVaccinations() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        List<TipoVaccinazione> typeVaccinations = new ArrayList<>();
+
+        Cursor cursor = null;
+        try {
+            String query = "SELECT * FROM " + TipoVaccinazione.TABLE_NAME +
+                    " ORDER BY " + TipoVaccinazione.COLUMN_DA + " ASC";
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                TipoVaccinazione typeVaccination = new TipoVaccinazione(cursor);
+                typeVaccinations.add(typeVaccination);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+
+        return typeVaccinations;
+    }
+
+    /*
+    *
+    * --------- DEVE FARE ---------
+    *
+    * */
+    /**
+     * @param toDo riferimento all'oggetto che si vuole inserire nel database
+     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
+     */
+    public boolean addToDo(DeveFare toDo) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        long row = db.insert(DeveFare.TABLE_NAME, null, toDo.getContentValues());
+        return row > 1;
+    }
+
+    /**
+     * @param toDo riferimento all'oggetto che si vuole modificare nel database
+     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
+     */
+    public boolean updateToDO(DeveFare toDo) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int row = db.update(DeveFare.TABLE_NAME, toDo.getContentValues(),
+                DeveFare.COLUMN_IDUTENTE + " = ? AND " + DeveFare.COLUMN_IDTIPOVAC + " = ?",
+                new String[]{Integer.toString(toDo.getIdUtente()), Integer.toString(toDo.getIdTipoVac())});
+        return row > 0;
+    }
+
+    /**
+     * @param toDo riferimento all'oggetto che si vuole rimuovere dal database
+     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
+     */
+    public boolean deleteToDo(DeveFare toDo) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int row = db.delete(Utente.TABLE_NAME,
+                DeveFare.COLUMN_IDUTENTE + " = ? AND " + DeveFare.COLUMN_IDTIPOVAC + " = ?",
+                new String[]{Integer.toString(toDo.getIdUtente()), Integer.toString(toDo.getIdTipoVac())});
+        return row > 0;
+    }
+
+    /*
+    *
+    * --------- HA FATTO ---------
+    *
+    * */
+    /**
+     * @param done riferimento all'oggetto che si vuole inserire nel database
+     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
+     */
+    public boolean addDone(HaFatto done) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        long row = db.insert(HaFatto.TABLE_NAME, null, done.getContentValues());
+        return row > 1;
+    }
+
+    /**
+     * @param done riferimento all'oggetto che si vuole modificare nel database
+     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
+     */
+    public boolean updateDone(HaFatto done) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int row = db.update(HaFatto.TABLE_NAME, done.getContentValues(),
+                HaFatto.COLUMN_IDUTENTE + " = ? AND " + HaFatto.COLUMN_IDTIPOVAC + " = ?",
+                new String[]{Integer.toString(done.getIdUtente()), Integer.toString(done.getIdTipoVac())});
+        return row > 0;
+    }
+
+    /**     
+     * @param done riferimento all'oggetto che si vuole rimuovere dal database
+     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
+     */
+    public boolean deleteDone(HaFatto done) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int row = db.delete(HaFatto.TABLE_NAME,
+                HaFatto.COLUMN_IDUTENTE + " = ? AND " + HaFatto.COLUMN_IDTIPOVAC + " = ?",
+                new String[]{Integer.toString(done.getIdUtente()), Integer.toString(done.getIdTipoVac())});
+        return row > 0;
     }
 
     public void deleteTable(String tableName) {
