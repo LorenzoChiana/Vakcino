@@ -5,10 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.loren.vaccinebooklet.model.DeveFare;
-import com.example.loren.vaccinebooklet.model.Dove;
 import com.example.loren.vaccinebooklet.model.HaFatto;
-import com.example.loren.vaccinebooklet.model.Paese;
-import com.example.loren.vaccinebooklet.model.Tempo;
+import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
 
@@ -50,43 +48,34 @@ public class VakcinoDbHelper extends SQLiteOpenHelper {
     public static final String CREATE_TABLE_VACCINAZIONE = "CREATE TABLE "
             + Vaccinazione.TABLE_NAME + " (" +
             Vaccinazione.COLUMN_ANTIGEN + TEXT_PRIMARY_KEY + COMMA_SEP +
-            Vaccinazione.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP + " )";
+            Vaccinazione.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
+            Vaccinazione.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
+            Vaccinazione.COLUMN_GROUP + TEXT_TYPE + " )";
 
-    public static final String CREATE_TABLE_TEMPO = "CREATE TABLE "
-            + Tempo.TABLE_NAME + " (" +
-            Tempo._ID + INTEGER_PRIMARY_KEY + COMMA_SEP +
-            Tempo.COLUMN_YEARS + INTEGER_TYPE + COMMA_SEP +
-            Tempo.COLUMN_ANTIGEN + TEXT_TYPE + " )";
-
-    public static final String CREATE_TABLE_PAESE = "CREATE TABLE "
-            + Paese.TABLE_NAME + " (" +
-            Paese.COLUMN_COD_STATE + TEXT_PRIMARY_KEY + COMMA_SEP +
-            Paese.COLUMN_NAME + TEXT_TYPE + " )";
+    public static final String CREATE_TABLE_TIPOVACCINAZIONE = "CREATE TABLE "
+            + TipoVaccinazione.TABLE_NAME + " (" +
+            TipoVaccinazione.COLUMN_ID + INTEGER_PRIMARY_KEY + COMMA_SEP +
+            TipoVaccinazione.COLUMN_DA + TEXT_TYPE + COMMA_SEP +
+            TipoVaccinazione.COLUMN_A + TEXT_TYPE + COMMA_SEP +
+            TipoVaccinazione.COLUMN_TIPOIMMUNIZZAZIONE + TEXT_TYPE + COMMA_SEP +
+            TipoVaccinazione.COLUMN_NUMRICHIAMO + INTEGER_TYPE + COMMA_SEP +
+            TipoVaccinazione.COLUMN_ANTIGEN + TEXT_TYPE + " )";
 
     public static final String CREATE_TABLE_HAFATTO = "CREATE TABLE "
             + HaFatto.TABLE_NAME + " (" +
             HaFatto.COLUMN_IDUTENTE + INTEGER_TYPE + COMMA_SEP +
-            HaFatto.COLUMN_ANTIGEN + TEXT_TYPE + COMMA_SEP +
+            HaFatto.COLUMN_IDTIPOVAC + INTEGER_TYPE + COMMA_SEP +
             HaFatto.COLUMN_DATE + DATE_TYPE + COMMA_SEP +
             " CONSTRAINT PK_HAFATTO PRIMARY KEY (" +
-            HaFatto.COLUMN_IDUTENTE + COMMA_SEP + HaFatto.COLUMN_ANTIGEN + ")"
-            + " )";
-
-    public static final String CREATE_TABLE_DOVE = "CREATE TABLE "
-            + Dove.TABLE_NAME + " (" +
-            Dove.COLUMN_COD_STATE + TEXT_TYPE + COMMA_SEP +
-            Dove.COLUMN_ANTIGEN + TEXT_TYPE + COMMA_SEP +
-            Dove.COLUMN_ENTIRE_COUNTRY + TEXT_TYPE + COMMA_SEP +
-            " CONSTRAINT PK_DOVE PRIMARY KEY (" +
-            Dove.COLUMN_COD_STATE + COMMA_SEP + Dove.COLUMN_ANTIGEN + ")"
+            HaFatto.COLUMN_IDUTENTE + COMMA_SEP + HaFatto.COLUMN_IDTIPOVAC + ")"
             + " )";
 
     public static final String CREATE_TABLE_DEVEFARE = "CREATE TABLE "
             + DeveFare.TABLE_NAME + " (" +
             DeveFare.COLUMN_IDUTENTE + INTEGER_TYPE + COMMA_SEP +
-            DeveFare.COLUMN_ANTIGEN + TEXT_TYPE + COMMA_SEP +
+            DeveFare.COLUMN_IDTIPOVAC + INTEGER_TYPE + COMMA_SEP +
             " CONSTRAINT PK_DEVEFARE PRIMARY KEY (" +
-            DeveFare.COLUMN_IDUTENTE + COMMA_SEP + DeveFare.COLUMN_ANTIGEN + ")"
+            DeveFare.COLUMN_IDUTENTE + COMMA_SEP + DeveFare.COLUMN_IDTIPOVAC + ")"
             + " )";
 
     /**

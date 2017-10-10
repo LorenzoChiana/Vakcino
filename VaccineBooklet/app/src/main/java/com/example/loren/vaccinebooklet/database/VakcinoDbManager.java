@@ -139,22 +139,6 @@ public class VakcinoDbManager {
     }
 
     /**
-     * Metodo di rimozione di un vaccino dal database; l'oggetto viene passato come parametro.
-     * Viene poi innanzitutto recuperato il riferimento al database (modalità scrittura),
-     * dopodiché viene richamato il metodo delete, a cui viene passato il nome della tabella in cui effettuare
-     * la rimozione, la condizione da verificare per effettuare la rimozione, e il valore che sarà oggetto del confronto
-     * (in questo caso viene verificato che gli id delle righe prese in considerazione siano uguali a quello dell'oggetto passato).
-     *
-     * @param vaccination riferimento all'oggetto che si vuole rimuovere dal database
-     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
-     */
-    public boolean deleteVaccination(Vaccinazione vaccination) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int row = db.delete(Vaccinazione.TABLE_NAME, Vaccinazione.COLUMN_ANTIGEN + " = ?", new String[]{vaccination.getAntigen()});
-        return row > 0;
-    }
-
-    /**
      * Metodo di lettura di tutti i vaccini dal database.
      * Viene poi innanzitutto recuperato il riferimento al database (modalità lettura); viene poi predisposto un oggetto di tipo Cursor
      * che osipterà il risultato della query e una lista che conterrà le persone lette dal database.
