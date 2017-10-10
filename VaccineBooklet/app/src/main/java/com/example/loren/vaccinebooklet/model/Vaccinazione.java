@@ -13,18 +13,24 @@ public class Vaccinazione implements BaseColumns, Serializable {
 
     //Nomi delle colonne della relativa tabella
     public static final String COLUMN_ANTIGEN = "antigen";
+    public static final String COLUMN_NAME = "name";
     public static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_GROUP = "group";
 
 
     //Variabili del modello
     private String antigen;
+    private String name;
     private String description;
+    private String group;
 
 
     //Costruttore "standard"
-    public Vaccinazione(String antigen, String description) {
+    public Vaccinazione(String antigen, String name, String description, String group) {
         this.antigen = antigen;
+        this.name = name;
         this.description = description;
+        this.group = group;
     }
 
     /**
@@ -37,7 +43,9 @@ public class Vaccinazione implements BaseColumns, Serializable {
      */
     public Vaccinazione(Cursor cursor) {
         this.antigen = cursor.getString(cursor.getColumnIndex(Vaccinazione.COLUMN_ANTIGEN));
+        this.name = cursor.getString(cursor.getColumnIndex(Vaccinazione.COLUMN_NAME));
         this.description = cursor.getString(cursor.getColumnIndex(Vaccinazione.COLUMN_DESCRIPTION));
+        this.group = cursor.getString(cursor.getColumnIndex(Vaccinazione.COLUMN_GROUP));
     }
 
 
@@ -46,18 +54,28 @@ public class Vaccinazione implements BaseColumns, Serializable {
     public String getAntigen() {
         return antigen;
     }
-
+    public String getName() {
+        return name;
+    }
     public String getDescription() {
         return description;
+    }
+    public String getGroup() {
+        return group;
     }
 
     //Metodi di set
     public void setAntigen(String antigen) {
         this.antigen = antigen;
     }
-
+    public void setName(String name) {
+        this.name = name;
+    }
     public void setDescription(String description) {
         this.description = description;
+    }
+    public void setGroup(String group) {
+        this.group = group;
     }
 
 
@@ -72,7 +90,9 @@ public class Vaccinazione implements BaseColumns, Serializable {
     public ContentValues getContentValues() {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_ANTIGEN, antigen);
+        cv.put(COLUMN_NAME, name);
         cv.put(COLUMN_DESCRIPTION, description);
+        cv.put(COLUMN_GROUP, group);
         return cv;
     }
 }

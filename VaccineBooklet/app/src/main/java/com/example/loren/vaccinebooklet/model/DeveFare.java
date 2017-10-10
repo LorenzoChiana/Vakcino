@@ -6,10 +6,6 @@ import android.provider.BaseColumns;
 
 import java.io.Serializable;
 
-/**
- * Created by loren on 29/09/2017.
- */
-
 public class DeveFare implements BaseColumns, Serializable {
 
     //Nome della tabella che ospiterà gli oggetti di tipo DeveFare
@@ -17,18 +13,18 @@ public class DeveFare implements BaseColumns, Serializable {
 
     //Nomi delle colonne della relativa tabella
     public static final String COLUMN_IDUTENTE = "idUtente";
-    public static final String COLUMN_ANTIGEN = "antigen";
+    public static final String COLUMN_IDTIPOVAC = "idTipoVac";
 
 
     //Variabili del modello
     private int idUtente;
-    private String antigene;
+    private int idTipoVac;
 
 
     //Costruttore "standard"
-    public DeveFare(int idUtente, String antigene) {
+    public DeveFare(int idUtente, int idTipoVac) {
         this.idUtente = idUtente;
-        this.antigene = antigene;
+        this.idTipoVac = idTipoVac;
     }
 
     /**
@@ -41,7 +37,7 @@ public class DeveFare implements BaseColumns, Serializable {
      */
     public DeveFare(Cursor cursor) {
         this.idUtente = cursor.getInt(cursor.getColumnIndex(DeveFare.COLUMN_IDUTENTE));
-        this.antigene = cursor.getString(cursor.getColumnIndex(DeveFare.COLUMN_ANTIGEN));
+        this.idTipoVac = cursor.getInt(cursor.getColumnIndex(DeveFare.COLUMN_IDTIPOVAC));
     }
 
 
@@ -50,8 +46,8 @@ public class DeveFare implements BaseColumns, Serializable {
         return idUtente;
     }
 
-    public String getAntigene() {
-        return antigene;
+    public int getIdTipoVac() {
+        return idTipoVac;
     }
 
     //Metodi di set
@@ -59,8 +55,8 @@ public class DeveFare implements BaseColumns, Serializable {
         this.idUtente = idUtente;
     }
 
-    public void setAntigene(String antigene) {
-        this.antigene = antigene;
+    public void setIdTipoVac(int idTipoVac) {
+        this.idTipoVac = idTipoVac;
     }
 
 
@@ -75,7 +71,7 @@ public class DeveFare implements BaseColumns, Serializable {
     public ContentValues getContentValues() {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_IDUTENTE, idUtente);
-        cv.put(COLUMN_ANTIGEN, antigene);
+        cv.put(COLUMN_IDTIPOVAC, idTipoVac);
         return cv;
     }
 }

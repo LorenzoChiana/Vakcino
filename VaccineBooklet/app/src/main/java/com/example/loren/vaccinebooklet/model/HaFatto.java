@@ -13,19 +13,19 @@ public class HaFatto implements BaseColumns, Serializable {
 
     //Nomi delle colonne della relativa tabella
     public static final String COLUMN_IDUTENTE = "idUtente";
-    public static final String COLUMN_ANTIGEN = "antigen";
+    public static final String COLUMN_IDTIPOVAC = "idTipoVac";
     public static final String COLUMN_DATE = "date";
 
 
     //Variabili del modello
     private int idUtente;
-    private String antigene;
+    private int idTipoVac;
     private String date;
 
     //Costruttore "standard"
-    public HaFatto(int idUtente, String antigene, String date) {
+    public HaFatto(int idUtente, int idTipoVac, String date) {
         this.idUtente = idUtente;
-        this.antigene = antigene;
+        this.idTipoVac = idTipoVac;
         this.date = date;
     }
 
@@ -39,7 +39,7 @@ public class HaFatto implements BaseColumns, Serializable {
      */
     public HaFatto(Cursor cursor) {
         this.idUtente = cursor.getInt(cursor.getColumnIndex(HaFatto.COLUMN_IDUTENTE));
-        this.antigene = cursor.getString(cursor.getColumnIndex(HaFatto.COLUMN_ANTIGEN));
+        this.idTipoVac = cursor.getInt(cursor.getColumnIndex(HaFatto.COLUMN_IDTIPOVAC));
         this.date = cursor.getString(cursor.getColumnIndex(HaFatto.COLUMN_DATE));
     }
 
@@ -49,8 +49,8 @@ public class HaFatto implements BaseColumns, Serializable {
         return idUtente;
     }
 
-    public String getAntigene() {
-        return antigene;
+    public int getIdTipoVac() {
+        return idTipoVac;
     }
 
     public String getDate() { return date; }
@@ -60,8 +60,8 @@ public class HaFatto implements BaseColumns, Serializable {
         this.idUtente = idUtente;
     }
 
-    public void setAntigene(String antigene) {
-        this.antigene = antigene;
+    public void setIdTipoVac(int idTipoVac) {
+        this.idTipoVac = idTipoVac;
     }
 
     public void setDate(String date) {
@@ -80,7 +80,7 @@ public class HaFatto implements BaseColumns, Serializable {
     public ContentValues getContentValues() {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_IDUTENTE, idUtente);
-        cv.put(COLUMN_ANTIGEN, antigene);
+        cv.put(COLUMN_IDTIPOVAC, idTipoVac);
         cv.put(COLUMN_DATE, date);
         return cv;
     }
