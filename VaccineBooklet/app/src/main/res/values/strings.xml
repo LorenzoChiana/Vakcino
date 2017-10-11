@@ -63,4 +63,5 @@
     <string name="label_add_new_user">Create</string>
     <string name="operation_cancelled">The operation was cancelled</string>
     <string name="operation_successful">Done!</string>
+    <string name="notice_settings">Notice settings</string>
 </resources>

@@ -2,6 +2,7 @@ package com.example.loren.vaccinebooklet.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,6 +13,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -19,6 +21,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +47,8 @@ public class MainActivity extends AppCompatActivity
 
     public static final String EXTRA_TYPE = "type";
     public static final String URL_GET_USER = "http://vakcinoapp.altervista.org/getUsers.php";
+    private static final int LOGOUT_ID = 1;
+    private static final int NOTICE_ID = 2;
     private boolean doubleBackToExitPressedOnce;
     private String message;
     private String email;
@@ -53,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private TextView twEmailUser;
 
 
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    //private SectionsPagerAdapter mSectionsPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +81,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        initializeNavigationUI(navigationView.getMenu());
+
+
         View headerView = navigationView.getHeaderView(0);
         twEmailUser = (TextView) headerView.findViewById(R.id.tw_email);
         /*
@@ -94,14 +102,14 @@ public class MainActivity extends AppCompatActivity
         twEmailUser.setText(email);
 
         /* Setting up the three main Pages (Fragment) of the MainActivity */
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        //mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         //mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        /*TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setCurrentItem(1);
+        mViewPager.setCurrentItem(1);*/
 
         final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
                 R.style.AppTheme_Dark_Dialog);
@@ -143,11 +151,10 @@ public class MainActivity extends AppCompatActivity
         }.execute();
     }
 
-    /* Override of the 2 Fragment Listeners Interaction Methods */
-
-
-
-
+    private void initializeNavigationUI(Menu menu) {
+        menu.add(R.id.drawer_options, NOTICE_ID, Menu.CATEGORY_SECONDARY, getString(R.string.notice_settings)).setIcon(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_lock_idle_alarm));
+        menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_lock_power_off));
+    }
 
     @Override
     public void onBackPressed() {
@@ -179,64 +186,22 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Log.d("ID_DEBUG", Integer.toString(id));
 
         // Sezione aggiunta utente
         if (id == R.id.add_user) {
-
-            final Item[] items;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                items = new Item[]{
-                        new Item(getString(R.string.type_user1),
-                                getResources().getDrawable(R.drawable.ic_person, null)),
-                        new Item(getString(R.string.type_user2),
-                                getResources().getDrawable(R.drawable.ic_pet_print, null))
-                };
-            } else {
-                items = new Item[]{
-                        new Item(getString(R.string.type_user1),
-                                getResources().getDrawable(R.drawable.ic_person)),
-                        new Item(getString(R.string.type_user2),
-                                getResources().getDrawable(R.drawable.ic_pet_print))
-                };
-            }
-            ListAdapter adapter = new ArrayAdapter<Item>(
-                    this,
-                    android.R.layout.select_dialog_item,
-                    android.R.id.text1,
-                    items){
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    //Use super class to create the View
-                    View myView = super.getView(position, convertView, parent);
-                    TextView myTextView = (TextView)myView.findViewById(android.R.id.text1);
-
-                    myTextView.setCompoundDrawablesWithIntrinsicBounds(items[position].icon, null, null, null);
-
-                    //Add margin between image and text (support various screen densities)
-                    int dp5 = (int) (10 * getResources().getDisplayMetrics().density + 0.5f);
-                    myTextView.setCompoundDrawablePadding(dp5);
-
-                    return myView;
-                }
-            };
-
-
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.choice_person_pet))
-                    .setAdapter(adapter, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int item) {
-                            //0 = persona, 1 = animale
-                            Intent intent = new Intent(MainActivity.this, NewUserActivity.class);
-                            intent.putExtra(EXTRA_TYPE, item);
-                            startActivity(intent);
-
-                        }
-                    }).show();
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            Menu menu = navigationView.getMenu();
+            menu.add(R.id.nav_users, 2, Menu.FIRST + 1, "aggiunto").setIcon(R.drawable.ic_person);
+            Intent intent = new Intent(MainActivity.this, NewUserActivity.class);
+            startActivity(intent);
         } // sezione logout
-        else if (id == R.id.log_out) {
+        else if (id == LOGOUT_ID) {
             Utils.setLogged(MainActivity.this, false);
             Utils.setAccount(MainActivity.this, "");
             Utils.setDBVersion(MainActivity.this, -1);
@@ -262,73 +227,4 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
-        private static final int MAX_TAB = 2;
-        Fragment[] mainViewFragments;
-        FragmentManager fm;
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-            this.fm = fm;
-
-            mainViewFragments = new Fragment[MAX_TAB];
-
-            mainViewFragments[0] = PersonFragment.newInstance(/*dataModel.getLoggedUser().getFavorites()*/);
-            mainViewFragments[1] = PetFragment.newInstance();
-
-        /*if (dataModel.hasOpenOrder()){
-            mainViewFragments[1] = OrderFragment.newInstance(dataModel.getOrder());
-        } else {
-            mainViewFragments[1] = NewOrderFragment.newInstance(dataModel.getRestaurants());
-        }
-
-        if (dataModel.hasOpenOrder()){
-            mainViewFragments[2] = CompletedFragment.newInstance(dataModel.getOrder());
-        } else {
-            mainViewFragments[2] = CompletedFragment.newInstance();
-        }*/
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mainViewFragments[position];
-        }
-
-        /* Override that permits to refresh the fragments on change */
-        @Override
-        public int getItemPosition(Object object) {
-            if (object instanceof PersonFragment || object instanceof PetFragment) {
-                return POSITION_NONE;
-            } else {
-                return POSITION_UNCHANGED;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return mainViewFragments.length;
-        }
-
-        @Override
-        public String getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_fragment_people);
-                case 1:
-                    return getString(R.string.title_fragment_pets);
-            }
-            return null;
-        }
-
-        /**
-         * Method tha can replace one fragment inside the Adapter and can refresh the data
-         *
-         * @param i index of the fragment.
-         * @param f new {@link Fragment} that is inserted inside the adapter.
-         */
-        public void replaceFragment(int i, Fragment f) {
-            mainViewFragments[i] = f;
-            notifyDataSetChanged();
-        }
-    }
 }
