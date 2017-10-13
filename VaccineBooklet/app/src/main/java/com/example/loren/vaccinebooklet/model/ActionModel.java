@@ -3,6 +3,7 @@ package com.example.loren.vaccinebooklet.model;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
 import com.example.loren.vaccinebooklet.utils.HTTPHelper;
 import com.example.loren.vaccinebooklet.utils.JSONHelper;
 import com.example.loren.vaccinebooklet.utils.Utils;
@@ -13,10 +14,12 @@ import java.util.HashMap;
 public class ActionModel {
     private static final String URL_GET_REMOTE_DB_VERSION = "http://vakcinoapp.altervista.org/getDBVersion.php";
     private String account;
+    private Context context;
     private static final String URL_GET_USER = "http://vakcinoapp.altervista.org/getUsers.php";
 
     public ActionModel(Context context){
-        account = Utils.getAccount(context);
+        this.context = context;
+        this.account = Utils.getAccount(context);
     }
 
     public ArrayList<Utente> getUsers(){

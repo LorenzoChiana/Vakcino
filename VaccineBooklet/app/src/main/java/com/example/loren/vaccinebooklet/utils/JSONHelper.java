@@ -36,7 +36,9 @@ public class JSONHelper {
                 //Log.d("JSON", type);
                 String email = object.getString("Email");
                 //Log.d("JSON", email);
-                users.add(new Utente(id, name, surname, birthdayDate, type, email));
+                int status = object.getInt("Status");
+                //Log.d("JSON", Integer.toString(status));
+                users.add(new Utente(id, name, surname, birthdayDate, type, email, status));
                 //Log.d("JSON", users.toString());
             }
         } catch (JSONException e) {

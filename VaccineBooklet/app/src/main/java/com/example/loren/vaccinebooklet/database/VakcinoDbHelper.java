@@ -3,6 +3,7 @@ package com.example.loren.vaccinebooklet.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.example.loren.vaccinebooklet.model.DeveFare;
 import com.example.loren.vaccinebooklet.model.HaFatto;
@@ -36,23 +37,24 @@ public class VakcinoDbHelper extends SQLiteOpenHelper {
     }
 
     //Query per la creazione delle tabelle, sfruttando i nomi delle colonne delle classi del modello.
-    public static final String CREATE_TABLE_UTENTE = "CREATE TABLE "
+    public static final String CREATE_TABLE_UTENTE = "CREATE TABLE IF NOT EXISTS "
             + Utente.TABLE_NAME + " (" +
-            Utente._ID + INTEGER_PRIMARY_KEY + COMMA_SEP +
+            Utente.COLUMN_ID + INTEGER_PRIMARY_KEY + COMMA_SEP +
             Utente.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
             Utente.COLUMN_SURNAME + TEXT_TYPE + COMMA_SEP +
             Utente.COLUMN_BIRTHDAY_DATE + DATE_TYPE + COMMA_SEP +
             Utente.COLUMN_TYPE + TEXT_TYPE + COMMA_SEP +
-            Utente.COLUMN_EMAIL + TEXT_TYPE + " )";
+            Utente.COLUMN_EMAIL + TEXT_TYPE + COMMA_SEP +
+            Utente.COLUMN_STATUS + INTEGER_TYPE + " )";
 
-    public static final String CREATE_TABLE_VACCINAZIONE = "CREATE TABLE "
+    public static final String CREATE_TABLE_VACCINAZIONE = "CREATE TABLE IF NOT EXISTS "
             + Vaccinazione.TABLE_NAME + " (" +
             Vaccinazione.COLUMN_ANTIGEN + TEXT_PRIMARY_KEY + COMMA_SEP +
             Vaccinazione.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
             Vaccinazione.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
             Vaccinazione.COLUMN_GROUP + TEXT_TYPE + " )";
 
-    public static final String CREATE_TABLE_TIPOVACCINAZIONE = "CREATE TABLE "
+    public static final String CREATE_TABLE_TIPOVACCINAZIONE = "CREATE TABLE IF NOT EXISTS "
             + TipoVaccinazione.TABLE_NAME + " (" +
             TipoVaccinazione.COLUMN_ID + INTEGER_PRIMARY_KEY + COMMA_SEP +
             TipoVaccinazione.COLUMN_DA + TEXT_TYPE + COMMA_SEP +
@@ -61,7 +63,7 @@ public class VakcinoDbHelper extends SQLiteOpenHelper {
             TipoVaccinazione.COLUMN_NUMRICHIAMO + INTEGER_TYPE + COMMA_SEP +
             TipoVaccinazione.COLUMN_ANTIGEN + TEXT_TYPE + " )";
 
-    public static final String CREATE_TABLE_HAFATTO = "CREATE TABLE "
+    public static final String CREATE_TABLE_HAFATTO = "CREATE TABLE IF NOT EXISTS "
             + HaFatto.TABLE_NAME + " (" +
             HaFatto.COLUMN_IDUTENTE + INTEGER_TYPE + COMMA_SEP +
             HaFatto.COLUMN_IDTIPOVAC + INTEGER_TYPE + COMMA_SEP +
@@ -70,7 +72,7 @@ public class VakcinoDbHelper extends SQLiteOpenHelper {
             HaFatto.COLUMN_IDUTENTE + COMMA_SEP + HaFatto.COLUMN_IDTIPOVAC + ")"
             + " )";
 
-    public static final String CREATE_TABLE_DEVEFARE = "CREATE TABLE "
+    public static final String CREATE_TABLE_DEVEFARE = "CREATE TABLE IF NOT EXISTS "
             + DeveFare.TABLE_NAME + " (" +
             DeveFare.COLUMN_IDUTENTE + INTEGER_TYPE + COMMA_SEP +
             DeveFare.COLUMN_IDTIPOVAC + INTEGER_TYPE + COMMA_SEP +
@@ -88,6 +90,12 @@ public class VakcinoDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        Log.d("DBMANAGER", CREATE_TABLE_UTENTE);
+        db.execSQL(CREATE_TABLE_UTENTE);
+        /*db.execSQL(CREATE_TABLE_DEVEFARE);
+        db.execSQL(CREATE_TABLE_HAFATTO);
+        db.execSQL(CREATE_TABLE_TIPOVACCINAZIONE);
+        db.execSQL(CREATE_TABLE_VACCINAZIONE);*/
     }
 
     /**

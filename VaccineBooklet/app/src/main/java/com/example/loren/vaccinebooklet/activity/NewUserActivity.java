@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,16 +22,17 @@ import static android.R.attr.duration;
 
 public class NewUserActivity extends AppCompatActivity implements
         View.OnClickListener {
-    private EditText etName;
-    private EditText etSurname;
     private EditText etBirthDate;
-    private int type;
-    private Button createButton;
-    private TextView cancelButton;
-    private int year, month, day;
+    int year, month, day;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        EditText etName;
+        EditText etSurname;
+        Button createButton;
+        TextView cancelButton;
+        ImageButton backButton;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
 
@@ -41,16 +43,10 @@ public class NewUserActivity extends AppCompatActivity implements
         etBirthDate.setFocusable(false);
         etBirthDate.setClickable(true);
         etBirthDate.setOnClickListener(this);
+        backButton = (ImageButton) findViewById(R.id.back_button);
+        backButton.setOnClickListener(cancelClickListener);
         cancelButton = (TextView) findViewById(R.id.link_cancel);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setResult(RESULT_CANCELED);
-                Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.operation_cancelled), Toast.LENGTH_SHORT);
-                toast.show();
-                finish();
-            }
-        });
+        cancelButton.setOnClickListener(cancelClickListener);
         createButton = (Button) findViewById(R.id.new_order_button);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +60,16 @@ public class NewUserActivity extends AppCompatActivity implements
         });
 
     }
+
+    private View.OnClickListener cancelClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            setResult(RESULT_CANCELED);
+            Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.operation_cancelled), Toast.LENGTH_SHORT);
+            toast.show();
+            finish();
+        }
+    };
 
     @Override
     public void onBackPressed() {

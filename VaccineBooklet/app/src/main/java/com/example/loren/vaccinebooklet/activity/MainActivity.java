@@ -5,6 +5,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,15 +34,18 @@ import android.widget.Toast;
 
 import com.example.loren.vaccinebooklet.Item;
 import com.example.loren.vaccinebooklet.R;
+import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
 import com.example.loren.vaccinebooklet.fragment.PersonFragment;
 import com.example.loren.vaccinebooklet.fragment.PetFragment;
 import com.example.loren.vaccinebooklet.model.ActionModel;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.utils.HTTPHelper;
+import com.example.loren.vaccinebooklet.utils.JSONHelper;
 import com.example.loren.vaccinebooklet.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -49,6 +54,7 @@ public class MainActivity extends AppCompatActivity
     public static final String URL_GET_USER = "http://vakcinoapp.altervista.org/getUsers.php";
     private static final int LOGOUT_ID = 1;
     private static final int NOTICE_ID = 2;
+    private static final String URL_GET_UNSYNC_USER = "http://vakcinoapp.altervista.org/getUnsyncedUsers.php";
     private boolean doubleBackToExitPressedOnce;
     private String message;
     private String email;
@@ -56,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
 
     private TextView twEmailUser;
+    private ActionModel actionModel;
 
 
     //private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -70,7 +77,7 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        actionModel = new ActionModel(getApplicationContext());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -120,35 +127,42 @@ public class MainActivity extends AppCompatActivity
         new AsyncTask<String, Void, String>(){
             @Override
             protected String doInBackground(String... strings) {
-                /*HashMap<String,String> hm = new HashMap<>();
-                hm.put("email", email);
-                String result = HTTPHelper.connectPost(URL_GET_USER, hm);*/
-                /*ArrayList<Utente> list = new ActionModel(getApplicationContext()).getUsers();
-                String listString = "";
 
-                for (Utente u : list)
-                {
-                    listString += u.getName() + "\t";
+                if(connectionOK(getApplicationContext())) {
+                    HashMap<String,String> hm = new HashMap<>();
+                    hm.put("email", email);
+                    return HTTPHelper.connectPost(URL_GET_UNSYNC_USER, hm);
+
+                    /*List<Utente> prova = dbManager.getUsers(email);
+                    if(prova.isEmpty())
+                        Log.d("DBMANAGER", "vuoto");
+                    Log.d("DBMANAGER", prova.toString());
+                    return prova.toString();*/
                 }
-                return listString;*/
-                int remoteDbVersion = new ActionModel(getApplicationContext()).getRemoteDBVersion();
-                int localDbVersion = Utils.getDBVersion(getApplicationContext());
-                Log.d("DBVersion", Integer.toString(remoteDbVersion));
-                if(localDbVersion < remoteDbVersion) {
-                    //aggiorno il db locale
-                } else if(localDbVersion > remoteDbVersion) {
-                    //aggiorno il db remoto
-                }
-                //return "";
-                return null;
+
+                return "";
             }
             @Override
             protected void onPostExecute(String result) {
+                ArrayList<Utente> remoteUsers = JSONHelper.parseUser(result);
+                VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
+                for (Utente ru: remoteUsers) {
+                    if(!dbManager.updateUser(ru)){
+                        dbManager.addUser(ru);
+                    }
+                }
+
                 progressDialog.dismiss();
-                /*Toast.makeText(getApplicationContext(), result,
-                        Toast.LENGTH_LONG).show();*/
+                Toast.makeText(getApplicationContext(), result,
+                        Toast.LENGTH_LONG).show();
             }
         }.execute();
+    }
+
+    private boolean connectionOK(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE);
     }
 
     private void initializeNavigationUI(Menu menu) {

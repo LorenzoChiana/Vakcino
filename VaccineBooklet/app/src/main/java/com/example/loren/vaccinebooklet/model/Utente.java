@@ -4,21 +4,23 @@ package com.example.loren.vaccinebooklet.model;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import java.io.Serializable;
 
 public class Utente implements BaseColumns, Serializable {
 
     //Nome della tabella che ospiterà gli oggetti di tipo Utente
-    public static final String TABLE_NAME = "utente";
+    public static final String TABLE_NAME = "user";
 
     //Nomi delle colonne della relativa tabella
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_SURNAME = "surname";
-    public static final String COLUMN_BIRTHDAY_DATE = "birthdayDate";
+    public static final String COLUMN_BIRTHDAY_DATE = "birthDate";
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_EMAIL = "email";
+    public static final String COLUMN_STATUS = "status";
 
 
     //Variabili del modello
@@ -28,16 +30,18 @@ public class Utente implements BaseColumns, Serializable {
     private String birthdayDate;
     private String type;
     private String email;
+    private int status;
 
 
     //Costruttore "standard"
-    public Utente(int ID, String name, String surname, String birthdayDate, String type, String email) {
+    public Utente(int ID, String name, String surname, String birthdayDate, String type, String email, int status) {
         this.id = ID;
         this.name = name;
         this.surname = surname;
         this.birthdayDate = birthdayDate;
         this.type = type;
         this.email = email;
+        this.status = status;
     }
 
     /**
@@ -55,6 +59,7 @@ public class Utente implements BaseColumns, Serializable {
         this.birthdayDate = cursor.getString(cursor.getColumnIndex(Utente.COLUMN_BIRTHDAY_DATE));
         this.type = cursor.getString(cursor.getColumnIndex(Utente.COLUMN_TYPE));
         this.email = cursor.getString(cursor.getColumnIndex(Utente.COLUMN_EMAIL));
+        this.status = cursor.getInt(cursor.getColumnIndex(Utente.COLUMN_STATUS));
     }
 
 
@@ -83,6 +88,8 @@ public class Utente implements BaseColumns, Serializable {
         return email;
     }
 
+    public int getStatus() { return status; }
+
 
     //Metodi di set
     public void setName(String name) {
@@ -103,12 +110,14 @@ public class Utente implements BaseColumns, Serializable {
         this.email = email;
     }
 
+    public void setStatus(int status) { this.status = status; }
+
 
     //Override del metodo toString per rappresnetare i valori di "name" e "surname" di Utente in una sola stringa.
-    @Override
+    /*@Override
     public String toString() {
         return surname + " " + name;
-    }
+    }*/
 
 
     /**
@@ -126,6 +135,7 @@ public class Utente implements BaseColumns, Serializable {
         cv.put(COLUMN_BIRTHDAY_DATE, birthdayDate);
         cv.put(COLUMN_TYPE, type);
         cv.put(COLUMN_EMAIL, email);
+        cv.put(COLUMN_STATUS, status);
         return cv;
     }
 }

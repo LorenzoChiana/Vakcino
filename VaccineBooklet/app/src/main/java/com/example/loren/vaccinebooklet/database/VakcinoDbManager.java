@@ -3,12 +3,14 @@ package com.example.loren.vaccinebooklet.database;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.loren.vaccinebooklet.model.DeveFare;
 import com.example.loren.vaccinebooklet.model.HaFatto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
+import com.example.loren.vaccinebooklet.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,9 @@ import java.util.List;
 public class VakcinoDbManager {
     //Riferimento alla classe di helper.
     private final VakcinoDbHelper dbHelper;
+
+    public static final int SYNC_WITH_SERVER = 1;
+    public static final int NOT_SYNC_WITH_SERVER = 0;
 
 
     //Costruttore
@@ -45,6 +50,7 @@ public class VakcinoDbManager {
     public boolean addUser(Utente user) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         long row = db.insert(Utente.TABLE_NAME, null, user.getContentValues());
+        Log.d("DBMANAGER", Long.toString(row));
         return row > 1;
     }
 
@@ -101,8 +107,9 @@ public class VakcinoDbManager {
         Cursor cursor = null;
         try {
             String query = "SELECT * FROM " + Utente.TABLE_NAME +
-                    " WHERE email = " + email +
-                    " ORDER BY " + Utente.COLUMN_NAME + " ASC";
+                    " WHERE email = '" + email +
+                    "' ORDER BY " + Utente.COLUMN_NAME + " ASC";
+            Log.d("DBMANAGER", query);
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
                 Utente user = new Utente(cursor);
@@ -118,6 +125,12 @@ public class VakcinoDbManager {
         }
 
         return users;
+    }
+
+    public Cursor getUnsyncedUsers() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String sql = "SELECT * FROM " + Utente.TABLE_NAME + " WHERE " + Utente.COLUMN_NAME + " = " + NOT_SYNC_WITH_SERVER + ";";
+        return db.rawQuery(sql, null);
     }
 
     /*
@@ -316,4 +329,5 @@ public class VakcinoDbManager {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(tableName, null, null);
     }
+
 }
