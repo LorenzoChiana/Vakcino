@@ -26,21 +26,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.loren.vaccinebooklet.Item;
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
-import com.example.loren.vaccinebooklet.fragment.PersonFragment;
-import com.example.loren.vaccinebooklet.fragment.PetFragment;
-import com.example.loren.vaccinebooklet.model.ActionModel;
 import com.example.loren.vaccinebooklet.model.Utente;
+import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
 import com.example.loren.vaccinebooklet.utils.HTTPHelper;
-import com.example.loren.vaccinebooklet.utils.JSONHelper;
 import com.example.loren.vaccinebooklet.utils.Utils;
 
 import java.util.ArrayList;
@@ -54,7 +46,9 @@ public class MainActivity extends AppCompatActivity
     public static final String URL_GET_USER = "http://vakcinoapp.altervista.org/getUsers.php";
     private static final int LOGOUT_ID = 1;
     private static final int NOTICE_ID = 2;
+    private static final int USER_ID = 3;
     private static final String URL_GET_UNSYNC_USER = "http://vakcinoapp.altervista.org/getUnsyncedUsers.php";
+    private static final String URL_SET_SYNC_REMOTE_USER = "http://vakcinoapp.altervista.org/setSyncRemoteUser.php";
     private boolean doubleBackToExitPressedOnce;
     private String message;
     private String email;
@@ -62,7 +56,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
 
     private TextView twEmailUser;
-    private ActionModel actionModel;
+    private NavigationView navigationView;
 
 
     //private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -77,7 +71,6 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        actionModel = new ActionModel(getApplicationContext());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -85,10 +78,8 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        initializeNavigationUI(navigationView.getMenu());
 
 
         View headerView = navigationView.getHeaderView(0);
@@ -129,32 +120,14 @@ public class MainActivity extends AppCompatActivity
             protected String doInBackground(String... strings) {
 
                 if(connectionOK(getApplicationContext())) {
-                    HashMap<String,String> hm = new HashMap<>();
-                    hm.put("email", email);
-                    return HTTPHelper.connectPost(URL_GET_UNSYNC_USER, hm);
-
-                    /*List<Utente> prova = dbManager.getUsers(email);
-                    if(prova.isEmpty())
-                        Log.d("DBMANAGER", "vuoto");
-                    Log.d("DBMANAGER", prova.toString());
-                    return prova.toString();*/
+                    RemoteDBInteractions.syncUsersRemoteToLocal(getApplicationContext());
                 }
-
                 return "";
             }
             @Override
             protected void onPostExecute(String result) {
-                ArrayList<Utente> remoteUsers = JSONHelper.parseUser(result);
-                VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
-                for (Utente ru: remoteUsers) {
-                    if(!dbManager.updateUser(ru)){
-                        dbManager.addUser(ru);
-                    }
-                }
-
+                initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
                 progressDialog.dismiss();
-                Toast.makeText(getApplicationContext(), result,
-                        Toast.LENGTH_LONG).show();
             }
         }.execute();
     }
@@ -165,9 +138,14 @@ public class MainActivity extends AppCompatActivity
         return activeNetwork != null && (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE);
     }
 
-    private void initializeNavigationUI(Menu menu) {
-        menu.add(R.id.drawer_options, NOTICE_ID, Menu.CATEGORY_SECONDARY, getString(R.string.notice_settings)).setIcon(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_lock_idle_alarm));
-        menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.ic_lock_power_off));
+    private void initializeNavigationUI(Menu menu, Context context) {
+        VakcinoDbManager dbManager = new VakcinoDbManager(context);
+        List<Utente> users = dbManager.getUsers(email);
+        for (Utente u: users) {
+            menu.add(R.id.nav_users, USER_ID, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person));
+        }
+        menu.add(R.id.drawer_options, NOTICE_ID, Menu.CATEGORY_SECONDARY, getString(R.string.notice_settings)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_idle_alarm));
+        menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_power_off));
     }
 
     @Override

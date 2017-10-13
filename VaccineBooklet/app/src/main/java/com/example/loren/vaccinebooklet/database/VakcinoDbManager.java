@@ -23,8 +23,8 @@ public class VakcinoDbManager {
     //Riferimento alla classe di helper.
     private final VakcinoDbHelper dbHelper;
 
-    public static final int SYNC_WITH_SERVER = 1;
-    public static final int NOT_SYNC_WITH_SERVER = 0;
+    public static final int SYNC_WITH_SERVER = 0;
+    public static final int NOT_SYNC_WITH_SERVER = 1;
 
 
     //Costruttore
@@ -108,7 +108,7 @@ public class VakcinoDbManager {
         try {
             String query = "SELECT * FROM " + Utente.TABLE_NAME +
                     " WHERE email = '" + email +
-                    "' ORDER BY " + Utente.COLUMN_NAME + " ASC";
+                    "' ORDER BY " + Utente.COLUMN_NAME + " DESC";
             Log.d("DBMANAGER", query);
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
