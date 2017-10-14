@@ -20,7 +20,7 @@
 	    mysqli_stmt_store_result($result);
 
 
-	    mysqli_stmt_bind_result($result, $id, $first_name, $last_name, $birthday, $type, $email);
+	    mysqli_stmt_bind_result($result, $id, $first_name, $last_name, $birthday, $type, $email, $status);
 		$a = array();
 		$b = array();
 	while (mysqli_stmt_fetch($result)) {
@@ -30,6 +30,7 @@
 		$b["DataNascita"] = $birthday;
 		$b["Tipo"] = $type;
 		$b["Email"] = $email;
+		$b["Status"] = $status;
 		array_push($a,$b);
 	}
 	print_r(json_encode($a));

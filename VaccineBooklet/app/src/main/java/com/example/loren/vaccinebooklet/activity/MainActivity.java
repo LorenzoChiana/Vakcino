@@ -42,13 +42,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String EXTRA_TYPE = "type";
-    public static final String URL_GET_USER = "http://vakcinoapp.altervista.org/getUsers.php";
     private static final int LOGOUT_ID = 1;
     private static final int NOTICE_ID = 2;
     private static final int USER_ID = 3;
-    private static final String URL_GET_UNSYNC_USER = "http://vakcinoapp.altervista.org/getUnsyncedUsers.php";
-    private static final String URL_SET_SYNC_REMOTE_USER = "http://vakcinoapp.altervista.org/setSyncRemoteUser.php";
     private boolean doubleBackToExitPressedOnce;
     private String message;
     private String email;
@@ -84,15 +80,23 @@ public class MainActivity extends AppCompatActivity
 
         View headerView = navigationView.getHeaderView(0);
         twEmailUser = (TextView) headerView.findViewById(R.id.tw_email);
+        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
+                R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(getString(R.string.waiting));
+        progressDialog.show();
         /*
             Se ho appena fatto il login/sign up
             allora setto la sharedpreference con l'email dell'account
             altrimenti prendo l'email direttamente dal sharedpreference
          */
         final String extraEmail;
+        boolean afterLogin = false;
         try {
             extraEmail = getIntent().getExtras().getString("email");
             Utils.setAccount(MainActivity.this, extraEmail);
+            // significa inoltre che si è appena loggato quindi devo scaricarmi localmente il db remoto
+            afterLogin = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -109,23 +113,20 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.setCurrentItem(1);*/
 
-        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage(getString(R.string.waiting));
-        progressDialog.show();
-
-        new AsyncTask<String, Void, String>(){
+        final boolean finalAfterLogin = afterLogin;
+        new AsyncTask<Void, Void, Boolean>(){
             @Override
-            protected String doInBackground(String... strings) {
+            protected Boolean doInBackground(Void... args) {
 
                 if(connectionOK(getApplicationContext())) {
+                    if(finalAfterLogin)
+                        RemoteDBInteractions.createUsersRemoteToLocal(getApplicationContext());
                     RemoteDBInteractions.syncUsersRemoteToLocal(getApplicationContext());
                 }
-                return "";
+                return true;
             }
             @Override
-            protected void onPostExecute(String result) {
+            protected void onPostExecute(Boolean result) {
                 initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
                 progressDialog.dismiss();
             }
@@ -187,9 +188,6 @@ public class MainActivity extends AppCompatActivity
 
         // Sezione aggiunta utente
         if (id == R.id.add_user) {
-            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-            Menu menu = navigationView.getMenu();
-            menu.add(R.id.nav_users, 2, Menu.FIRST + 1, "aggiunto").setIcon(R.drawable.ic_person);
             Intent intent = new Intent(MainActivity.this, NewUserActivity.class);
             startActivity(intent);
         } // sezione logout

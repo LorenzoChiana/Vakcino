@@ -15,8 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.loren.vaccinebooklet.R;
+import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
+import com.example.loren.vaccinebooklet.model.Utente;
 
 import java.util.Calendar;
+import java.util.List;
 
 import static android.R.attr.duration;
 
