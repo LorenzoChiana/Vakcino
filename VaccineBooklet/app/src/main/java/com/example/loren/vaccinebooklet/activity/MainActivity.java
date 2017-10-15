@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -29,6 +30,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.loren.vaccinebooklet.R;
+import com.example.loren.vaccinebooklet.database.VakcinoDbHelper;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
@@ -133,7 +135,7 @@ public class MainActivity extends AppCompatActivity
         }.execute();
     }
 
-    private boolean connectionOK(Context context) {
+    public static boolean connectionOK(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE);
@@ -194,7 +196,8 @@ public class MainActivity extends AppCompatActivity
         else if (id == LOGOUT_ID) {
             Utils.setLogged(MainActivity.this, false);
             Utils.setAccount(MainActivity.this, "");
-            Utils.setDBVersion(MainActivity.this, -1);
+            VakcinoDbHelper dbHelper = new VakcinoDbHelper(getApplicationContext());
+            this.deleteDatabase(dbHelper.getDatabaseName());
             Intent returnToLogin = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(returnToLogin);
             Toast.makeText(MainActivity.this, message != null ? message : getString(R.string.logout_successfully), Toast.LENGTH_SHORT).show();
