@@ -15,7 +15,7 @@
 
 
 	$result = mysqli_prepare($conn, "UPDATE TIPO_VACCINAZIONE SET Status = 1 WHERE ID = (?)");    
-	    mysqli_stmt_bind_param($result, "s", $id);
+	    mysqli_stmt_bind_param($result, "i", $id);
 	    mysqli_stmt_execute($result);
 	/*    mysqli_stmt_store_result($result);
 

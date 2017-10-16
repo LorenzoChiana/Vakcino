@@ -17,12 +17,14 @@ import java.util.HashMap;
 public class RemoteDBInteractions {
     private static final String URL_SET_SYNC_REMOTE_USER = "http://vakcinoapp.altervista.org/setSyncRemoteUser.php";
     private static final String URL_GET_UNSYNC_USER = "http://vakcinoapp.altervista.org/getUnsyncedUsers.php";
+    private static final String URL_GET_UNSYNC_VACCINATION = "http://vakcinoapp.altervista.org/getUnsyncedVaccinations.php";
+    private static final String URL_GET_UNSYNC_VACCINATIONTYPE = "http://vakcinoapp.altervista.org/getUnsyncedVaccinationType.php";
     private static final String URL_GET_USER = "http://vakcinoapp.altervista.org/getUsers.php";
     private static final String URL_SET_USER = "http://vakcinoapp.altervista.org/setUser.php";
     private static final String URL_GET_VACCINATIONS = "http://vakcinoapp.altervista.org/getVaccinations.php";
     private static final java.lang.String URL_SET_SYNC_REMOTE_VACCINATION = "http://vakcinoapp.altervista.org/setSyncRemoteVaccination.php";;
     private static final java.lang.String URL_GET_VACCINATIONTYPE = "http://vakcinoapp.altervista.org/getVaccinationType.php";
-    private static final java.lang.String URL_SET_SYNC_REMOTE_VACCINATIONTYPE = "http://vakcinoapp.altervista.org/http://vakcinoapp.altervista.org/setSyncRemoteVaccination.php.php";
+    private static final java.lang.String URL_SET_SYNC_REMOTE_VACCINATIONTYPE = "http://vakcinoapp.altervista.org/setSyncRemoteVaccinationType.php";
 
     /*
     * --- UTENTE ---
@@ -94,7 +96,7 @@ public class RemoteDBInteractions {
     }
 
     public static ArrayList<Vaccinazione> getRemoteUnsyncedVaccinations() {
-        return JSONHelper.parseVaccination(HTTPHelper.connectPost(URL_SET_SYNC_REMOTE_VACCINATION));
+        return JSONHelper.parseVaccination(HTTPHelper.connectPost(URL_GET_UNSYNC_VACCINATION));
     }
 
     public static void syncVaccinationsRemoteToLocal(Context context) {
@@ -105,7 +107,7 @@ public class RemoteDBInteractions {
             if(!dbManager.updateVaccination(rv)){
                 dbManager.addVaccination(rv);
             }
-            hm.put("antigen", rv.getAntigen());
+            hm.put("Antigene", rv.getAntigen());
             HTTPHelper.connectPost(URL_SET_SYNC_REMOTE_VACCINATION, hm);
             hm.clear();
         }
@@ -130,7 +132,7 @@ public class RemoteDBInteractions {
     }
 
     public static ArrayList<TipoVaccinazione> getRemoteUnsyncedVaccinationType() {
-        return JSONHelper.parseVaccinationType(HTTPHelper.connectPost(URL_SET_SYNC_REMOTE_VACCINATIONTYPE));
+        return JSONHelper.parseVaccinationType(HTTPHelper.connectPost(URL_GET_UNSYNC_VACCINATIONTYPE));
     }
 
     public static void syncVaccinationTypeRemoteToLocal(Context context) {
