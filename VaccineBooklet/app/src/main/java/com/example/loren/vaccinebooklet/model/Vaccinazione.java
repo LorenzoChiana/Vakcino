@@ -15,7 +15,8 @@ public class Vaccinazione implements BaseColumns, Serializable {
     public static final String COLUMN_ANTIGEN = "antigen";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_DESCRIPTION = "description";
-    public static final String COLUMN_GROUP = "group";
+    public static final String COLUMN_GROUP = "gruppo";
+    public static final String COLUMN_STATUS = "status";
 
 
     //Variabili del modello
@@ -23,14 +24,16 @@ public class Vaccinazione implements BaseColumns, Serializable {
     private String name;
     private String description;
     private String group;
+    private int status;
 
 
     //Costruttore "standard"
-    public Vaccinazione(String antigen, String name, String description, String group) {
+    public Vaccinazione(String antigen, String name, String description, String group, int status) {
         this.antigen = antigen;
         this.name = name;
         this.description = description;
         this.group = group;
+        this.status = status;
     }
 
     /**
@@ -46,6 +49,7 @@ public class Vaccinazione implements BaseColumns, Serializable {
         this.name = cursor.getString(cursor.getColumnIndex(Vaccinazione.COLUMN_NAME));
         this.description = cursor.getString(cursor.getColumnIndex(Vaccinazione.COLUMN_DESCRIPTION));
         this.group = cursor.getString(cursor.getColumnIndex(Vaccinazione.COLUMN_GROUP));
+        this.status = cursor.getInt(cursor.getColumnIndex(Vaccinazione.COLUMN_STATUS));
     }
 
 
@@ -63,6 +67,9 @@ public class Vaccinazione implements BaseColumns, Serializable {
     public String getGroup() {
         return group;
     }
+    public int getStatus() {
+        return status;
+    }
 
     //Metodi di set
     public void setAntigen(String antigen) {
@@ -77,7 +84,9 @@ public class Vaccinazione implements BaseColumns, Serializable {
     public void setGroup(String group) {
         this.group = group;
     }
-
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     /**
      * Metodo che ritorna il content values dell'oggetto di classe Vaccinazione.
@@ -93,6 +102,7 @@ public class Vaccinazione implements BaseColumns, Serializable {
         cv.put(COLUMN_NAME, name);
         cv.put(COLUMN_DESCRIPTION, description);
         cv.put(COLUMN_GROUP, group);
+        cv.put(COLUMN_STATUS, status);
         return cv;
     }
 }

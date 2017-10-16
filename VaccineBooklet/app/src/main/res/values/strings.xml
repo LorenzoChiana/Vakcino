@@ -64,4 +64,8 @@
     <string name="operation_cancelled">The operation was cancelled</string>
     <string name="operation_successful">Done!</string>
     <string name="notice_settings">Notice settings</string>
+    <string name="empty_input">Enter a value</string>
+    <string name="menu_view">View</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_delete">Delete</string>
 </resources>

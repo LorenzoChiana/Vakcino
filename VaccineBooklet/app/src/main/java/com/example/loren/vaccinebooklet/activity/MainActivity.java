@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.loren.vaccinebooklet.R;
@@ -105,15 +106,8 @@ public class MainActivity extends AppCompatActivity
         email = Utils.getAccount(MainActivity.this);
         twEmailUser.setText(email);
 
-        /* Setting up the three main Pages (Fragment) of the MainActivity */
-        //mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
         mViewPager = (ViewPager) findViewById(R.id.container);
-        //mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        /*TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setCurrentItem(1);*/
 
         final boolean finalAfterLogin = afterLogin;
         new AsyncTask<Void, Void, Boolean>(){
@@ -121,9 +115,14 @@ public class MainActivity extends AppCompatActivity
             protected Boolean doInBackground(Void... args) {
 
                 if(connectionOK(getApplicationContext())) {
-                    if(finalAfterLogin)
+                    if(finalAfterLogin) {
                         RemoteDBInteractions.createUsersRemoteToLocal(getApplicationContext());
+                        RemoteDBInteractions.createVaccinationsRemoteToLocal(getApplicationContext());
+                        RemoteDBInteractions.createVaccinationTypeRemoteToLocal(getApplicationContext());
+                    }
                     RemoteDBInteractions.syncUsersRemoteToLocal(getApplicationContext());
+                    RemoteDBInteractions.syncVaccinationsRemoteToLocal(getApplicationContext());
+                    RemoteDBInteractions.syncVaccinationTypeRemoteToLocal(getApplicationContext());
                 }
                 return true;
             }
@@ -135,6 +134,49 @@ public class MainActivity extends AppCompatActivity
         }.execute();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateNavigationUI(navigationView.getMenu(), getApplicationContext());
+    }
+
+    private void updateNavigationUI(Menu menu, Context context) {
+        int menuSize = menu.size();
+        if(menuSize > 1) {
+            for(int i = 1; i < menuSize; i++) {
+                menu.removeItem(i);
+            }
+            initializeNavigationUI(menu, context);
+        }
+    }
+
+    /*@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main_drawer, menu);
+
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                final View view = findViewById(R.id.add_user);
+
+                if (view != null) {
+                    view.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+
+                            // Do something...
+
+                            Toast.makeText(getApplicationContext(), "Long pressed", Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
+                    });
+                }
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }*/
+
     public static boolean connectionOK(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -144,11 +186,37 @@ public class MainActivity extends AppCompatActivity
     private void initializeNavigationUI(Menu menu, Context context) {
         VakcinoDbManager dbManager = new VakcinoDbManager(context);
         List<Utente> users = dbManager.getUsers(email);
+        int i = 0;
         for (Utente u: users) {
-            menu.add(R.id.nav_users, USER_ID, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person));
+            menu.add(R.id.nav_users, USER_ID + i++, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person));
+
         }
         menu.add(R.id.drawer_options, NOTICE_ID, Menu.CATEGORY_SECONDARY, getString(R.string.notice_settings)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_idle_alarm));
         menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_power_off));
+        /*int a = menu.size();
+        CharSequence b = menu.getItem(0).getTitle();
+        if(menu.size() > 2) {
+            menu.getItem(0).getActionView().setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(MainActivity.this, message != null ? message : "Long click", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+        }*/
+        /*MenuItem menuItem = menu.findItem(NOTICE_ID);
+        for(int j = 1; j < menu.size() - 2; j++){
+            View v = new View(this);
+            v.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Toast.makeText(MainActivity.this, message != null ? message : "Long click", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
+            });
+            menu.getItem(j).setActionView(v);
+        }*/
     }
 
     @Override
@@ -180,7 +248,6 @@ public class MainActivity extends AppCompatActivity
             }, 2000);
         }
     }
-
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -219,5 +286,7 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 
 }

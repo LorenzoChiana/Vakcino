@@ -2,7 +2,9 @@ package com.example.loren.vaccinebooklet.utils;
 
 import android.util.Log;
 
+import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
+import com.example.loren.vaccinebooklet.model.Vaccinazione;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +47,59 @@ public class JSONHelper {
             return null;
         } finally {
             return users;
+        }
+    }
+
+    /**
+     * Method that parse a {@link Vaccinazione}
+     * @param result {@link String} of the response from the server
+     * @return the object of the result user
+     */
+    public static ArrayList<Vaccinazione> parseVaccination(String result){
+        ArrayList<Vaccinazione> vaccinations = new ArrayList<>();
+        try {
+            JSONArray array = new JSONArray(result);
+            for(int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                String antigen = object.getString("Antigene");
+                String name = object.getString("Nome");
+                String description = object.getString("Descrizione");
+                String group = object.getString("Gruppo");
+                int status = object.getInt("Status");
+                vaccinations.add(new Vaccinazione(antigen, name, description, group, status));
+            }
+        } catch (JSONException e) {
+            return null;
+        } finally {
+            return vaccinations;
+        }
+    }
+
+
+    /**
+     * Method that parse a {@link TipoVaccinazione}
+     * @param result {@link String} of the response from the server
+     * @return the object of the result user
+     */
+    public static ArrayList<TipoVaccinazione> parseVaccinationType(String result){
+        ArrayList<TipoVaccinazione> vaccinationsType = new ArrayList<>();
+        try {
+            JSONArray array = new JSONArray(result);
+            for(int i = 0; i < array.length(); i++) {
+                JSONObject object = array.getJSONObject(i);
+                int id = object.getInt("ID");
+                int da = object.getInt("Da");
+                int a = object.getInt("A");
+                String ti = object.getString("TipoImmunizzazione");
+                int numRichiamo = object.getInt("NumRichiamo");
+                String antigene = object.getString("Antigene");
+                int status = object.getInt("Status");
+                vaccinationsType.add(new TipoVaccinazione(id, da, a, ti, numRichiamo, antigene, status));
+            }
+        } catch (JSONException e) {
+            return null;
+        } finally {
+            return vaccinationsType;
         }
     }
 

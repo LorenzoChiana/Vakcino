@@ -22,24 +22,27 @@ public class TipoVaccinazione implements BaseColumns, Serializable {
     public static final String COLUMN_TIPOIMMUNIZZAZIONE = "tipoimmunizzazione";
     public static final String COLUMN_NUMRICHIAMO = "numrichiamo";
     public static final String COLUMN_ANTIGEN = "antigene";
+    public static final String COLUMN_STATUS = "status";
 
     //Variabili del modello
     private int id;
-    private String da;
-    private String a;
+    private int da;
+    private int a;
     private String tipoImmunizzazione;
     private int numRichiamo;
     private String antigen;
+    private int status;
 
 
     //Costruttore "standard"
-    public TipoVaccinazione(int ID, String da, String a, String tipoImmunizzazione, int numRichiamo, String antigen) {
+    public TipoVaccinazione(int ID, int da, int a, String tipoImmunizzazione, int numRichiamo, String antigen, int status) {
         this.id = ID;
         this.da = da;
         this.a = a;
         this.tipoImmunizzazione = tipoImmunizzazione;
         this.numRichiamo = numRichiamo;
         this.antigen = antigen;
+        this.status = status;
     }
 
     /**
@@ -51,12 +54,13 @@ public class TipoVaccinazione implements BaseColumns, Serializable {
      * @param cursor oggetto cursore
      */
     public TipoVaccinazione(Cursor cursor) {
-        this.id = cursor.getInt(cursor.getColumnIndex(Utente.COLUMN_ID));
-        this.da = cursor.getString(cursor.getColumnIndex(TipoVaccinazione.COLUMN_DA));
-        this.a = cursor.getString(cursor.getColumnIndex(TipoVaccinazione.COLUMN_A));
+        this.id = cursor.getInt(cursor.getColumnIndex(TipoVaccinazione.COLUMN_ID));
+        this.da = cursor.getInt(cursor.getColumnIndex(TipoVaccinazione.COLUMN_DA));
+        this.a = cursor.getInt(cursor.getColumnIndex(TipoVaccinazione.COLUMN_A));
         this.tipoImmunizzazione = cursor.getString(cursor.getColumnIndex(TipoVaccinazione.COLUMN_TIPOIMMUNIZZAZIONE));
         this.numRichiamo = cursor.getInt(cursor.getColumnIndex(TipoVaccinazione.COLUMN_NUMRICHIAMO));
         this.antigen = cursor.getString(cursor.getColumnIndex(TipoVaccinazione.COLUMN_ANTIGEN));
+        this.status = cursor.getInt(cursor.getColumnIndex(TipoVaccinazione.COLUMN_STATUS));
     }
 
 
@@ -64,10 +68,10 @@ public class TipoVaccinazione implements BaseColumns, Serializable {
     public int getId() {
         return id;
     }
-    public String getDa() {
+    public int getDa() {
         return da;
     }
-    public String getA() {
+    public int getA() {
         return a;
     }
     public String getTipoImmunizzazione() {
@@ -79,20 +83,29 @@ public class TipoVaccinazione implements BaseColumns, Serializable {
     public String getAntigen() {
         return antigen;
     }
+    public int getStatus() { return status; }
 
     // Setter
     public  void setId(int id) {
         this.id = id;
-    }public void setDa(String da) {
+    }
+    public void setDa(int da) {
         this.da = da;
-    }public void setA(String a) {
+    }
+    public void setA(int a) {
         this.a = a;
-    }public void setTipoImmunizzazione(String tipoImmunizzazione) {
+    }
+    public void setTipoImmunizzazione(String tipoImmunizzazione) {
         this.tipoImmunizzazione = tipoImmunizzazione;
-    }public void setNumRichiamo(int numRichiamo) {
+    }
+    public void setNumRichiamo(int numRichiamo) {
         this.numRichiamo = numRichiamo;
-    }public void setAntigen(String antigen) {
+    }
+    public void setAntigen(String antigen) {
         this.antigen = antigen;
+    }
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     /**
@@ -111,6 +124,7 @@ public class TipoVaccinazione implements BaseColumns, Serializable {
         cv.put(COLUMN_TIPOIMMUNIZZAZIONE, tipoImmunizzazione);
         cv.put(COLUMN_NUMRICHIAMO, numRichiamo);
         cv.put(COLUMN_ANTIGEN, antigen);
+        cv.put(COLUMN_STATUS, status);
         return cv;
     }
 }

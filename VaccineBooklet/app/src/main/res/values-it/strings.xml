@@ -61,5 +61,9 @@
     <string name="label_cancel">Annulla</string>
     <string name="label_add_new_user">Crea</string>
     <string name="operation_cancelled">L\'operazione è stata annullata</string>
-    <string name="operation_successful">datto!</string>
+    <string name="operation_successful">Fatto!</string>
+    <string name="empty_input">Inserisci un valore</string>
+    <string name="menu_view">Visualizza</string>
+    <string name="menu_edit">Modifica</string>
+    <string name="menu_delete">Cancella</string>
 </resources>

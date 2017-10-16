@@ -108,7 +108,7 @@ public class VakcinoDbManager {
         try {
             String query = "SELECT * FROM " + Utente.TABLE_NAME +
                     " WHERE email = '" + email +
-                    "' ORDER BY " + Utente.COLUMN_NAME + " DESC";
+                    "' ORDER BY " + Utente.COLUMN_NAME + ", " + Utente.COLUMN_SURNAME + " ASC";
             Log.d("DBMANAGER", query);
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
@@ -152,6 +152,24 @@ public class VakcinoDbManager {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         long row = db.insert(Vaccinazione.TABLE_NAME, null, vaccination.getContentValues());
         return row > 1;
+    }
+
+    /**
+     * Metodo di modifica di una vaccinazione nel database; l'oggetto viene passato come parametro.
+     * Viene poi innanzitutto recuperato il riferimento al database (modalità scrittura),
+     * dopodiché viene richamato il metodo update, a cui viene passato il nome della tabella in cui effettuare
+     * la modifica, il ContentValues dell'oggetto che si vuole modificare, e come ultimi due parametri, la condizione
+     * da verificare per effettuare la modifica, e il valore che sarà oggetto del confronto (in questo caso viene verificato
+     * che gli id delle righe prese in considerazione siano uguali a quello dell'oggetto passato).
+     *
+     * @param vac riferimento all'oggetto che si vuole modificare nel database
+     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
+     */
+    public boolean updateVaccination(Vaccinazione vac) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int row = db.update(Vaccinazione.TABLE_NAME, vac.getContentValues(),
+                Vaccinazione.COLUMN_ANTIGEN + " = ? ", new String[]{vac.getAntigen()});
+        return row > 0;
     }
 
     /**
@@ -205,10 +223,28 @@ public class VakcinoDbManager {
      * @param typeVaccination riferimento all'oggetto che si vuole inserire nel database
      * @return booleano che indica se l'operazione ha avuto o meno esito positivo
      */
-    public boolean addTypeVaccination(TipoVaccinazione typeVaccination) {
+    public boolean addVaccinationType(TipoVaccinazione typeVaccination) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         long row = db.insert(TipoVaccinazione.TABLE_NAME, null, typeVaccination.getContentValues());
         return row > 1;
+    }
+
+    /**
+     * Metodo di modifica di un tipo di vaccinazione nel database; l'oggetto viene passato come parametro.
+     * Viene poi innanzitutto recuperato il riferimento al database (modalità scrittura),
+     * dopodiché viene richamato il metodo update, a cui viene passato il nome della tabella in cui effettuare
+     * la modifica, il ContentValues dell'oggetto che si vuole modificare, e come ultimi due parametri, la condizione
+     * da verificare per effettuare la modifica, e il valore che sarà oggetto del confronto (in questo caso viene verificato
+     * che gli id delle righe prese in considerazione siano uguali a quello dell'oggetto passato).
+     *
+     * @param vt riferimento all'oggetto che si vuole modificare nel database
+     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
+     */
+    public boolean updateVaccinationType(TipoVaccinazione vt) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int row = db.update(TipoVaccinazione.TABLE_NAME, vt.getContentValues(),
+                TipoVaccinazione.COLUMN_ID + " = ? ", new String[]{Integer.toString(vt.getId())});
+        return row > 0;
     }
 
     /**
@@ -221,7 +257,7 @@ public class VakcinoDbManager {
      *
      * @return lista contenente i vaccini letti dal database
      */
-    public List<TipoVaccinazione> getTypeVaccinations() {
+    public List<TipoVaccinazione> getVaccinationType() {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         List<TipoVaccinazione> typeVaccinations = new ArrayList<>();

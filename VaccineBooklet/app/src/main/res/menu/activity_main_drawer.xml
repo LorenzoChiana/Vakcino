@@ -3,7 +3,7 @@
 
 
 
-        <group android:id="@+id/nav_users" android:checkableBehavior="single" >
+        <group android:id="@+id/nav_users" android:checkableBehavior="single">
             <item
                 android:id="@+id/add_user"
                 android:icon="@android:drawable/ic_input_add"

@@ -61,6 +61,50 @@ public class HTTPHelper {
         return response.toString();
     }
 
+    public static String connectPost(String urlToConnect) {
+        HttpURLConnection httpUrlConnection = null;
+        StringBuilder response = new StringBuilder();
+        BufferedReader rd = null;
+        try {
+            URL url = new URL(urlToConnect);
+            httpUrlConnection = (HttpURLConnection) url.openConnection();
+            httpUrlConnection.setUseCaches(false);
+            httpUrlConnection.setRequestMethod("POST");
+            httpUrlConnection.setDoInput(true);
+            httpUrlConnection.setDoOutput(true);
+            httpUrlConnection.setConnectTimeout(5000);
+
+            OutputStream output = httpUrlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output, "UTF-8"));
+            writer.write(getPostDataString(new HashMap<String, String>()));
+            writer.flush();
+            writer.close();
+            output.close();
+
+            int responseCode = httpUrlConnection.getResponseCode();
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                InputStream inputStream = httpUrlConnection.getInputStream();
+                rd = new BufferedReader(new InputStreamReader(inputStream));
+                String line = "";
+                while ((line = rd.readLine()) != null) {
+                    response.append(line);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rd != null) {
+                try {
+                    rd.close();
+                } catch (Exception e) {
+                }
+            }
+            if (httpUrlConnection != null)
+                httpUrlConnection.disconnect();
+        }
+        return response.toString();
+    }
+
     public static String getPostDataString(HashMap<String, String> params)
             throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
