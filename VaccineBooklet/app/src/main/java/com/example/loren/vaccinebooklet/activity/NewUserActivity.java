@@ -17,8 +17,11 @@ import android.widget.Toast;
 
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
+import com.example.loren.vaccinebooklet.model.DeveFare;
+import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
+import com.example.loren.vaccinebooklet.utils.InternetConnection;
 import com.example.loren.vaccinebooklet.utils.Utils;
 
 import java.text.ParseException;
@@ -74,15 +77,25 @@ public class NewUserActivity extends AppCompatActivity implements
                             etName.getText().toString(), etSurname.getText().toString(),
                             convertToDate(etBirthDate.getText().toString()), "p", email, STATUS_DB_LOCAL_NOT_SYNC);
                     dbManager.addUser(newUser);
-                    new AsyncTask<Void, Void, Void>() {
+                    List<TipoVaccinazione> vt = dbManager.getVaccinationType();
+                    for (int i = 0; i < vt.size(); i++) {
+                        DeveFare toDo = new DeveFare(newUser.getId(), vt.get(i).getId(), STATUS_DB_LOCAL_NOT_SYNC);
+                        dbManager.addToDo(toDo);
+                    }
+                    new AsyncTask<Void, Void, String>() {
                         @Override
-                        protected Void doInBackground(Void... args) {
-                            if (MainActivity.connectionOK(getApplicationContext())) {
+                        protected String doInBackground(Void... args) {
+                            if (InternetConnection.haveInternetConnection(getApplicationContext())) {
                                 RemoteDBInteractions.createUserLocalToRemote(newUser);
                                 newUser.setStatus(STATUS_DB_LOCAL_SYNC);
                                 dbManager.updateUser(newUser);
                             }
-                            return null;
+                            return "";
+                        }
+
+                        @Override
+                        protected void onPostExecute(String s) {
+                            super.onPostExecute(s);
                         }
                     }.execute();
                     setResult(RESULT_OK);

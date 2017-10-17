@@ -15,18 +15,20 @@ public class HaFatto implements BaseColumns, Serializable {
     public static final String COLUMN_IDUTENTE = "idUtente";
     public static final String COLUMN_IDTIPOVAC = "idTipoVac";
     public static final String COLUMN_DATE = "date";
-
+    public static final String COLUMN_STATUS = "status";
 
     //Variabili del modello
     private int idUtente;
     private int idTipoVac;
     private String date;
+    private int status;
 
     //Costruttore "standard"
-    public HaFatto(int idUtente, int idTipoVac, String date) {
+    public HaFatto(int idUtente, int idTipoVac, String date, int status) {
         this.idUtente = idUtente;
         this.idTipoVac = idTipoVac;
         this.date = date;
+        this.status = status;
     }
 
     /**
@@ -41,6 +43,7 @@ public class HaFatto implements BaseColumns, Serializable {
         this.idUtente = cursor.getInt(cursor.getColumnIndex(HaFatto.COLUMN_IDUTENTE));
         this.idTipoVac = cursor.getInt(cursor.getColumnIndex(HaFatto.COLUMN_IDTIPOVAC));
         this.date = cursor.getString(cursor.getColumnIndex(HaFatto.COLUMN_DATE));
+        this.status = cursor.getInt(cursor.getColumnIndex(HaFatto.COLUMN_STATUS));
     }
 
 
@@ -48,24 +51,26 @@ public class HaFatto implements BaseColumns, Serializable {
     public int getIdUtente() {
         return idUtente;
     }
-
     public int getIdTipoVac() {
         return idTipoVac;
     }
-
     public String getDate() { return date; }
+    public int getStatus() {
+        return status;
+    }
 
     //Metodi di set
     public void setIdUtente(int idUtente) {
         this.idUtente = idUtente;
     }
-
     public void setIdTipoVac(int idTipoVac) {
         this.idTipoVac = idTipoVac;
     }
-
     public void setDate(String date) {
         this.date = date;
+    }
+    public void setStatus(int status) {
+        this.status = status;
     }
 
 
@@ -82,6 +87,7 @@ public class HaFatto implements BaseColumns, Serializable {
         cv.put(COLUMN_IDUTENTE, idUtente);
         cv.put(COLUMN_IDTIPOVAC, idTipoVac);
         cv.put(COLUMN_DATE, date);
+        cv.put(COLUMN_STATUS, status);
         return cv;
     }
 }

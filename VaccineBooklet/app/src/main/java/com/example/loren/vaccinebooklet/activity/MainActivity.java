@@ -2,9 +2,11 @@ package com.example.loren.vaccinebooklet.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -36,6 +38,8 @@ import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
 import com.example.loren.vaccinebooklet.utils.HTTPHelper;
+import com.example.loren.vaccinebooklet.utils.InternetConnection;
+import com.example.loren.vaccinebooklet.utils.NetworkStateReceiver;
 import com.example.loren.vaccinebooklet.utils.Utils;
 
 import java.util.ArrayList;
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity
     private static final int LOGOUT_ID = 1;
     private static final int NOTICE_ID = 2;
     private static final int USER_ID = 3;
+
+    public static final String INTENT_EXTRA   = "finish";
+    public static final String INTENT_ACTION_INT = "com.example.loren.vaccinebooklet.intent.action.TEST.int";
     private boolean doubleBackToExitPressedOnce;
     private String message;
     private String email;
@@ -56,6 +63,12 @@ public class MainActivity extends AppCompatActivity
 
     private TextView twEmailUser;
     private NavigationView navigationView;
+    private boolean afterLogin;
+
+    private BroadcastReceiver broadcastReceiver;
+    private NetworkStateReceiver receiverConnectivity;
+    private IntentFilter filter, intentFilter;
+    private int sync;
 
 
     //private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -83,18 +96,17 @@ public class MainActivity extends AppCompatActivity
 
         View headerView = navigationView.getHeaderView(0);
         twEmailUser = (TextView) headerView.findViewById(R.id.tw_email);
-        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
+        /*final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage(getString(R.string.waiting));
-        progressDialog.show();
+        progressDialog.show();*/
         /*
             Se ho appena fatto il login/sign up
             allora setto la sharedpreference con l'email dell'account
             altrimenti prendo l'email direttamente dal sharedpreference
          */
         final String extraEmail;
-        boolean afterLogin = false;
         try {
             extraEmail = getIntent().getExtras().getString("email");
             Utils.setAccount(MainActivity.this, extraEmail);
@@ -108,39 +120,57 @@ public class MainActivity extends AppCompatActivity
 
         mViewPager = (ViewPager) findViewById(R.id.container);
 
+        receiverConnectivity = new NetworkStateReceiver();
+        receiverConnectivity.setAfterLogin(afterLogin);
+        filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        registerReceiver(receiverConnectivity, filter);
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(INTENT_ACTION_INT);
 
-        final boolean finalAfterLogin = afterLogin;
-        new AsyncTask<Void, Void, Boolean>(){
-            @Override
-            protected Boolean doInBackground(Void... args) {
-
-                if(connectionOK(getApplicationContext())) {
-                    if(finalAfterLogin) {
-                        RemoteDBInteractions.createUsersRemoteToLocal(getApplicationContext());
-                        RemoteDBInteractions.createVaccinationsRemoteToLocal(getApplicationContext());
-                        RemoteDBInteractions.createVaccinationTypeRemoteToLocal(getApplicationContext());
-                    }
-                    RemoteDBInteractions.syncUsersRemoteToLocal(getApplicationContext());
-                    RemoteDBInteractions.syncVaccinationsRemoteToLocal(getApplicationContext());
-                    RemoteDBInteractions.syncVaccinationTypeRemoteToLocal(getApplicationContext());
-                }
-                return true;
-            }
-            @Override
-            protected void onPostExecute(Boolean result) {
-                initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
-                progressDialog.dismiss();
-            }
-        }.execute();
+        //initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
     }
+
+    private BroadcastReceiver receiverSync = new BroadcastReceiver() {
+
+        /**
+         * "onReceive" è il metodo principale di un broadcast receiver, che va obbligatoriamente implementato.
+         * Questo metodo viene richiamato quando un particolare broadcast receiver riceve un messaggio dalla
+         * "fonte" di cui è in ascolto.
+         * All'interno di questo metodo viene posto il corpo delle funzionalità da eseguire.
+         *
+         * @param context riferimento al contesto
+         * @param intent intent allegato al messaggio inviato in broadcast
+         */
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction().equals(INTENT_ACTION_INT)) {
+                sync = intent.getIntExtra(INTENT_EXTRA, 0);
+                if(sync > 0)
+                    updateNavigationUI(navigationView.getMenu(), context);
+                else
+                    initializeNavigationUI(navigationView.getMenu(), context);
+            }
+        }
+    };
 
     @Override
     protected void onResume() {
         super.onResume();
         updateNavigationUI(navigationView.getMenu(), getApplicationContext());
+        registerReceiver(receiverConnectivity, filter);
+        registerReceiver(receiverSync, intentFilter);
     }
 
-    private void updateNavigationUI(Menu menu, Context context) {
+    @Override
+    public void onPause() {
+        unregisterReceiver(receiverConnectivity);
+        unregisterReceiver(receiverSync);
+        super.onPause();
+    }
+
+    public void updateNavigationUI(Menu menu, Context context) {
         int menuSize = menu.size();
         if(menuSize > 1) {
             for(int i = 1; i < menuSize; i++) {
@@ -177,11 +207,11 @@ public class MainActivity extends AppCompatActivity
         return super.onCreateOptionsMenu(menu);
     }*/
 
-    public static boolean connectionOK(Context context) {
+    /*public static boolean connectionOK(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE);
-    }
+    }*/
 
     private void initializeNavigationUI(Menu menu, Context context) {
         VakcinoDbManager dbManager = new VakcinoDbManager(context);

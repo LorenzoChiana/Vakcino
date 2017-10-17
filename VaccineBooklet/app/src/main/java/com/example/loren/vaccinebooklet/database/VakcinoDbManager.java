@@ -322,6 +322,31 @@ public class VakcinoDbManager {
         return row > 0;
     }
 
+    public List<DeveFare> getToDoList(Utente user) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        List<DeveFare> toDoList = new ArrayList<>();
+
+        Cursor cursor = null;
+        try {
+            String query = "SELECT * FROM " + DeveFare.TABLE_NAME +
+                    " WHERE " + DeveFare.COLUMN_IDUTENTE + " = " + user.getId();
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                DeveFare toDo = new DeveFare(cursor);
+                toDoList.add(toDo);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return toDoList;
+    }
+
     /*
     *
     * --------- HA FATTO ---------

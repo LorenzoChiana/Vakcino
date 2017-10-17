@@ -14,17 +14,19 @@ public class DeveFare implements BaseColumns, Serializable {
     //Nomi delle colonne della relativa tabella
     public static final String COLUMN_IDUTENTE = "idUtente";
     public static final String COLUMN_IDTIPOVAC = "idTipoVac";
+    public static final String COLUMN_STATUS = "status";
 
 
     //Variabili del modello
     private int idUtente;
     private int idTipoVac;
-
+    private int status;
 
     //Costruttore "standard"
-    public DeveFare(int idUtente, int idTipoVac) {
+    public DeveFare(int idUtente, int idTipoVac, int status) {
         this.idUtente = idUtente;
         this.idTipoVac = idTipoVac;
+        this.status = status;
     }
 
     /**
@@ -38,6 +40,7 @@ public class DeveFare implements BaseColumns, Serializable {
     public DeveFare(Cursor cursor) {
         this.idUtente = cursor.getInt(cursor.getColumnIndex(DeveFare.COLUMN_IDUTENTE));
         this.idTipoVac = cursor.getInt(cursor.getColumnIndex(DeveFare.COLUMN_IDTIPOVAC));
+        this.status = cursor.getInt(cursor.getColumnIndex(DeveFare.COLUMN_STATUS));
     }
 
 
@@ -45,18 +48,22 @@ public class DeveFare implements BaseColumns, Serializable {
     public int getIdUtente() {
         return idUtente;
     }
-
     public int getIdTipoVac() {
         return idTipoVac;
+    }
+    public int getStatus() {
+        return status;
     }
 
     //Metodi di set
     public void setIdUtente(int idUtente) {
         this.idUtente = idUtente;
     }
-
     public void setIdTipoVac(int idTipoVac) {
         this.idTipoVac = idTipoVac;
+    }
+    public void setStatus(int status) {
+        this.status = status;
     }
 
 
@@ -72,6 +79,7 @@ public class DeveFare implements BaseColumns, Serializable {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_IDUTENTE, idUtente);
         cv.put(COLUMN_IDTIPOVAC, idTipoVac);
+        cv.put(COLUMN_STATUS, status);
         return cv;
     }
 }

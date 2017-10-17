@@ -96,10 +96,8 @@ public class VakcinoDbHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_UTENTE);
         db.execSQL(CREATE_TABLE_TIPOVACCINAZIONE);
         db.execSQL(CREATE_TABLE_VACCINAZIONE);
-        /*db.execSQL(CREATE_TABLE_DEVEFARE);
+        db.execSQL(CREATE_TABLE_DEVEFARE);
         db.execSQL(CREATE_TABLE_HAFATTO);
-        db.execSQL(CREATE_TABLE_TIPOVACCINAZIONE);
-        db.execSQL(CREATE_TABLE_VACCINAZIONE);*/
     }
 
     /**
