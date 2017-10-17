@@ -70,6 +70,7 @@ public class VakcinoDbHelper extends SQLiteOpenHelper {
             HaFatto.COLUMN_IDUTENTE + INTEGER_TYPE + COMMA_SEP +
             HaFatto.COLUMN_IDTIPOVAC + INTEGER_TYPE + COMMA_SEP +
             HaFatto.COLUMN_DATE + DATE_TYPE + COMMA_SEP +
+            HaFatto.COLUMN_STATUS + INTEGER_TYPE + COMMA_SEP +
             " CONSTRAINT PK_HAFATTO PRIMARY KEY (" +
             HaFatto.COLUMN_IDUTENTE + COMMA_SEP + HaFatto.COLUMN_IDTIPOVAC + ")"
             + " )";
@@ -78,6 +79,7 @@ public class VakcinoDbHelper extends SQLiteOpenHelper {
             + DeveFare.TABLE_NAME + " (" +
             DeveFare.COLUMN_IDUTENTE + INTEGER_TYPE + COMMA_SEP +
             DeveFare.COLUMN_IDTIPOVAC + INTEGER_TYPE + COMMA_SEP +
+            DeveFare.COLUMN_STATUS + INTEGER_TYPE + COMMA_SEP +
             " CONSTRAINT PK_DEVEFARE PRIMARY KEY (" +
             DeveFare.COLUMN_IDUTENTE + COMMA_SEP + DeveFare.COLUMN_IDTIPOVAC + ")"
             + " )";
