@@ -45,13 +45,14 @@ public class RemoteDBInteractions {
         ArrayList<Utente> remoteUsers = getRemoteUsers(Utils.getAccount(context));
         VakcinoDbManager dbManager = new VakcinoDbManager(context);
         for (Utente ru: remoteUsers) {
+            ru.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
             if(!dbManager.updateUser(ru)){
                 dbManager.addUser(ru);
             }
         }
     }
 
-    public static void createUserLocalToRemote(Utente user) {
+    public static void syncUserLocalToRemote(Utente user) {
         HashMap<String,String> hm = new HashMap<>();
         hm.put("ID", Integer.toString(user.getId()));
         hm.put("Nome", user.getName());
@@ -68,6 +69,7 @@ public class RemoteDBInteractions {
         VakcinoDbManager dbManager = new VakcinoDbManager(context);
         HashMap<String,String> hm = new HashMap<>();
         for (Utente ru: remoteUsers) {
+            ru.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
             if(!dbManager.updateUser(ru)){
                 dbManager.addUser(ru);
             }

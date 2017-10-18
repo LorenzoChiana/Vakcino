@@ -23,8 +23,8 @@ public class VakcinoDbManager {
     //Riferimento alla classe di helper.
     private final VakcinoDbHelper dbHelper;
 
-    public static final int SYNC_WITH_SERVER = 0;
-    public static final int NOT_SYNC_WITH_SERVER = 1;
+    public static final int SYNCED_WITH_SERVER = 0;
+    public static final int NOT_SYNCED_WITH_SERVER = 1;
 
 
     //Costruttore
@@ -127,10 +127,32 @@ public class VakcinoDbManager {
         return users;
     }
 
-    public Cursor getUnsyncedUsers() {
+    public List<Utente> getUnsyncedUsers(String email) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String sql = "SELECT * FROM " + Utente.TABLE_NAME + " WHERE " + Utente.COLUMN_NAME + " = " + NOT_SYNC_WITH_SERVER + ";";
-        return db.rawQuery(sql, null);
+
+        List<Utente> users = new ArrayList<>();
+
+        Cursor cursor = null;
+        try {
+            String query = "SELECT * FROM " + Utente.TABLE_NAME +
+                    " WHERE " + Utente.COLUMN_EMAIL + " = '" + email +
+                    "' AND " + Utente.COLUMN_STATUS + " = " + NOT_SYNCED_WITH_SERVER;
+            Log.d("DBMANAGER", query);
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                Utente user = new Utente(cursor);
+                users.add(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+
+        return users;
     }
 
     /*

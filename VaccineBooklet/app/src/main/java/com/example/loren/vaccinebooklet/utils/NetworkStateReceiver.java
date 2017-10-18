@@ -12,7 +12,11 @@ import android.widget.Toast;
 
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.activity.MainActivity;
+import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
+import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
+
+import java.util.List;
 
 public class NetworkStateReceiver extends BroadcastReceiver {
     private boolean isAfterLogin;
@@ -54,6 +58,15 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                             RemoteDBInteractions.syncUsersRemoteToLocal(context);
                             RemoteDBInteractions.syncVaccinationsRemoteToLocal(context);
                             RemoteDBInteractions.syncVaccinationTypeRemoteToLocal(context);
+                            //get unsync users per ogni users
+                            VakcinoDbManager dbManager = new VakcinoDbManager(context);
+                            List<Utente> unsyncedUsers = dbManager.getUnsyncedUsers(Utils.getAccount(context));
+                            for (Utente user: unsyncedUsers) {
+                                RemoteDBInteractions.syncUserLocalToRemote(user);
+                                user.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
+                                dbManager.updateUser(user);
+                            }
+
                         }
                         return true;
                     }
@@ -71,6 +84,11 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 }.execute();
             } else if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
                 Log.d("app", "There's no network connectivity");
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction(MainActivity.INTENT_ACTION_INT);
+                broadcastIntent.putExtra(MainActivity.INTENT_EXTRA, i);
+                i++;
+                context.sendBroadcast(broadcastIntent);
                 Toast toast = Toast.makeText(context, "There's no network connectivity", Toast.LENGTH_SHORT);
                 toast.show();
             }

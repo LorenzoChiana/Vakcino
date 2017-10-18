@@ -64,8 +64,6 @@ public class MainActivity extends AppCompatActivity
     private TextView twEmailUser;
     private NavigationView navigationView;
     private boolean afterLogin;
-
-    private BroadcastReceiver broadcastReceiver;
     private NetworkStateReceiver receiverConnectivity;
     private IntentFilter filter, intentFilter;
     private int sync;
@@ -158,7 +156,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        updateNavigationUI(navigationView.getMenu(), getApplicationContext());
+        //updateNavigationUI(navigationView.getMenu(), getApplicationContext());
         registerReceiver(receiverConnectivity, filter);
         registerReceiver(receiverSync, intentFilter);
     }

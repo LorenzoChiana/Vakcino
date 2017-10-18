@@ -37,8 +37,6 @@ import static android.R.attr.duration;
 
 public class NewUserActivity extends AppCompatActivity implements
         View.OnClickListener {
-    private static final int STATUS_DB_LOCAL_NOT_SYNC = 1;
-    private static final int STATUS_DB_LOCAL_SYNC = 0;
     int year, month, day;
 
     @Bind(R.id.input_name) EditText etName;
@@ -75,18 +73,18 @@ public class NewUserActivity extends AppCompatActivity implements
                     String email = Utils.getAccount(getApplicationContext());
                     final Utente newUser = new Utente(dbManager.getUsers(email).size() + 1,
                             etName.getText().toString(), etSurname.getText().toString(),
-                            convertToDate(etBirthDate.getText().toString()), "p", email, STATUS_DB_LOCAL_NOT_SYNC);
+                            convertToDate(etBirthDate.getText().toString()), "p", email, VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
                     dbManager.addUser(newUser);
                     List<TipoVaccinazione> vt = dbManager.getVaccinationType();
                     for (int i = 0; i < vt.size(); i++) {
-                        DeveFare toDo = new DeveFare(newUser.getId(), vt.get(i).getId(), STATUS_DB_LOCAL_NOT_SYNC);
+                        DeveFare toDo = new DeveFare(newUser.getId(), vt.get(i).getId(), VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
                         dbManager.addToDo(toDo);
                     }
-                    new AsyncTask<Void, Void, String>() {
+                    /*new AsyncTask<Void, Void, String>() {
                         @Override
                         protected String doInBackground(Void... args) {
                             if (InternetConnection.haveInternetConnection(getApplicationContext())) {
-                                RemoteDBInteractions.createUserLocalToRemote(newUser);
+                                RemoteDBInteractions.setUserLocalToRemote(newUser);
                                 newUser.setStatus(STATUS_DB_LOCAL_SYNC);
                                 dbManager.updateUser(newUser);
                             }
@@ -97,7 +95,7 @@ public class NewUserActivity extends AppCompatActivity implements
                         protected void onPostExecute(String s) {
                             super.onPostExecute(s);
                         }
-                    }.execute();
+                    }.execute();*/
                     setResult(RESULT_OK);
                     Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.operation_successful), Toast.LENGTH_SHORT);
                     toast.show();
