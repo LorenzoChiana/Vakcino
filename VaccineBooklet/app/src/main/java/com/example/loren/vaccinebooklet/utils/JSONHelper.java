@@ -2,6 +2,7 @@ package com.example.loren.vaccinebooklet.utils;
 
 import android.util.Log;
 
+import com.example.loren.vaccinebooklet.model.DeveFare;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
@@ -104,21 +105,25 @@ public class JSONHelper {
     }
 
     /**
+     * Method that parse a {@link DeveFare}
      * @param result {@link String} of the response from the server
-     * @return the synchronization version of remote db
+     * @return the object of the result user
      */
-    public static int parseSyncVersion(String result){
-        int version = -1;
+    public static ArrayList<DeveFare> parseToDo(String result){
+        ArrayList<DeveFare> toDoList = new ArrayList<>();
         try {
             JSONArray array = new JSONArray(result);
             for(int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
-                version = object.getInt("Version");
+                int idUser = object.getInt("ID");
+                int idVac = object.getInt("ID_VAC");
+                int status = object.getInt("Status");
+                toDoList.add(new DeveFare(idUser, idVac, status));
             }
         } catch (JSONException e) {
-            return -1;
+            return null;
         } finally {
-            return version;
+            return toDoList;
         }
     }
 }

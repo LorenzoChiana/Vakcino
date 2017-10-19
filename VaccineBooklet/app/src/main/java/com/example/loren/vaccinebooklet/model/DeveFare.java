@@ -13,18 +13,21 @@ public class DeveFare implements BaseColumns, Serializable {
 
     //Nomi delle colonne della relativa tabella
     public static final String COLUMN_IDUTENTE = "idUtente";
+    //public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_IDTIPOVAC = "idTipoVac";
     public static final String COLUMN_STATUS = "status";
 
 
     //Variabili del modello
     private int idUtente;
+    //private String email;
     private int idTipoVac;
     private int status;
 
     //Costruttore "standard"
-    public DeveFare(int idUtente, int idTipoVac, int status) {
+    public DeveFare(int idUtente, /*String email,*/ int idTipoVac, int status) {
         this.idUtente = idUtente;
+        //this.email = email;
         this.idTipoVac = idTipoVac;
         this.status = status;
     }
@@ -39,6 +42,7 @@ public class DeveFare implements BaseColumns, Serializable {
      */
     public DeveFare(Cursor cursor) {
         this.idUtente = cursor.getInt(cursor.getColumnIndex(DeveFare.COLUMN_IDUTENTE));
+        //this.email = cursor.getString(cursor.getColumnIndex(DeveFare.COLUMN_EMAIL));
         this.idTipoVac = cursor.getInt(cursor.getColumnIndex(DeveFare.COLUMN_IDTIPOVAC));
         this.status = cursor.getInt(cursor.getColumnIndex(DeveFare.COLUMN_STATUS));
     }
@@ -48,6 +52,9 @@ public class DeveFare implements BaseColumns, Serializable {
     public int getIdUtente() {
         return idUtente;
     }
+    /*public String getEmail() {
+        return email;
+    }*/
     public int getIdTipoVac() {
         return idTipoVac;
     }
@@ -59,6 +66,9 @@ public class DeveFare implements BaseColumns, Serializable {
     public void setIdUtente(int idUtente) {
         this.idUtente = idUtente;
     }
+    /*public void setEmail(String email) {
+        this.email = email;
+    }*/
     public void setIdTipoVac(int idTipoVac) {
         this.idTipoVac = idTipoVac;
     }
@@ -78,6 +88,7 @@ public class DeveFare implements BaseColumns, Serializable {
     public ContentValues getContentValues() {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_IDUTENTE, idUtente);
+        //cv.put(COLUMN_EMAIL, email);
         cv.put(COLUMN_IDTIPOVAC, idTipoVac);
         cv.put(COLUMN_STATUS, status);
         return cv;

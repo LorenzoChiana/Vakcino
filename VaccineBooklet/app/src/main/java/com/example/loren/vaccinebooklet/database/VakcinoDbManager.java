@@ -68,7 +68,8 @@ public class VakcinoDbManager {
     public boolean updateUser(Utente user) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int row = db.update(Utente.TABLE_NAME, user.getContentValues(),
-                Utente.COLUMN_ID + " = ? ", new String[]{Integer.toString(user.getId())});
+                Utente.COLUMN_ID + " = ?",
+                new String[]{Integer.toString(user.getId())});
         return row > 0;
     }
 
@@ -135,8 +136,7 @@ public class VakcinoDbManager {
         Cursor cursor = null;
         try {
             String query = "SELECT * FROM " + Utente.TABLE_NAME +
-                    " WHERE " + Utente.COLUMN_EMAIL + " = '" + email +
-                    "' AND " + Utente.COLUMN_STATUS + " = " + NOT_SYNCED_WITH_SERVER;
+                    " WHERE " + Utente.COLUMN_STATUS + " = " + NOT_SYNCED_WITH_SERVER;
             Log.d("DBMANAGER", query);
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
@@ -324,11 +324,13 @@ public class VakcinoDbManager {
      * @param toDo riferimento all'oggetto che si vuole modificare nel database
      * @return booleano che indica se l'operazione ha avuto o meno esito positivo
      */
-    public boolean updateToDO(DeveFare toDo) {
+    public boolean updateToDo(DeveFare toDo) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int row = db.update(DeveFare.TABLE_NAME, toDo.getContentValues(),
-                DeveFare.COLUMN_IDUTENTE + " = ? AND " + DeveFare.COLUMN_IDTIPOVAC + " = ?",
-                new String[]{Integer.toString(toDo.getIdUtente()), Integer.toString(toDo.getIdTipoVac())});
+                DeveFare.COLUMN_IDUTENTE + " = ? AND " +
+                //DeveFare.COLUMN_EMAIL + " = '?' AND " +
+                DeveFare.COLUMN_IDTIPOVAC + " = ?",
+                new String[]{Integer.toString(toDo.getIdUtente()), /*toDo.getEmail(),*/ Integer.toString(toDo.getIdTipoVac())});
         return row > 0;
     }
 
@@ -352,7 +354,8 @@ public class VakcinoDbManager {
         Cursor cursor = null;
         try {
             String query = "SELECT * FROM " + DeveFare.TABLE_NAME +
-                    " WHERE " + DeveFare.COLUMN_IDUTENTE + " = " + user.getId();
+                    " WHERE " + DeveFare.COLUMN_IDUTENTE + " = " + user.getId() /*+
+                    " AND " + DeveFare.COLUMN_EMAIL + " = '" + user.getEmail() + "'"*/;
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
                 DeveFare toDo = new DeveFare(cursor);
@@ -366,6 +369,35 @@ public class VakcinoDbManager {
             }
             db.close();
         }
+        return toDoList;
+    }
+
+    public List<DeveFare> getUnsyncedToDo(Utente user) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        List<DeveFare> toDoList = new ArrayList<>();
+
+        Cursor cursor = null;
+        try {
+            String query = "SELECT * FROM " + DeveFare.TABLE_NAME +
+                    " WHERE " + DeveFare.COLUMN_IDUTENTE + " = " + user.getId() +
+                    /*" AND " + DeveFare.COLUMN_EMAIL + " = '" + user.getEmail() + "'" +*/
+                    " AND " + DeveFare.COLUMN_STATUS + " = " + NOT_SYNCED_WITH_SERVER;
+            Log.d("DBMANAGER", query);
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                DeveFare toDo = new DeveFare(cursor);
+                toDoList.add(toDo);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+
         return toDoList;
     }
 

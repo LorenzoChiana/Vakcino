@@ -13,19 +13,22 @@ public class HaFatto implements BaseColumns, Serializable {
 
     //Nomi delle colonne della relativa tabella
     public static final String COLUMN_IDUTENTE = "idUtente";
+    //public static final String COLUMN_EMAIL = "email";
     public static final String COLUMN_IDTIPOVAC = "idTipoVac";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_STATUS = "status";
 
     //Variabili del modello
     private int idUtente;
+    //private String email;
     private int idTipoVac;
     private String date;
     private int status;
 
     //Costruttore "standard"
-    public HaFatto(int idUtente, int idTipoVac, String date, int status) {
+    public HaFatto(int idUtente, /*String email,*/ int idTipoVac, String date, int status) {
         this.idUtente = idUtente;
+        //this.email = email;
         this.idTipoVac = idTipoVac;
         this.date = date;
         this.status = status;
@@ -41,6 +44,7 @@ public class HaFatto implements BaseColumns, Serializable {
      */
     public HaFatto(Cursor cursor) {
         this.idUtente = cursor.getInt(cursor.getColumnIndex(HaFatto.COLUMN_IDUTENTE));
+        //this.email = cursor.getString(cursor.getColumnIndex(DeveFare.COLUMN_EMAIL));
         this.idTipoVac = cursor.getInt(cursor.getColumnIndex(HaFatto.COLUMN_IDTIPOVAC));
         this.date = cursor.getString(cursor.getColumnIndex(HaFatto.COLUMN_DATE));
         this.status = cursor.getInt(cursor.getColumnIndex(HaFatto.COLUMN_STATUS));
@@ -51,6 +55,9 @@ public class HaFatto implements BaseColumns, Serializable {
     public int getIdUtente() {
         return idUtente;
     }
+    /*public String getEmail() {
+        return email;
+    }*/
     public int getIdTipoVac() {
         return idTipoVac;
     }
@@ -63,6 +70,9 @@ public class HaFatto implements BaseColumns, Serializable {
     public void setIdUtente(int idUtente) {
         this.idUtente = idUtente;
     }
+    /*public void setEmail(String email) {
+        this.email = email;
+    }*/
     public void setIdTipoVac(int idTipoVac) {
         this.idTipoVac = idTipoVac;
     }
@@ -85,6 +95,7 @@ public class HaFatto implements BaseColumns, Serializable {
     public ContentValues getContentValues() {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_IDUTENTE, idUtente);
+        //cv.put(COLUMN_EMAIL, email);
         cv.put(COLUMN_IDTIPOVAC, idTipoVac);
         cv.put(COLUMN_DATE, date);
         cv.put(COLUMN_STATUS, status);

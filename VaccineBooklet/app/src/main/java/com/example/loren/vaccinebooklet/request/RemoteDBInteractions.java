@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
+import com.example.loren.vaccinebooklet.model.DeveFare;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
@@ -25,6 +26,8 @@ public class RemoteDBInteractions {
     private static final java.lang.String URL_SET_SYNC_REMOTE_VACCINATION = "http://vakcinoapp.altervista.org/setSyncRemoteVaccination.php";;
     private static final java.lang.String URL_GET_VACCINATIONTYPE = "http://vakcinoapp.altervista.org/getVaccinationType.php";
     private static final java.lang.String URL_SET_SYNC_REMOTE_VACCINATIONTYPE = "http://vakcinoapp.altervista.org/setSyncRemoteVaccinationType.php";
+    private static final java.lang.String URL_SET_TODO = "http://vakcinoapp.altervista.org/setToDo.php";
+    private static final java.lang.String URL_GET_TODO = "http://vakcinoapp.altervista.org/getToDo.php";
 
     /*
     * --- UTENTE ---
@@ -148,6 +151,34 @@ public class RemoteDBInteractions {
             hm.put("id", Integer.toString(tv.getId()));
             HTTPHelper.connectPost(URL_SET_SYNC_REMOTE_VACCINATIONTYPE, hm);
             hm.clear();
+        }
+    }
+
+    /*
+    * --- DEVE FARE
+    * */
+    public static void syncToDoLocalToRemote(DeveFare toDo, String account) {
+        HashMap<String,String> hm = new HashMap<>();
+        hm.put("IDUtente", Integer.toString(toDo.getIdUtente()));
+        hm.put("Email", account);
+        hm.put("IDTipoVac", Integer.toString(toDo.getIdTipoVac()));
+        hm.put("Status", Integer.toString(toDo.getStatus()));
+        HTTPHelper.connectPost(URL_SET_TODO, hm);
+    }
+
+    public static ArrayList<DeveFare> getRemoteToDo(String email) {
+        HashMap<String,String> hm = new HashMap<>();
+        hm.put("email", email);
+        return JSONHelper.parseToDo(HTTPHelper.connectPost(URL_GET_TODO, hm));
+    }
+
+    public static void createToDoRemoteToLocal(Context context){
+        ArrayList<DeveFare> remoteToDo = getRemoteToDo(Utils.getAccount(context));
+        VakcinoDbManager dbManager = new VakcinoDbManager(context);
+        for (DeveFare toDo: remoteToDo) {
+            if(!dbManager.updateToDo(toDo)){
+                dbManager.addToDo(toDo);
+            }
         }
     }
 }

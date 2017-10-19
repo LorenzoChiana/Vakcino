@@ -77,7 +77,7 @@ public class NewUserActivity extends AppCompatActivity implements
                     dbManager.addUser(newUser);
                     List<TipoVaccinazione> vt = dbManager.getVaccinationType();
                     for (int i = 0; i < vt.size(); i++) {
-                        DeveFare toDo = new DeveFare(newUser.getId(), vt.get(i).getId(), VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
+                        DeveFare toDo = new DeveFare(newUser.getId(), /*newUser.getEmail(),*/ vt.get(i).getId(), VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
                         dbManager.addToDo(toDo);
                     }
                     /*new AsyncTask<Void, Void, String>() {
