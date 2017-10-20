@@ -68,4 +68,6 @@
     <string name="menu_view">View</string>
     <string name="menu_edit">Edit</string>
     <string name="menu_delete">Delete</string>
+
+    <string name="apply_vaccination">APPLY</string>
 </resources>

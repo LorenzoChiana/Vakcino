@@ -66,4 +66,6 @@
     <string name="menu_view">Visualizza</string>
     <string name="menu_edit">Modifica</string>
     <string name="menu_delete">Cancella</string>
+
+    <string name="apply_vaccination">APPLICA</string>
 </resources>
