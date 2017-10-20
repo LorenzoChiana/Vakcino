@@ -24,6 +24,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -33,6 +36,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.loren.vaccinebooklet.R;
+import com.example.loren.vaccinebooklet.adapter.VaccinationsToDoAdapter;
 import com.example.loren.vaccinebooklet.database.VakcinoDbHelper;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
 import com.example.loren.vaccinebooklet.model.Utente;
@@ -59,14 +63,17 @@ public class MainActivity extends AppCompatActivity
     private String message;
     private String email;
 
-    private ViewPager mViewPager;
-
+    //private ViewPager mViewPager;
+    private RecyclerView mRecyclerView;
     private TextView twEmailUser;
     private NavigationView navigationView;
     private boolean afterLogin;
     private NetworkStateReceiver receiverConnectivity;
     private IntentFilter filter, intentFilter;
     private int sync;
+    private static RecyclerView.Adapter adapterToDo;
+
+    private RecyclerView.LayoutManager layoutManager;
 
 
     //private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -116,7 +123,13 @@ public class MainActivity extends AppCompatActivity
         email = Utils.getAccount(MainActivity.this);
         twEmailUser.setText(email);
 
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        //mViewPager = (ViewPager) findViewById(R.id.container);
+        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+
+        layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         receiverConnectivity = new NetworkStateReceiver();
         receiverConnectivity.setAfterLogin(afterLogin);
@@ -149,6 +162,12 @@ public class MainActivity extends AppCompatActivity
                     updateNavigationUI(navigationView.getMenu(), context);
                 else
                     initializeNavigationUI(navigationView.getMenu(), context);
+                VakcinoDbManager dbManager = new VakcinoDbManager(context);
+                for (Utente user: dbManager.getUsers(Utils.getAccount(context))) {
+                    adapterToDo = new VaccinationsToDoAdapter(dbManager.getToDoList(user));
+                    mRecyclerView.setAdapter(adapterToDo);
+                }
+
             }
         }
     };
