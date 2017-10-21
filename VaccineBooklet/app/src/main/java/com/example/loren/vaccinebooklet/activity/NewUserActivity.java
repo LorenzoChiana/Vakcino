@@ -96,6 +96,7 @@ public class NewUserActivity extends AppCompatActivity implements
                             super.onPostExecute(s);
                         }
                     }.execute();*/
+
                     setResult(RESULT_OK);
                     Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.operation_successful), Toast.LENGTH_SHORT);
                     toast.show();

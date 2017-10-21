@@ -1,5 +1,6 @@
 package com.example.loren.vaccinebooklet.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -25,29 +26,30 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.adapter.VaccinationsToDoAdapter;
 import com.example.loren.vaccinebooklet.database.VakcinoDbHelper;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
+import com.example.loren.vaccinebooklet.model.DeveFare;
+import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
+import com.example.loren.vaccinebooklet.model.Vaccinazione;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
-import com.example.loren.vaccinebooklet.utils.HTTPHelper;
-import com.example.loren.vaccinebooklet.utils.InternetConnection;
 import com.example.loren.vaccinebooklet.utils.NetworkStateReceiver;
 import com.example.loren.vaccinebooklet.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -67,7 +69,6 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mRecyclerView;
     private TextView twEmailUser;
     private NavigationView navigationView;
-    private boolean afterLogin;
     private NetworkStateReceiver receiverConnectivity;
     private IntentFilter filter, intentFilter;
     private int sync;
@@ -76,7 +77,34 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView.LayoutManager layoutManager;
 
 
-    //private SectionsPagerAdapter mSectionsPagerAdapter;
+    private boolean afterLogin = false;
+    /*private boolean afterAddUser = false;
+    private boolean afterOpenApp = false;
+
+
+    public static boolean isAfterLogin() {
+        return afterLogin;
+    }
+
+    public void setAfterLogin(boolean afterLogin) {
+        this.afterLogin = afterLogin;
+    }
+
+    public boolean isAfterAddUser() {
+        return afterAddUser;
+    }
+
+    public void setAfterAddUser(boolean afterAddUser) {
+        this.afterAddUser = afterAddUser;
+    }
+
+    public boolean isAfterOpenApp() {
+        return afterOpenApp;
+    }
+
+    public void setAfterOpenApp(boolean afterOpenApp) {
+        this.afterOpenApp = afterOpenApp;
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +139,9 @@ public class MainActivity extends AppCompatActivity
             allora setto la sharedpreference con l'email dell'account
             altrimenti prendo l'email direttamente dal sharedpreference
          */
+        /*setAfterOpenApp(true);
+        setAfterLogin(false);*/
+
         final String extraEmail;
         try {
             extraEmail = getIntent().getExtras().getString("email");
@@ -122,6 +153,10 @@ public class MainActivity extends AppCompatActivity
         }
         email = Utils.getAccount(MainActivity.this);
         twEmailUser.setText(email);
+        //ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        //TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+       // viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
+        //tabLayout.setupWithViewPager(viewPager);
 
         //mViewPager = (ViewPager) findViewById(R.id.container);
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -138,9 +173,10 @@ public class MainActivity extends AppCompatActivity
         registerReceiver(receiverConnectivity, filter);
         intentFilter = new IntentFilter();
         intentFilter.addAction(INTENT_ACTION_INT);
-
         //initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
     }
+
+
 
     private BroadcastReceiver receiverSync = new BroadcastReceiver() {
 
@@ -163,14 +199,52 @@ public class MainActivity extends AppCompatActivity
                 else
                     initializeNavigationUI(navigationView.getMenu(), context);
                 VakcinoDbManager dbManager = new VakcinoDbManager(context);
-                for (Utente user: dbManager.getUsers(Utils.getAccount(context))) {
-                    adapterToDo = new VaccinationsToDoAdapter(dbManager.getToDoList(user));
+                List<Utente> users = dbManager.getUsers(Utils.getAccount(context));
+                List<Vaccinazione> vaccinations = dbManager.getVaccinations();
+                List<TipoVaccinazione> vacTypeList = dbManager.getVaccinationType();
+                for (Utente user: users) {
+                    adapterToDo = new VaccinationsToDoAdapter(dbManager.getToDoList(user), users, vaccinations, vacTypeList);
+
                     mRecyclerView.setAdapter(adapterToDo);
                 }
 
             }
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            AsyncTask<Void, Void, Boolean> sync = new AsyncTask<Void, Void, Boolean>() {
+
+                @Override
+                protected Boolean doInBackground(Void... params) {
+                    VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
+                    List<Utente> unsyncedUsers = dbManager.getUnsyncedUsers(Utils.getAccount(getApplicationContext()));
+
+                    for (Utente user : unsyncedUsers) {
+                        RemoteDBInteractions.syncUserLocalToRemote(user);
+                        user.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
+                        dbManager.updateUser(user);
+                    }
+
+                    for (Utente user : dbManager.getUsers(Utils.getAccount(getApplicationContext()))) {
+                        List<DeveFare> unsyncedToDo = dbManager.getUnsyncedToDo(user);
+                        for (DeveFare toDo : unsyncedToDo) {
+                            RemoteDBInteractions.syncToDoLocalToRemote(toDo, Utils.getAccount(getApplicationContext()));
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Boolean result) {
+                    updateNavigationUI(navigationView.getMenu(), getApplicationContext());
+                }
+            };
+
+        }
+    }
 
     @Override
     protected void onResume() {

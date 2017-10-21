@@ -22,7 +22,6 @@ import java.util.List;
 public class NetworkStateReceiver extends BroadcastReceiver {
     private boolean isAfterLogin;
     int i = 0;
-    private ProgressDialog progressDialog = null;
 
     public boolean isAfterLogin() {
         return isAfterLogin;
@@ -83,6 +82,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                                 List<DeveFare> unsyncedToDo = dbManager.getUnsyncedToDo(user);
                                 for (DeveFare toDo : unsyncedToDo) {
                                     RemoteDBInteractions.syncToDoLocalToRemote(toDo, Utils.getAccount(context));
+                                    toDo.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
+                                    dbManager.updateToDo(toDo);
                                 }
                             }
 

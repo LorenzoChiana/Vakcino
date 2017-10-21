@@ -114,10 +114,10 @@ public class Utente implements BaseColumns, Serializable {
 
 
     //Override del metodo toString per rappresnetare i valori di "name" e "surname" di Utente in una sola stringa.
-    /*@Override
+    @Override
     public String toString() {
-        return surname + " " + name;
-    }*/
+        return name + " " + surname;
+    }
 
 
     /**
