@@ -75,6 +75,9 @@ public class MainActivity extends AppCompatActivity
     private static RecyclerView.Adapter adapterToDo;
 
     private RecyclerView.LayoutManager layoutManager;
+    private List<Utente> users;
+    private List<Vaccinazione> vaccinations;
+    private List<TipoVaccinazione> vacTypeList;
 
 
     private boolean afterLogin = false;
@@ -110,6 +113,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
+        users = dbManager.getUsers(Utils.getAccount(getApplicationContext()));
+        vaccinations = dbManager.getVaccinations();
+        vacTypeList = dbManager.getVaccinationType();
+
 
         this.message = null;
         this.doubleBackToExitPressedOnce = false;
@@ -199,14 +208,9 @@ public class MainActivity extends AppCompatActivity
                 else
                     initializeNavigationUI(navigationView.getMenu(), context);
                 VakcinoDbManager dbManager = new VakcinoDbManager(context);
-                List<Utente> users = dbManager.getUsers(Utils.getAccount(context));
-                List<Vaccinazione> vaccinations = dbManager.getVaccinations();
-                List<TipoVaccinazione> vacTypeList = dbManager.getVaccinationType();
-                for (Utente user: users) {
-                    adapterToDo = new VaccinationsToDoAdapter(dbManager.getToDoList(user), users, vaccinations, vacTypeList);
-
-                    mRecyclerView.setAdapter(adapterToDo);
-                }
+                users = dbManager.getUsers(Utils.getAccount(context));
+                vaccinations = dbManager.getVaccinations();
+                vacTypeList = dbManager.getVaccinationType();
 
             }
         }
@@ -305,12 +309,12 @@ public class MainActivity extends AppCompatActivity
     }*/
 
     private void initializeNavigationUI(Menu menu, Context context) {
-        VakcinoDbManager dbManager = new VakcinoDbManager(context);
-        List<Utente> users = dbManager.getUsers(email);
-        int i = 0;
+       /* VakcinoDbManager dbManager = new VakcinoDbManager(context);
+        List<Utente> users = dbManager.getUsers(email);*/
+        int i = USER_ID;
         for (Utente u: users) {
-            menu.add(R.id.nav_users, USER_ID + i++, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person));
-
+            menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person));
+            i++;
         }
         menu.add(R.id.drawer_options, NOTICE_ID, Menu.CATEGORY_SECONDARY, getString(R.string.notice_settings)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_idle_alarm));
         menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_power_off));
@@ -389,6 +393,12 @@ public class MainActivity extends AppCompatActivity
             Intent returnToLogin = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(returnToLogin);
             Toast.makeText(MainActivity.this, message != null ? message : getString(R.string.logout_successfully), Toast.LENGTH_SHORT).show();
+        }
+        else {
+            VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
+            Utente user = users.get(id-USER_ID);
+            adapterToDo = new VaccinationsToDoAdapter(dbManager.getToDoList(user), user, vaccinations, vacTypeList);
+            mRecyclerView.setAdapter(adapterToDo);
         }
 
        /* } else if (id == R.id.nav_slideshow) {

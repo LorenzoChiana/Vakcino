@@ -27,7 +27,7 @@ import java.util.List;
 public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsToDoAdapter.MyViewHolder> {
 
     private final List<Vaccinazione> vaccinations;
-    private final List<Utente> users;
+    private final Utente user;
     private final List<DeveFare> toDoList;
     private final List<TipoVaccinazione> vacTypeList;
 
@@ -53,9 +53,9 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         }
     }
 
-    public VaccinationsToDoAdapter(List<DeveFare> toDoList, List<Utente> users, List<Vaccinazione> vaccinations, List<TipoVaccinazione> vacTypeList) {
+    public VaccinationsToDoAdapter(List<DeveFare> toDoList, Utente user, List<Vaccinazione> vaccinations, List<TipoVaccinazione> vacTypeList) {
         this.toDoList = toDoList;
-        this.users = users;
+        this.user = user;
         this.vaccinations = vaccinations;
         this.vacTypeList = vacTypeList;
     }
@@ -80,10 +80,10 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         TextView textViewDate = holder.textViewDate;
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
 
-        textViewUserName.setText(users.get(toDoList.get(listPosition).getIdUtente() -1).toString());
+        textViewUserName.setText(user.toString());
         textViewVacName.setText(vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getAntigen());
         textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getNumRichiamo()));
-        textViewDate.setText(translateDaIntoDate(users.get(toDoList.get(listPosition).getIdUtente() -1).getbirthdayDate(),vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getDa()));
+        textViewDate.setText(translateDaIntoDate(user.getbirthdayDate(),vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getDa()));
     }
 
     @Override
