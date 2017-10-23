@@ -311,10 +311,13 @@ public class MainActivity extends AppCompatActivity
     private void initializeNavigationUI(Menu menu, Context context) {
        /* VakcinoDbManager dbManager = new VakcinoDbManager(context);
         List<Utente> users = dbManager.getUsers(email);*/
+        //menu.add(R.id.nav_users, 0, Menu.FIRST, "aggiungi").setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_input_add));
+        menu.getItem(0).setCheckable(false);
         int i = USER_ID;
         for (Utente u: users) {
-            menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person));
+            menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person)).setCheckable(true);
             i++;
+
         }
         menu.add(R.id.drawer_options, NOTICE_ID, Menu.CATEGORY_SECONDARY, getString(R.string.notice_settings)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_idle_alarm));
         menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_power_off));
@@ -394,9 +397,15 @@ public class MainActivity extends AppCompatActivity
             startActivity(returnToLogin);
             Toast.makeText(MainActivity.this, message != null ? message : getString(R.string.logout_successfully), Toast.LENGTH_SHORT).show();
         }
+        else if (id == NOTICE_ID) {
+
+        }
         else {
             VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
             Utente user = users.get(id-USER_ID);
+            item.setChecked(true);
+            TextView textViewUserName = (TextView) findViewById(R.id.user_name_title);
+            textViewUserName.setText(user.toString());
             adapterToDo = new VaccinationsToDoAdapter(dbManager.getToDoList(user), user, vaccinations, vacTypeList);
             mRecyclerView.setAdapter(adapterToDo);
         }

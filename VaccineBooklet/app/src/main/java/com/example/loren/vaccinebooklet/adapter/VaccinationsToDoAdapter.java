@@ -81,7 +81,16 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
 
         textViewUserName.setText(user.toString());
-        textViewVacName.setText(vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getAntigen());
+        for (Vaccinazione v: vaccinations) {
+            v.getAntigen().equals(vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getAntigen());
+        }
+        int i = 0;
+
+        while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getAntigen())) {
+            vaccinations.iterator().next();
+            i++;
+        }
+        textViewVacName.setText(vaccinations.get(i).getName());
         textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getNumRichiamo()));
         textViewDate.setText(translateDaIntoDate(user.getbirthdayDate(),vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getDa()));
     }
