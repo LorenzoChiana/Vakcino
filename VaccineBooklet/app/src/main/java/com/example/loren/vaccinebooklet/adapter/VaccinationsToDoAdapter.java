@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -54,7 +55,6 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         ImageView imageInfo;
         CardView cardView;
         ImageView dateInfo;
-        Context context;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -84,7 +84,6 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
                 .inflate(R.layout.cards_layout, parent, false);
 
         //view.setOnClickListener(MainActivity.myOnClickListener);
-
         MyViewHolder myViewHolder = new MyViewHolder(view);
 
         return myViewHolder;
@@ -119,7 +118,7 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         else
             textViewDate.setText(dateDa + " - " + dateA);
         if (isLateThan(dateA)) {
-            cardView.setCardBackgroundColor(Color.RED);
+            cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), R.color.fab_material_red_500));
         }
         imageInfo.setId(imageID);
         imageID++;

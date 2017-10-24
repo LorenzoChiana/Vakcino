@@ -80,22 +80,6 @@ public class NewUserActivity extends AppCompatActivity implements
                         DeveFare toDo = new DeveFare(newUser.getId(), /*newUser.getEmail(),*/ vt.get(i).getId(), VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
                         dbManager.addToDo(toDo);
                     }
-                    /*new AsyncTask<Void, Void, String>() {
-                        @Override
-                        protected String doInBackground(Void... args) {
-                            if (InternetConnection.haveInternetConnection(getApplicationContext())) {
-                                RemoteDBInteractions.setUserLocalToRemote(newUser);
-                                newUser.setStatus(STATUS_DB_LOCAL_SYNC);
-                                dbManager.updateUser(newUser);
-                            }
-                            return "";
-                        }
-
-                        @Override
-                        protected void onPostExecute(String s) {
-                            super.onPostExecute(s);
-                        }
-                    }.execute();*/
 
                     setResult(RESULT_OK);
                     Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.operation_successful), Toast.LENGTH_SHORT);

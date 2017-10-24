@@ -287,7 +287,7 @@ public class VakcinoDbManager {
         Cursor cursor = null;
         try {
             String query = "SELECT * FROM " + TipoVaccinazione.TABLE_NAME +
-                    " ORDER BY " + TipoVaccinazione.COLUMN_DA + " ASC";
+                    " ORDER BY cast(" + TipoVaccinazione.COLUMN_DA + " as INTEGER) ASC";
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
                 TipoVaccinazione typeVaccination = new TipoVaccinazione(cursor);

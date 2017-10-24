@@ -212,6 +212,9 @@ public class MainActivity extends AppCompatActivity
 
             if (intent.getAction().equals(INTENT_ACTION_INT)) {
                 sync = intent.getIntExtra(INTENT_EXTRA, 0);
+                updateUsersList();
+                updateVacList();
+                updateVacTypeList();
                 if(sync > 0)
                     updateNavigationUI(navigationView.getMenu(), context);
                 else
@@ -224,6 +227,21 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
+    private void updateUsersList() {
+        VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
+        users = dbManager.getUsers(email);
+    }
+
+    private void updateVacList() {
+        VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
+        vaccinations = dbManager.getVaccinations();
+    }
+
+    private void updateVacTypeList() {
+        VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
+        vacTypeList = dbManager.getVaccinationType();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
