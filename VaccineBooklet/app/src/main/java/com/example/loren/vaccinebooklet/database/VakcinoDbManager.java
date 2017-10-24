@@ -354,8 +354,9 @@ public class VakcinoDbManager {
         Cursor cursor = null;
         try {
             String query = "SELECT * FROM " + DeveFare.TABLE_NAME +
-                    " WHERE " + DeveFare.COLUMN_IDUTENTE + " = " + user.getId() /*+
-                    " AND " + DeveFare.COLUMN_EMAIL + " = '" + user.getEmail() + "'"*/;
+                    " WHERE " + DeveFare.COLUMN_IDUTENTE + " = " + user.getId();
+                    /*+
+                    " AND " + DeveFare.COLUMN_EMAIL + " = '" + user.getEmail() + "'"*/
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
                 DeveFare toDo = new DeveFare(cursor);

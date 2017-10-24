@@ -2,6 +2,7 @@ package com.example.loren.vaccinebooklet.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,9 +12,11 @@ import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -21,12 +24,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -38,6 +39,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.adapter.VaccinationsToDoAdapter;
 import com.example.loren.vaccinebooklet.database.VakcinoDbHelper;
@@ -49,6 +53,7 @@ import com.example.loren.vaccinebooklet.model.Vaccinazione;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
 import com.example.loren.vaccinebooklet.utils.NetworkStateReceiver;
 import com.example.loren.vaccinebooklet.utils.Utils;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 
 import java.util.List;
 
@@ -78,6 +83,7 @@ public class MainActivity extends AppCompatActivity
     private List<Utente> users;
     private List<Vaccinazione> vaccinations;
     private List<TipoVaccinazione> vacTypeList;
+    public static MaterialStyledDialog.Builder dialogInfoVac;
 
 
     private boolean afterLogin = false;
@@ -132,6 +138,8 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        dialogInfoVac = new MaterialStyledDialog.Builder(MainActivity.this);
+
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -183,6 +191,7 @@ public class MainActivity extends AppCompatActivity
         intentFilter = new IntentFilter();
         intentFilter.addAction(INTENT_ACTION_INT);
         //initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
+
     }
 
 

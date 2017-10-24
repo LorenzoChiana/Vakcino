@@ -58,7 +58,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                     }*/
                     @Override
                     protected Boolean doInBackground(Void... args) {
-
+                        VakcinoDbManager dbManager = new VakcinoDbManager(context);
                         if (InternetConnection.haveInternetConnection(context)) {
                             if (isAfterLogin()) {
                                 RemoteDBInteractions.createUsersRemoteToLocal(context);
@@ -69,8 +69,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                             RemoteDBInteractions.syncUsersRemoteToLocal(context);
                             RemoteDBInteractions.syncVaccinationsRemoteToLocal(context);
                             RemoteDBInteractions.syncVaccinationTypeRemoteToLocal(context);
+                            //RemoteDBInteractions.syncToDoRemoteToLocal(context);
                             //get unsync users per ogni users
-                            VakcinoDbManager dbManager = new VakcinoDbManager(context);
                             List<Utente> unsyncedUsers = dbManager.getUnsyncedUsers(Utils.getAccount(context));
                             for (Utente user : unsyncedUsers) {
                                 RemoteDBInteractions.syncUserLocalToRemote(user);

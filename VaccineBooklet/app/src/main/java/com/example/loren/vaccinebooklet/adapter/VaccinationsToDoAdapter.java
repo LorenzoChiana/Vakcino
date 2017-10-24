@@ -1,6 +1,12 @@
 package com.example.loren.vaccinebooklet.adapter;
 
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.activity.MainActivity;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
@@ -16,6 +25,7 @@ import com.example.loren.vaccinebooklet.model.DeveFare;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,12 +34,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static com.example.loren.vaccinebooklet.R.drawable.ic_menu;
+
 public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsToDoAdapter.MyViewHolder> {
 
     private final List<Vaccinazione> vaccinations;
     private final Utente user;
     private final List<DeveFare> toDoList;
     private final List<TipoVaccinazione> vacTypeList;
+    private int imageID = 0;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -39,7 +52,9 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         TextView textViewDate;
         Button button_apply;
         ImageView imageInfo;
-        VakcinoDbManager dbManager;
+        CardView cardView;
+        ImageView dateInfo;
+        Context context;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -49,6 +64,8 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
             this.textViewDate = (TextView) itemView.findViewById(R.id.textViewDate);
             this.imageInfo = (ImageView) itemView.findViewById(R.id.imageInfo);
             this.button_apply = (Button) itemView.findViewById(R.id.button_apply);
+            this.cardView = (CardView) itemView.findViewById(R.id.card_view);
+            this.imageInfo = (ImageView) itemView.findViewById(R.id.imageInfo);
 
         }
     }
@@ -69,6 +86,7 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         //view.setOnClickListener(MainActivity.myOnClickListener);
 
         MyViewHolder myViewHolder = new MyViewHolder(view);
+
         return myViewHolder;
     }
 
@@ -79,6 +97,8 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         TextView textViewVacName = holder.textViewVaccinationName;
         TextView textViewDate = holder.textViewDate;
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
+        final CardView cardView = holder.cardView;
+        final ImageView imageInfo = holder.imageInfo;
 
         textViewUserName.setText(user.toString());
         for (Vaccinazione v: vaccinations) {
@@ -92,15 +112,62 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         }
         textViewVacName.setText(vaccinations.get(i).getName());
         textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getNumRichiamo()));
-        textViewDate.setText(translateDaIntoDate(user.getbirthdayDate(),vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getDa()));
-    }
+        String dateDa = translateDate(user.getbirthdayDate(),vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getDa());
+        String dateA = translateDate(user.getbirthdayDate(),vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getA());
+        if(dateA.equals(dateDa))
+            textViewDate.setText(dateA);
+        else
+            textViewDate.setText(dateDa + " - " + dateA);
+        if (isLateThan(dateA)) {
+            cardView.setCardBackgroundColor(Color.RED);
+        }
+        imageInfo.setId(imageID);
+        imageID++;
+        View.OnClickListener onInfoClick = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int i = 0;
 
+                while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(toDoList.get(imageInfo.getId()).getIdTipoVac() -1).getAntigen())) {
+                    vaccinations.iterator().next();
+                    i++;
+                }
+
+                MainActivity.dialogInfoVac.setHeaderDrawable(R.drawable.header_2)
+                        .setTitle(vaccinations.get(i).getName())
+                        .setDescription(vaccinations.get(i).getDescription() +
+                                "\n\nAntigene: " + vaccinations.get(i).getAntigen() +
+                                "\nGruppo: " + vaccinations.get(i).getGroup())
+                        .setPositiveText("Ok");
+
+                MainActivity.dialogInfoVac.show();
+            }
+        };
+        imageInfo.setOnClickListener(onInfoClick);
+
+    }
     @Override
     public int getItemCount() {
         return toDoList.size();
     }
 
-    private String translateDaIntoDate(String birthDate, int da) {
+    private boolean isLateThan(String date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date strDate = null;
+        try {
+            strDate = sdf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (new Date().after(strDate)) {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    private String translateDate(String birthDate, int da) {
         //String dt = "2012-01-04";  // Start date
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar c = Calendar.getInstance();
