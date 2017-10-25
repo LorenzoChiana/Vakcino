@@ -1,11 +1,5 @@
 package com.example.loren.vaccinebooklet.adapter;
 
-
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,22 +9,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.activity.MainActivity;
-import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
-import com.example.loren.vaccinebooklet.model.DeveFare;
+import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
-import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +28,7 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
 
     private final List<Vaccinazione> vaccinations;
     private final Utente user;
-    private final List<DeveFare> toDoList;
+    private final List<Libretto> booklet;
     private final List<TipoVaccinazione> vacTypeList;
     private int imageID = 0;
 
@@ -54,7 +41,6 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         Button button_apply;
         ImageView imageInfo;
         CardView cardView;
-        ImageView dateInfo;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -70,8 +56,8 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         }
     }
 
-    public VaccinationsToDoAdapter(List<DeveFare> toDoList, Utente user, List<Vaccinazione> vaccinations, List<TipoVaccinazione> vacTypeList) {
-        this.toDoList = toDoList;
+    public VaccinationsToDoAdapter(List<Libretto> booklet, Utente user, List<Vaccinazione> vaccinations, List<TipoVaccinazione> vacTypeList) {
+        this.booklet = booklet;
         this.user = user;
         this.vaccinations = vaccinations;
         this.vacTypeList = vacTypeList;
@@ -101,18 +87,18 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
 
         textViewUserName.setText(user.toString());
         for (Vaccinazione v: vaccinations) {
-            v.getAntigen().equals(vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getAntigen());
+            v.getAntigen().equals(vacTypeList.get(booklet.get(listPosition).getIdTipoVac() -1).getAntigen());
         }
         int i = 0;
 
-        while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getAntigen())) {
+        while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(booklet.get(listPosition).getIdTipoVac() -1).getAntigen())) {
             vaccinations.iterator().next();
             i++;
         }
         textViewVacName.setText(vaccinations.get(i).getName());
-        textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getNumRichiamo()));
-        String dateDa = translateDate(user.getbirthdayDate(),vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getDa());
-        String dateA = translateDate(user.getbirthdayDate(),vacTypeList.get(toDoList.get(listPosition).getIdTipoVac() -1).getA());
+        textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(booklet.get(listPosition).getIdTipoVac() -1).getNumRichiamo()));
+        String dateDa = translateDate(user.getbirthdayDate(),vacTypeList.get(booklet.get(listPosition).getIdTipoVac() -1).getDa());
+        String dateA = translateDate(user.getbirthdayDate(),vacTypeList.get(booklet.get(listPosition).getIdTipoVac() -1).getA());
         if(dateA.equals(dateDa))
             textViewDate.setText(dateA);
         else
@@ -127,7 +113,7 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
             public void onClick(View v) {
                 int i = 0;
 
-                while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(toDoList.get(imageInfo.getId()).getIdTipoVac() -1).getAntigen())) {
+                while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(booklet.get(imageInfo.getId()).getIdTipoVac() -1).getAntigen())) {
                     vaccinations.iterator().next();
                     i++;
                 }
@@ -147,7 +133,7 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
     }
     @Override
     public int getItemCount() {
-        return toDoList.size();
+        return booklet.size();
     }
 
     private boolean isLateThan(String date) {

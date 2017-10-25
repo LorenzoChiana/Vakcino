@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
-import com.example.loren.vaccinebooklet.model.DeveFare;
+import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
@@ -77,8 +77,8 @@ public class NewUserActivity extends AppCompatActivity implements
                     dbManager.addUser(newUser);
                     List<TipoVaccinazione> vt = dbManager.getVaccinationType();
                     for (int i = 0; i < vt.size(); i++) {
-                        DeveFare toDo = new DeveFare(newUser.getId(), /*newUser.getEmail(),*/ vt.get(i).getId(), VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
-                        dbManager.addToDo(toDo);
+                        Libretto booklet = new Libretto(newUser.getId(), vt.get(i).getId(), VakcinoDbManager.NOT_DONE, "", VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
+                        dbManager.addBooklet(booklet);
                     }
 
                     setResult(RESULT_OK);

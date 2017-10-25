@@ -46,7 +46,7 @@ import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.adapter.VaccinationsToDoAdapter;
 import com.example.loren.vaccinebooklet.database.VakcinoDbHelper;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
-import com.example.loren.vaccinebooklet.model.DeveFare;
+import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
@@ -260,9 +260,9 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     for (Utente user : dbManager.getUsers(Utils.getAccount(getApplicationContext()))) {
-                        List<DeveFare> unsyncedToDo = dbManager.getUnsyncedToDo(user);
-                        for (DeveFare toDo : unsyncedToDo) {
-                            RemoteDBInteractions.syncToDoLocalToRemote(toDo, Utils.getAccount(getApplicationContext()));
+                        List<Libretto> unsyncedBooklet = dbManager.getUnsyncedBooklet(user);
+                        for (Libretto booklet : unsyncedBooklet) {
+                            RemoteDBInteractions.syncBookletLocalToRemote(booklet, Utils.getAccount(getApplicationContext()));
                         }
                     }
                     return null;
@@ -433,7 +433,7 @@ public class MainActivity extends AppCompatActivity
             item.setChecked(true);
             TextView textViewUserName = (TextView) findViewById(R.id.user_name_title);
             textViewUserName.setText(user.toString());
-            adapterToDo = new VaccinationsToDoAdapter(dbManager.getToDoList(user), user, vaccinations, vacTypeList);
+            adapterToDo = new VaccinationsToDoAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList);
             mRecyclerView.setAdapter(adapterToDo);
         }
 

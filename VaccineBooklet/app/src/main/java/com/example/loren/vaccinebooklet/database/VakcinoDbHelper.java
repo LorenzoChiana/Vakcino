@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.loren.vaccinebooklet.model.DeveFare;
 import com.example.loren.vaccinebooklet.model.HaFatto;
+import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
@@ -76,6 +77,17 @@ public class VakcinoDbHelper extends SQLiteOpenHelper {
             HaFatto.COLUMN_IDUTENTE + COMMA_SEP /*+ HaFatto.COLUMN_EMAIL + COMMA_SEP*/ + HaFatto.COLUMN_IDTIPOVAC + ")"
             + " )";
 
+    public static final String CREATE_TABLE_LIBRETTO = "CREATE TABLE IF NOT EXISTS "
+            + Libretto.TABLE_NAME + " (" +
+            Libretto.COLUMN_IDUTENTE + INTEGER_TYPE + COMMA_SEP +
+            Libretto.COLUMN_IDTIPOVAC + INTEGER_TYPE + COMMA_SEP +
+            Libretto.COLUMN_DONE + INTEGER_TYPE + COMMA_SEP +
+            Libretto.COLUMN_DATE + DATE_TYPE + COMMA_SEP +
+            Libretto.COLUMN_STATUS + INTEGER_TYPE + COMMA_SEP +
+            " CONSTRAINT PK_LIBRETTO PRIMARY KEY (" +
+            Libretto.COLUMN_IDUTENTE + COMMA_SEP + Libretto.COLUMN_IDTIPOVAC + ")"
+            + " )";
+
     public static final String CREATE_TABLE_DEVEFARE = "CREATE TABLE IF NOT EXISTS "
             + DeveFare.TABLE_NAME + " (" +
             DeveFare.COLUMN_IDUTENTE + INTEGER_TYPE + COMMA_SEP +
@@ -100,8 +112,7 @@ public class VakcinoDbHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_UTENTE);
         db.execSQL(CREATE_TABLE_TIPOVACCINAZIONE);
         db.execSQL(CREATE_TABLE_VACCINAZIONE);
-        db.execSQL(CREATE_TABLE_DEVEFARE);
-        db.execSQL(CREATE_TABLE_HAFATTO);
+        db.execSQL(CREATE_TABLE_LIBRETTO);
     }
 
     /**

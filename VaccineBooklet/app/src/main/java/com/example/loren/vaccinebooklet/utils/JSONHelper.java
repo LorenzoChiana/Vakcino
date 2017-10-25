@@ -1,8 +1,6 @@
 package com.example.loren.vaccinebooklet.utils;
 
-import android.util.Log;
-
-import com.example.loren.vaccinebooklet.model.DeveFare;
+import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
@@ -105,25 +103,27 @@ public class JSONHelper {
     }
 
     /**
-     * Method that parse a {@link DeveFare}
+     * Method that parse a {@link Libretto}
      * @param result {@link String} of the response from the server
      * @return the object of the result user
      */
-    public static ArrayList<DeveFare> parseToDo(String result){
-        ArrayList<DeveFare> toDoList = new ArrayList<>();
+    public static ArrayList<Libretto> parseBooklet(String result){
+        ArrayList<Libretto> bookletList = new ArrayList<>();
         try {
             JSONArray array = new JSONArray(result);
             for(int i = 0; i < array.length(); i++) {
                 JSONObject object = array.getJSONObject(i);
                 int idUser = object.getInt("ID");
                 int idVac = object.getInt("ID_VAC");
+                int done = object.getInt("Fatto");
+                String date = object.getString("InData");
                 int status = object.getInt("Status");
-                toDoList.add(new DeveFare(idUser, idVac, status));
+                bookletList.add(new Libretto(idUser, idVac, done, date, status));
             }
         } catch (JSONException e) {
             return null;
         } finally {
-            return toDoList;
+            return bookletList;
         }
     }
 }

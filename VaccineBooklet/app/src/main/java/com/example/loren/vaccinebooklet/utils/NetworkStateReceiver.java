@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.activity.MainActivity;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
-import com.example.loren.vaccinebooklet.model.DeveFare;
+import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
 
@@ -64,7 +64,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                                 RemoteDBInteractions.createUsersRemoteToLocal(context);
                                 RemoteDBInteractions.createVaccinationsRemoteToLocal(context);
                                 RemoteDBInteractions.createVaccinationTypeRemoteToLocal(context);
-                                RemoteDBInteractions.createToDoRemoteToLocal(context);
+                                RemoteDBInteractions.createBookletRemoteToLocal(context);
                             }
                             RemoteDBInteractions.syncUsersRemoteToLocal(context);
                             RemoteDBInteractions.syncVaccinationsRemoteToLocal(context);
@@ -79,11 +79,11 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                             }
 
                             for (Utente user : dbManager.getUsers(Utils.getAccount(context))) {
-                                List<DeveFare> unsyncedToDo = dbManager.getUnsyncedToDo(user);
-                                for (DeveFare toDo : unsyncedToDo) {
-                                    RemoteDBInteractions.syncToDoLocalToRemote(toDo, Utils.getAccount(context));
-                                    toDo.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
-                                    dbManager.updateToDo(toDo);
+                                List<Libretto> unsyncedBooklet = dbManager.getUnsyncedBooklet(user);
+                                for (Libretto booklet : unsyncedBooklet) {
+                                    RemoteDBInteractions.syncBookletLocalToRemote(booklet, Utils.getAccount(context));
+                                    booklet.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
+                                    dbManager.updateBooklet(booklet);
                                 }
                             }
 

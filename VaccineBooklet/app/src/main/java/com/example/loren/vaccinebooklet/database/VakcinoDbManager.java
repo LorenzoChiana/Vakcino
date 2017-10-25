@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.loren.vaccinebooklet.model.DeveFare;
 import com.example.loren.vaccinebooklet.model.HaFatto;
+import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
@@ -25,6 +26,9 @@ public class VakcinoDbManager {
 
     public static final int SYNCED_WITH_SERVER = 0;
     public static final int NOT_SYNCED_WITH_SERVER = 1;
+
+    public static final int DONE = 0;
+    public static final int NOT_DONE = 1;
 
 
     //Costruttore
@@ -307,60 +311,63 @@ public class VakcinoDbManager {
 
     /*
     *
-    * --------- DEVE FARE ---------
+    * --------- LIBRETTO ---------
     *
     * */
     /**
-     * @param toDo riferimento all'oggetto che si vuole inserire nel database
+     * @param booklet riferimento all'oggetto che si vuole inserire nel database
      * @return booleano che indica se l'operazione ha avuto o meno esito positivo
      */
-    public boolean addToDo(DeveFare toDo) {
+    public boolean addBooklet(Libretto booklet) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long row = db.insert(DeveFare.TABLE_NAME, null, toDo.getContentValues());
+        long row = db.insert(Libretto.TABLE_NAME, null, booklet.getContentValues());
         return row > 1;
     }
 
     /**
-     * @param toDo riferimento all'oggetto che si vuole modificare nel database
+     * @param booklet riferimento all'oggetto che si vuole modificare nel database
      * @return booleano che indica se l'operazione ha avuto o meno esito positivo
      */
-    public boolean updateToDo(DeveFare toDo) {
+    public boolean updateBooklet(Libretto booklet) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int row = db.update(DeveFare.TABLE_NAME, toDo.getContentValues(),
-                DeveFare.COLUMN_IDUTENTE + " = ? AND " +
-                //DeveFare.COLUMN_EMAIL + " = '?' AND " +
-                DeveFare.COLUMN_IDTIPOVAC + " = ?",
-                new String[]{Integer.toString(toDo.getIdUtente()), /*toDo.getEmail(),*/ Integer.toString(toDo.getIdTipoVac())});
+        int row = db.update(
+                Libretto.TABLE_NAME,
+                booklet.getContentValues(),
+                Libretto.COLUMN_IDUTENTE + " = ? AND " +
+                Libretto.COLUMN_IDTIPOVAC + " = ?",
+                new String[]{
+                        Integer.toString(booklet.getIdUtente()),
+                        Integer.toString(booklet.getIdTipoVac())
+                }
+        );
         return row > 0;
     }
 
     /**
-     * @param toDo riferimento all'oggetto che si vuole rimuovere dal database
+     * @param booklet riferimento all'oggetto che si vuole rimuovere dal database
      * @return booleano che indica se l'operazione ha avuto o meno esito positivo
      */
-    public boolean deleteToDo(DeveFare toDo) {
+    public boolean deleteBooklet(Libretto booklet) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int row = db.delete(Utente.TABLE_NAME,
-                DeveFare.COLUMN_IDUTENTE + " = ? AND " + DeveFare.COLUMN_IDTIPOVAC + " = ?",
-                new String[]{Integer.toString(toDo.getIdUtente()), Integer.toString(toDo.getIdTipoVac())});
+        int row = db.delete(Libretto.TABLE_NAME,
+                Libretto.COLUMN_IDUTENTE + " = ? AND " + Libretto.COLUMN_IDTIPOVAC + " = ?",
+                new String[]{Integer.toString(booklet.getIdUtente()), Integer.toString(booklet.getIdTipoVac())});
         return row > 0;
     }
 
-    public List<DeveFare> getToDoList(Utente user) {
+    public List<Libretto> getAllBooklet(Utente user) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        List<DeveFare> toDoList = new ArrayList<>();
+        List<Libretto> bookletList = new ArrayList<>();
 
         Cursor cursor = null;
         try {
-            String query = "SELECT * FROM " + DeveFare.TABLE_NAME +
-                    " WHERE " + DeveFare.COLUMN_IDUTENTE + " = " + user.getId();
-                    /*+
-                    " AND " + DeveFare.COLUMN_EMAIL + " = '" + user.getEmail() + "'"*/
+            String query = "SELECT * FROM " + Libretto.TABLE_NAME +
+                    " WHERE " + Libretto.COLUMN_IDUTENTE + " = " + user.getId();
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
-                DeveFare toDo = new DeveFare(cursor);
-                toDoList.add(toDo);
+                Libretto booklet = new Libretto(cursor);
+                bookletList.add(booklet);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -370,25 +377,76 @@ public class VakcinoDbManager {
             }
             db.close();
         }
-        return toDoList;
+        return bookletList;
     }
 
-    public List<DeveFare> getUnsyncedToDo(Utente user) {
+    public List<Libretto> getToDoList(Utente user) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        List<DeveFare> toDoList = new ArrayList<>();
+        List<Libretto> bookletList = new ArrayList<>();
 
         Cursor cursor = null;
         try {
-            String query = "SELECT * FROM " + DeveFare.TABLE_NAME +
-                    " WHERE " + DeveFare.COLUMN_IDUTENTE + " = " + user.getId() +
-                    /*" AND " + DeveFare.COLUMN_EMAIL + " = '" + user.getEmail() + "'" +*/
-                    " AND " + DeveFare.COLUMN_STATUS + " = " + NOT_SYNCED_WITH_SERVER;
+            String query = "SELECT * FROM " + Libretto.TABLE_NAME +
+                    " WHERE " + Libretto.COLUMN_IDUTENTE + " = " + user.getId() +
+                    " AND " + Libretto.COLUMN_DONE + " = " + NOT_DONE;
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                Libretto booklet = new Libretto(cursor);
+                bookletList.add(booklet);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return bookletList;
+    }
+
+    public List<Libretto> getDoneList(Utente user) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        List<Libretto> bookletList = new ArrayList<>();
+
+        Cursor cursor = null;
+        try {
+            String query = "SELECT * FROM " + Libretto.TABLE_NAME +
+                    " WHERE " + Libretto.COLUMN_IDUTENTE + " = " + user.getId() +
+                    " AND " + Libretto.COLUMN_DONE + " = " + DONE;
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                Libretto booklet = new Libretto(cursor);
+                bookletList.add(booklet);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return bookletList;
+    }
+
+    public List<Libretto> getUnsyncedBooklet(Utente user) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        List<Libretto> bookletList = new ArrayList<>();
+
+        Cursor cursor = null;
+        try {
+            String query = "SELECT * FROM " + Libretto.TABLE_NAME +
+                    " WHERE " + Libretto.COLUMN_IDUTENTE + " = " + user.getId() +
+                    " AND " + Libretto.COLUMN_STATUS + " = " + NOT_SYNCED_WITH_SERVER;
             Log.d("DBMANAGER", query);
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
-                DeveFare toDo = new DeveFare(cursor);
-                toDoList.add(toDo);
+                Libretto booklet = new Libretto(cursor);
+                bookletList.add(booklet);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -399,46 +457,7 @@ public class VakcinoDbManager {
             db.close();
         }
 
-        return toDoList;
-    }
-
-    /*
-    *
-    * --------- HA FATTO ---------
-    *
-    * */
-    /**
-     * @param done riferimento all'oggetto che si vuole inserire nel database
-     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
-     */
-    public boolean addDone(HaFatto done) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        long row = db.insert(HaFatto.TABLE_NAME, null, done.getContentValues());
-        return row > 1;
-    }
-
-    /**
-     * @param done riferimento all'oggetto che si vuole modificare nel database
-     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
-     */
-    public boolean updateDone(HaFatto done) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int row = db.update(HaFatto.TABLE_NAME, done.getContentValues(),
-                HaFatto.COLUMN_IDUTENTE + " = ? AND " + HaFatto.COLUMN_IDTIPOVAC + " = ?",
-                new String[]{Integer.toString(done.getIdUtente()), Integer.toString(done.getIdTipoVac())});
-        return row > 0;
-    }
-
-    /**     
-     * @param done riferimento all'oggetto che si vuole rimuovere dal database
-     * @return booleano che indica se l'operazione ha avuto o meno esito positivo
-     */
-    public boolean deleteDone(HaFatto done) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        int row = db.delete(HaFatto.TABLE_NAME,
-                HaFatto.COLUMN_IDUTENTE + " = ? AND " + HaFatto.COLUMN_IDTIPOVAC + " = ?",
-                new String[]{Integer.toString(done.getIdUtente()), Integer.toString(done.getIdTipoVac())});
-        return row > 0;
+        return bookletList;
     }
 
     public void deleteTable(String tableName) {

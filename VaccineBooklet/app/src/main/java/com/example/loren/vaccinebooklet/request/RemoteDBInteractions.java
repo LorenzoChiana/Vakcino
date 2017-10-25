@@ -1,10 +1,9 @@
 package com.example.loren.vaccinebooklet.request;
 
 import android.content.Context;
-import android.content.Intent;
 
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
-import com.example.loren.vaccinebooklet.model.DeveFare;
+import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
@@ -26,8 +25,8 @@ public class RemoteDBInteractions {
     private static final java.lang.String URL_SET_SYNC_REMOTE_VACCINATION = "http://vakcinoapp.altervista.org/setSyncRemoteVaccination.php";;
     private static final java.lang.String URL_GET_VACCINATIONTYPE = "http://vakcinoapp.altervista.org/getVaccinationType.php";
     private static final java.lang.String URL_SET_SYNC_REMOTE_VACCINATIONTYPE = "http://vakcinoapp.altervista.org/setSyncRemoteVaccinationType.php";
-    private static final java.lang.String URL_SET_TODO = "http://vakcinoapp.altervista.org/setToDo.php";
-    private static final java.lang.String URL_GET_TODO = "http://vakcinoapp.altervista.org/getToDo.php";
+    private static final java.lang.String URL_SET_BOOKLET = "http://vakcinoapp.altervista.org/setBooklet.php";
+    private static final java.lang.String URL_GET_BOOKLET = "http://vakcinoapp.altervista.org/getBooklet.php";
 
     /*
     * --- UTENTE ---
@@ -157,27 +156,29 @@ public class RemoteDBInteractions {
     /*
     * --- DEVE FARE
     * */
-    public static void syncToDoLocalToRemote(DeveFare toDo, String account) {
+    public static void syncBookletLocalToRemote(Libretto booklet, String account) {
         HashMap<String,String> hm = new HashMap<>();
-        hm.put("IDUtente", Integer.toString(toDo.getIdUtente()));
+        hm.put("IDUtente", Integer.toString(booklet.getIdUtente()));
         hm.put("Email", account);
-        hm.put("IDTipoVac", Integer.toString(toDo.getIdTipoVac()));
-        hm.put("Status", Integer.toString(toDo.getStatus()));
-        HTTPHelper.connectPost(URL_SET_TODO, hm);
+        hm.put("IDTipoVac", Integer.toString(booklet.getIdTipoVac()));
+        hm.put("Fatto", Integer.toString(booklet.getDone()));
+        hm.put("InData", booklet.getDate());
+        hm.put("Status", Integer.toString(booklet.getStatus()));
+        HTTPHelper.connectPost(URL_SET_BOOKLET, hm);
     }
 
-    public static ArrayList<DeveFare> getRemoteToDo(String email) {
+    public static ArrayList<Libretto> getRemoteBooklet(String email) {
         HashMap<String,String> hm = new HashMap<>();
         hm.put("email", email);
-        return JSONHelper.parseToDo(HTTPHelper.connectPost(URL_GET_TODO, hm));
+        return JSONHelper.parseBooklet(HTTPHelper.connectPost(URL_GET_BOOKLET, hm));
     }
 
-    public static void createToDoRemoteToLocal(Context context){
-        ArrayList<DeveFare> remoteToDo = getRemoteToDo(Utils.getAccount(context));
+    public static void createBookletRemoteToLocal(Context context){
+        ArrayList<Libretto> remoteBooklet = getRemoteBooklet(Utils.getAccount(context));
         VakcinoDbManager dbManager = new VakcinoDbManager(context);
-        for (DeveFare toDo: remoteToDo) {
-            if(!dbManager.updateToDo(toDo)){
-                dbManager.addToDo(toDo);
+        for (Libretto booklet: remoteBooklet) {
+            if(!dbManager.updateBooklet(booklet)){
+                dbManager.addBooklet(booklet);
             }
         }
     }
