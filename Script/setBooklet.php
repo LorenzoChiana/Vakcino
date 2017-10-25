@@ -18,20 +18,16 @@
 	$date = $_POST["InData"];
 	$status = $_POST["Status"];
 
-	if(strcmp($date, "") !== 0){
-		$result = mysqli_prepare($conn, "INSERT INTO LIBRETTO (ID, email, ID_VAC, fatto, in_data, Status) VALUES ((?), (?), (?), (?), (?), (?))"); 
-	}
-	else {
+	if(strcmp($date, "") == 0){
 		$date = null;
-		$result = mysqli_prepare($conn, "INSERT INTO LIBRETTO (ID, email, ID_VAC, fatto, in_data, Status) VALUES ((?), (?), (?), (?), (?), (?))");
-
-	}  
+	} 
+	$result = mysqli_prepare($conn, "INSERT INTO LIBRETTO (ID, email, ID_VAC, fatto, in_data, Status) VALUES ((?), (?), (?), (?), (?), (?))");
 	mysqli_stmt_bind_param($result, "isiisi", $id_user, $email, $id_vacType, $done, $date, $status);
 	
 	if(!mysqli_stmt_execute($result)){
 		echo "SONO DENTRO";
-		$result = mysqli_prepare($conn, "UPDATE LIBRETTO SET Status = (?) WHERE ID = (?) AND email = (?) AND ID_VAC = (?)");    
-		mysqli_stmt_bind_param($result, "iisi", $status, $id_user, $email, $id_vacType);
+		$result = mysqli_prepare($conn, "UPDATE LIBRETTO SET Status = (?), fatto = (?), in_data = (?) WHERE ID = (?) AND email = (?) AND ID_VAC = (?)");    
+		mysqli_stmt_bind_param($result, "iisisi", $status, $done, $date, $id_user, $email, $id_vacType);
 		mysqli_stmt_execute($result);
 	} else {
 		mysqli_stmt_store_result($result);
