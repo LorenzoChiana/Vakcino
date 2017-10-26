@@ -70,4 +70,5 @@
     <string name="menu_delete">Delete</string>
 
     <string name="apply_vaccination">APPLY</string>
+    <string name="date_vaccination_question">When was vaccination done?</string>
 </resources>

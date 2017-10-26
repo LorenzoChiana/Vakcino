@@ -16,6 +16,7 @@ import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
 import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
+import com.example.loren.vaccinebooklet.tasks.SyncDBLocalToRemote;
 
 import java.util.List;
 
@@ -71,21 +72,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                             RemoteDBInteractions.syncVaccinationTypeRemoteToLocal(context);
                             //RemoteDBInteractions.syncToDoRemoteToLocal(context);
                             //get unsync users per ogni users
-                            List<Utente> unsyncedUsers = dbManager.getUnsyncedUsers(Utils.getAccount(context));
-                            for (Utente user : unsyncedUsers) {
-                                RemoteDBInteractions.syncUserLocalToRemote(user);
-                                user.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
-                                dbManager.updateUser(user);
-                            }
-
-                            for (Utente user : dbManager.getUsers(Utils.getAccount(context))) {
-                                List<Libretto> unsyncedBooklet = dbManager.getUnsyncedBooklet(user);
-                                for (Libretto booklet : unsyncedBooklet) {
-                                    RemoteDBInteractions.syncBookletLocalToRemote(booklet, Utils.getAccount(context));
-                                    booklet.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
-                                    dbManager.updateBooklet(booklet);
-                                }
-                            }
+                            new SyncDBLocalToRemote().execute(context);
 
                         }
                         return true;

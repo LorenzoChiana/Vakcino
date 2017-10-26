@@ -37,15 +37,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.AbsListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.loren.vaccinebooklet.R;
-import com.example.loren.vaccinebooklet.adapter.VaccinationsToDoAdapter;
+import com.example.loren.vaccinebooklet.adapter.VaccinationsBookletAdapter;
+
 import com.example.loren.vaccinebooklet.database.VakcinoDbHelper;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
+import com.example.loren.vaccinebooklet.listeners.MyOnScrollListener;
 import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
@@ -53,6 +57,8 @@ import com.example.loren.vaccinebooklet.model.Vaccinazione;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
 import com.example.loren.vaccinebooklet.utils.NetworkStateReceiver;
 import com.example.loren.vaccinebooklet.utils.Utils;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 
 import java.util.List;
@@ -84,6 +90,12 @@ public class MainActivity extends AppCompatActivity
     private List<Vaccinazione> vaccinations;
     private List<TipoVaccinazione> vacTypeList;
     public static MaterialStyledDialog.Builder dialogInfoVac;
+
+
+
+    int previousDy = 0;
+
+    private FloatingActionMenu mFab;
 
 
     private boolean afterLogin = false;
@@ -192,6 +204,19 @@ public class MainActivity extends AppCompatActivity
         intentFilter.addAction(INTENT_ACTION_INT);
         //initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
 
+        mFab = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
+        mFab.hideMenu(false);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mFab.showMenu(true);
+                mFab.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_scale_up));
+                mFab.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_scale_down));
+            }
+        }, 300);
+
+        mRecyclerView.addOnScrollListener(new MyOnScrollListener(mFab));
+
     }
 
 
@@ -246,7 +271,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            AsyncTask<Void, Void, Boolean> sync = new AsyncTask<Void, Void, Boolean>() {
+           AsyncTask<Void, Void, Boolean> sync = new AsyncTask<Void, Void, Boolean>() {
 
                 @Override
                 protected Boolean doInBackground(Void... params) {
@@ -433,7 +458,7 @@ public class MainActivity extends AppCompatActivity
             item.setChecked(true);
             TextView textViewUserName = (TextView) findViewById(R.id.user_name_title);
             textViewUserName.setText(user.toString());
-            adapterToDo = new VaccinationsToDoAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList);
+            adapterToDo = new VaccinationsBookletAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList);
             mRecyclerView.setAdapter(adapterToDo);
         }
 

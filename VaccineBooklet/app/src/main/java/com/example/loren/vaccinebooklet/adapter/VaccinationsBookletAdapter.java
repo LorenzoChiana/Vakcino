@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.activity.MainActivity;
+import com.example.loren.vaccinebooklet.listeners.OnApplyVacButtonClickListener;
+import com.example.loren.vaccinebooklet.listeners.OnInfoClickListener;
 import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
@@ -24,7 +26,7 @@ import java.util.List;
 
 import static com.example.loren.vaccinebooklet.R.drawable.ic_menu;
 
-public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsToDoAdapter.MyViewHolder> {
+public class VaccinationsBookletAdapter extends RecyclerView.Adapter<VaccinationsBookletAdapter.MyViewHolder> {
 
     private final List<Vaccinazione> vaccinations;
     private final Utente user;
@@ -56,7 +58,7 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         }
     }
 
-    public VaccinationsToDoAdapter(List<Libretto> booklet, Utente user, List<Vaccinazione> vaccinations, List<TipoVaccinazione> vacTypeList) {
+    public VaccinationsBookletAdapter(List<Libretto> booklet, Utente user, List<Vaccinazione> vaccinations, List<TipoVaccinazione> vacTypeList) {
         this.booklet = booklet;
         this.user = user;
         this.vaccinations = vaccinations;
@@ -82,20 +84,19 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         TextView textViewVacName = holder.textViewVaccinationName;
         TextView textViewDate = holder.textViewDate;
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
+        Button applyButton = holder.button_apply;
         final CardView cardView = holder.cardView;
         final ImageView imageInfo = holder.imageInfo;
 
         textViewUserName.setText(user.toString());
-        for (Vaccinazione v: vaccinations) {
-            v.getAntigen().equals(vacTypeList.get(booklet.get(listPosition).getIdTipoVac() -1).getAntigen());
-        }
         int i = 0;
 
         while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(booklet.get(listPosition).getIdTipoVac() -1).getAntigen())) {
             vaccinations.iterator().next();
             i++;
         }
-        textViewVacName.setText(vaccinations.get(i).getName());
+        Vaccinazione currentVac = vaccinations.get(i);
+        textViewVacName.setText(currentVac.getName());
         textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(booklet.get(listPosition).getIdTipoVac() -1).getNumRichiamo()));
         String dateDa = translateDate(user.getbirthdayDate(),vacTypeList.get(booklet.get(listPosition).getIdTipoVac() -1).getDa());
         String dateA = translateDate(user.getbirthdayDate(),vacTypeList.get(booklet.get(listPosition).getIdTipoVac() -1).getA());
@@ -108,27 +109,8 @@ public class VaccinationsToDoAdapter extends RecyclerView.Adapter<VaccinationsTo
         }
         imageInfo.setId(imageID);
         imageID++;
-        View.OnClickListener onInfoClick = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int i = 0;
-
-                while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(booklet.get(imageInfo.getId()).getIdTipoVac() -1).getAntigen())) {
-                    vaccinations.iterator().next();
-                    i++;
-                }
-
-                MainActivity.dialogInfoVac.setHeaderDrawable(R.drawable.header_2)
-                        .setTitle(vaccinations.get(i).getName())
-                        .setDescription(vaccinations.get(i).getDescription() +
-                                "\n\nAntigene: " + vaccinations.get(i).getAntigen() +
-                                "\nGruppo: " + vaccinations.get(i).getGroup())
-                        .setPositiveText("Ok");
-
-                MainActivity.dialogInfoVac.show();
-            }
-        };
-        imageInfo.setOnClickListener(onInfoClick);
+        imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
+        applyButton.setOnClickListener(new OnApplyVacButtonClickListener(booklet.get(listPosition)));
 
     }
     @Override
