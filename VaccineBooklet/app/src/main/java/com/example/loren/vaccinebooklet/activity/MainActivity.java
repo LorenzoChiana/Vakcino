@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity
         registerReceiver(receiverConnectivity, filter);
         intentFilter = new IntentFilter();
         intentFilter.addAction(INTENT_ACTION_INT);
-        //initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
+        initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
 
         mFab = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
         mFab.hideMenu(false);
@@ -210,8 +210,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
                 mFab.showMenu(true);
-                mFab.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_scale_up));
-                mFab.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_scale_down));
+                mFab.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.md_styled_slide_up_normal));
+                mFab.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.md_styled_slide_down_normal));
             }
         }, 300);
 
@@ -240,10 +240,10 @@ public class MainActivity extends AppCompatActivity
                 updateUsersList();
                 updateVacList();
                 updateVacTypeList();
-                if(sync > 0)
+                //if(sync > 0)
                     updateNavigationUI(navigationView.getMenu(), context);
-                else
-                    initializeNavigationUI(navigationView.getMenu(), context);
+                //else
+
                 VakcinoDbManager dbManager = new VakcinoDbManager(context);
                 users = dbManager.getUsers(Utils.getAccount(context));
                 vaccinations = dbManager.getVaccinations();
@@ -318,12 +318,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void updateNavigationUI(Menu menu, Context context) {
-        int menuSize = menu.size();
-        if(menuSize > 1) {
-            for(int i = 1; i < menuSize; i++) {
+        int i = USER_ID;
+        for (Utente u: users) {
+            try {
                 menu.removeItem(i);
+                menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person)).setCheckable(true);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person)).setCheckable(true);
             }
-            initializeNavigationUI(menu, context);
+
+            i++;
+
         }
     }
 
@@ -365,12 +372,7 @@ public class MainActivity extends AppCompatActivity
         List<Utente> users = dbManager.getUsers(email);*/
         //menu.add(R.id.nav_users, 0, Menu.FIRST, "aggiungi").setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_input_add));
         menu.getItem(0).setCheckable(false);
-        int i = USER_ID;
-        for (Utente u: users) {
-            menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person)).setCheckable(true);
-            i++;
 
-        }
         menu.add(R.id.drawer_options, NOTICE_ID, Menu.CATEGORY_SECONDARY, getString(R.string.notice_settings)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_idle_alarm));
         menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_power_off));
         /*int a = menu.size();

@@ -17,12 +17,14 @@ import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
 import com.example.loren.vaccinebooklet.tasks.SyncDBLocalToRemote;
+import com.example.loren.vaccinebooklet.tasks.SyncDBRemoteToLocal;
 
+import java.security.PublicKey;
 import java.util.List;
 
 public class NetworkStateReceiver extends BroadcastReceiver {
     private boolean isAfterLogin;
-    int i = 0;
+    private int iteration = 0;
 
     public boolean isAfterLogin() {
         return isAfterLogin;
@@ -30,6 +32,14 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
     public void setAfterLogin(boolean afterLogin) {
         isAfterLogin = afterLogin;
+    }
+
+    public int getIteration() {
+        return this.iteration;
+    }
+
+    public void nextIteration() {
+        this.iteration++;
     }
 
     public void onReceive(final Context context, Intent intent) {
@@ -42,21 +52,13 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 Log.i("app", "Network " + activeNetwork.getTypeName() + " connected");
                 Toast toast = Toast.makeText(context, "Network " + activeNetwork.getTypeName() + " connected", Toast.LENGTH_SHORT);
                 toast.show();
-                final ProgressDialog progressDialog = new ProgressDialog(context,
+                /*final ProgressDialog progressDialog = new ProgressDialog(context,
                         R.style.AppTheme_Dark_Dialog);
                 progressDialog.setIndeterminate(true);
                 progressDialog.setMessage(context.getString(R.string.waiting));
-                progressDialog.show();
-                AsyncTask<Void, Void, Boolean> sync = new AsyncTask<Void, Void, Boolean>() {
-                    /*@Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                        final ProgressDialog progressDialog = new ProgressDialog(context,
-                                R.style.AppTheme_Dark_Dialog);
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setMessage(context.getString(R.string.waiting));
-                        progressDialog.show();
-                    }*/
+                progressDialog.show();*/
+                new SyncDBRemoteToLocal(isAfterLogin(), context).execute();
+                /*AsyncTask<Void, Void, Boolean> sync = new AsyncTask<Void, Void, Boolean>() {
                     @Override
                     protected Boolean doInBackground(Void... args) {
                         VakcinoDbManager dbManager = new VakcinoDbManager(context);
@@ -88,7 +90,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                         context.sendBroadcast(broadcastIntent);
                         progressDialog.dismiss();
                     }
-                }.execute();
+                }.execute();*/
 
                 /*AsyncTask<Void, Void, Void> syncLocalToRemote = new AsyncTask<Void, Void, Void>() {
                     @Override
@@ -120,8 +122,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                 Log.d("app", "There's no network connectivity");
                 Intent broadcastIntent = new Intent();
                 broadcastIntent.setAction(MainActivity.INTENT_ACTION_INT);
-                broadcastIntent.putExtra(MainActivity.INTENT_EXTRA, i);
-                i++;
+                broadcastIntent.putExtra(MainActivity.INTENT_EXTRA, iteration);
+                iteration++;
                 context.sendBroadcast(broadcastIntent);
                 Toast toast = Toast.makeText(context, "There's no network connectivity", Toast.LENGTH_SHORT);
                 toast.show();
