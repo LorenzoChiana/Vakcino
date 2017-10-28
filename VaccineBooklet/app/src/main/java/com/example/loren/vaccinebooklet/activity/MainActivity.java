@@ -50,6 +50,8 @@ import com.example.loren.vaccinebooklet.adapter.VaccinationsBookletAdapter;
 import com.example.loren.vaccinebooklet.database.VakcinoDbHelper;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
 import com.example.loren.vaccinebooklet.listeners.MyOnScrollListener;
+import com.example.loren.vaccinebooklet.listeners.OnViewVacDoneClickListener;
+import com.example.loren.vaccinebooklet.listeners.OnViewVacToDoClickListener;
 import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
@@ -77,12 +79,11 @@ public class MainActivity extends AppCompatActivity
     private String email;
 
     //private ViewPager mViewPager;
-    private RecyclerView mRecyclerView;
+    public RecyclerView mRecyclerView;
     private TextView twEmailUser;
     private NavigationView navigationView;
     private NetworkStateReceiver receiverConnectivity;
     private IntentFilter filter, intentFilter;
-    private int sync;
     private static RecyclerView.Adapter adapterToDo;
 
     private RecyclerView.LayoutManager layoutManager;
@@ -91,41 +92,9 @@ public class MainActivity extends AppCompatActivity
     private List<TipoVaccinazione> vacTypeList;
     public static MaterialStyledDialog.Builder dialogInfoVac;
 
-
-
-    int previousDy = 0;
-
     private FloatingActionMenu mFab;
 
-
     private boolean afterLogin = false;
-    /*private boolean afterAddUser = false;
-    private boolean afterOpenApp = false;
-
-
-    public static boolean isAfterLogin() {
-        return afterLogin;
-    }
-
-    public void setAfterLogin(boolean afterLogin) {
-        this.afterLogin = afterLogin;
-    }
-
-    public boolean isAfterAddUser() {
-        return afterAddUser;
-    }
-
-    public void setAfterAddUser(boolean afterAddUser) {
-        this.afterAddUser = afterAddUser;
-    }
-
-    public boolean isAfterOpenApp() {
-        return afterOpenApp;
-    }
-
-    public void setAfterOpenApp(boolean afterOpenApp) {
-        this.afterOpenApp = afterOpenApp;
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +124,6 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         View headerView = navigationView.getHeaderView(0);
         twEmailUser = (TextView) headerView.findViewById(R.id.tw_email);
         /*final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
@@ -182,12 +150,7 @@ public class MainActivity extends AppCompatActivity
         }
         email = Utils.getAccount(MainActivity.this);
         twEmailUser.setText(email);
-        //ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        //TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-       // viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager()));
-        //tabLayout.setupWithViewPager(viewPager);
 
-        //mViewPager = (ViewPager) findViewById(R.id.container);
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
@@ -205,18 +168,17 @@ public class MainActivity extends AppCompatActivity
         initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
 
         mFab = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
-        mFab.hideMenu(false);
+        mFab.setVisibility(View.INVISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mFab.showMenu(true);
                 mFab.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.md_styled_slide_up_normal));
                 mFab.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.md_styled_slide_down_normal));
+
             }
         }, 300);
 
         mRecyclerView.addOnScrollListener(new MyOnScrollListener(mFab));
-
     }
 
 
@@ -236,7 +198,7 @@ public class MainActivity extends AppCompatActivity
         public void onReceive(Context context, Intent intent) {
 
             if (intent.getAction().equals(INTENT_ACTION_INT)) {
-                sync = intent.getIntExtra(INTENT_EXTRA, 0);
+                //sync = intent.getIntExtra(INTENT_EXTRA, 0);
                 updateUsersList();
                 updateVacList();
                 updateVacTypeList();
@@ -334,39 +296,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main_drawer, menu);
-
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                final View view = findViewById(R.id.add_user);
-
-                if (view != null) {
-                    view.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-
-                            // Do something...
-
-                            Toast.makeText(getApplicationContext(), "Long pressed", Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                    });
-                }
-            }
-        });
-
-        return super.onCreateOptionsMenu(menu);
-    }*/
-
-    /*public static boolean connectionOK(Context context) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI || activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE);
-    }*/
-
     private void initializeNavigationUI(Menu menu, Context context) {
        /* VakcinoDbManager dbManager = new VakcinoDbManager(context);
         List<Utente> users = dbManager.getUsers(email);*/
@@ -375,30 +304,7 @@ public class MainActivity extends AppCompatActivity
 
         menu.add(R.id.drawer_options, NOTICE_ID, Menu.CATEGORY_SECONDARY, getString(R.string.notice_settings)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_idle_alarm));
         menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_power_off));
-        /*int a = menu.size();
-        CharSequence b = menu.getItem(0).getTitle();
-        if(menu.size() > 2) {
-            menu.getItem(0).getActionView().setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Toast.makeText(MainActivity.this, message != null ? message : "Long click", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
-            });
-        }*/
-        /*MenuItem menuItem = menu.findItem(NOTICE_ID);
-        for(int j = 1; j < menu.size() - 2; j++){
-            View v = new View(this);
-            v.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Toast.makeText(MainActivity.this, message != null ? message : "Long click", Toast.LENGTH_SHORT).show();
-                    return false;
-                }
 
-            });
-            menu.getItem(j).setActionView(v);
-        }*/
     }
 
     @Override
@@ -460,27 +366,20 @@ public class MainActivity extends AppCompatActivity
             item.setChecked(true);
             TextView textViewUserName = (TextView) findViewById(R.id.user_name_title);
             textViewUserName.setText(user.toString());
-            adapterToDo = new VaccinationsBookletAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList);
+            adapterToDo = new VaccinationsBookletAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList, VaccinationsBookletAdapter.CHOICE_TO_DO);
             mRecyclerView.setAdapter(adapterToDo);
+            //mFab = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
+            mFab.setVisibility(View.VISIBLE);
+            View toDoChoice = findViewById(R.id.material_design_floating_action_menu_item1);
+            View doneChoice = findViewById(R.id.material_design_floating_action_menu_item2);
+            toDoChoice.setOnClickListener(new OnViewVacToDoClickListener(mRecyclerView, user, mFab));
+            doneChoice.setOnClickListener(new OnViewVacDoneClickListener(mRecyclerView, user, mFab));
         }
-
-       /* } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }*/
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
 
 }

@@ -69,4 +69,7 @@
 
     <string name="apply_vaccination">APPLICA</string>
     <string name="date_vaccination_question">Quando è stata fatta la vaccinazione?</string>
+    <string name="bookletToDo">Vaccinazioni da fare</string>
+    <string name="bookletDone">Vaccinazioni fatte</string>
+    <string name="remove_button">Rimuovi</string>
 </resources>
