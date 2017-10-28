@@ -65,7 +65,6 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
             this.cardView = (CardView) itemView.findViewById(R.id.card_view);
             this.imageInfo = (ImageView) itemView.findViewById(R.id.imageInfo);
             this.imageTime = (ImageView) itemView.findViewById(R.id.imageTemp);
-
         }
     }
 
@@ -116,7 +115,6 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         TextView textViewVacName = holder.textViewVaccinationName;
         TextView textViewDate = holder.textViewDate;
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
-        ImageView imageTime = holder.imageTime;
         Button applyButton = holder.button_apply;
         applyButton.setText(R.string.remove_button);
         final ImageView imageInfo = holder.imageInfo;
@@ -128,9 +126,8 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         Vaccinazione currentVac = vaccinations.get(i);
         textViewVacName.setText(currentVac.getName());
         textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(bookletDone.get(listPosition).getIdTipoVac() - 1).getNumRichiamo()));
-        String dateDone = translateDate(user.getbirthdayDate(), bookletDone.get(listPosition).getDone());
+        String dateDone = changeDateFormat(bookletDone.get(listPosition).getDate());
         textViewDate.setText(dateDone);
-        imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_action_time));
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
         imageID++;
@@ -178,17 +175,36 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
     private boolean isLateThan(String date) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date strDate = null;
+        Date today = new Date();
         try {
             strDate = sdf.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (new Date().after(strDate)) {
+        if (today.after(strDate)) {
             return true;
         }
         else{
             return false;
         }
+    }
+
+    public String changeDateFormat(String time) {
+        String inputPattern = "yyyy-MM-dd";
+        String outputPattern = "dd/MM/yyyy";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date = null;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(time);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 
     private String translateDate(String birthDate, int da) {

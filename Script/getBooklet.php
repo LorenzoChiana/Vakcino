@@ -26,8 +26,8 @@
 	while (mysqli_stmt_fetch($result)) {
 	    $b["ID"] = $id_user;
 		$b["ID_VAC"] = $id_vac;
-		$b["Fatto"] = $id_vac;
-		$b["InData"] = $id_vac;
+		$b["Fatto"] = $done;
+		$b["InData"] = $date;
 		$b["Status"] = $status;
 		array_push($a,$b);
 	}

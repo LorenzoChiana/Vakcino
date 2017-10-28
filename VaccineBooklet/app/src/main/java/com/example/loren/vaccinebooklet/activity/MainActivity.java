@@ -364,16 +364,16 @@ public class MainActivity extends AppCompatActivity
             VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
             Utente user = users.get(id-USER_ID);
             item.setChecked(true);
-            TextView textViewUserName = (TextView) findViewById(R.id.user_name_title);
-            textViewUserName.setText(user.toString());
             adapterToDo = new VaccinationsBookletAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList, VaccinationsBookletAdapter.CHOICE_TO_DO);
             mRecyclerView.setAdapter(adapterToDo);
             //mFab = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
             mFab.setVisibility(View.VISIBLE);
             View toDoChoice = findViewById(R.id.material_design_floating_action_menu_item1);
             View doneChoice = findViewById(R.id.material_design_floating_action_menu_item2);
-            toDoChoice.setOnClickListener(new OnViewVacToDoClickListener(mRecyclerView, user, mFab));
-            doneChoice.setOnClickListener(new OnViewVacDoneClickListener(mRecyclerView, user, mFab));
+            TextView appBarTitle = (TextView) findViewById(R.id.appbar_title);
+            appBarTitle.setText(R.string.bookletToDo);
+            toDoChoice.setOnClickListener(new OnViewVacToDoClickListener(mRecyclerView, user, mFab, appBarTitle));
+            doneChoice.setOnClickListener(new OnViewVacDoneClickListener(mRecyclerView, user, mFab, appBarTitle));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
