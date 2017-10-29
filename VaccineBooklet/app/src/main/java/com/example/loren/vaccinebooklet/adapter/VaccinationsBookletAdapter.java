@@ -1,5 +1,8 @@
 package com.example.loren.vaccinebooklet.adapter;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -7,18 +10,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.loren.vaccinebooklet.R;
-import com.example.loren.vaccinebooklet.activity.MainActivity;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
-import com.example.loren.vaccinebooklet.listeners.OnApplyVacButtonClickListener;
 import com.example.loren.vaccinebooklet.listeners.OnInfoClickListener;
 import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
+import com.example.loren.vaccinebooklet.tasks.SyncDBLocalToRemote;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,8 +38,8 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
     public static final int CHOICE_DONE = 1;
     private final List<Vaccinazione> vaccinations;
     private final Utente user;
-    private final List<Libretto> bookletToDo;
-    private final List<Libretto> bookletDone;
+    private List<Libretto> bookletToDo;
+    private List<Libretto> bookletDone;
     private final List<TipoVaccinazione> vacTypeList;
     private int imageID = 0;
     private int choice;
@@ -111,7 +115,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
 
     }
 
-    private void initializeUIDoneBooklet(MyViewHolder holder, int listPosition) {
+    private void initializeUIDoneBooklet(MyViewHolder holder, final int listPosition) {
         TextView textViewVacName = holder.textViewVaccinationName;
         TextView textViewDate = holder.textViewDate;
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
@@ -126,10 +130,26 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         Vaccinazione currentVac = vaccinations.get(i);
         textViewVacName.setText(currentVac.getName());
         textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(bookletDone.get(listPosition).getIdTipoVac() - 1).getNumRichiamo()));
-        String dateDone = changeDateFormat(bookletDone.get(listPosition).getDate());
+        String dateDone = changeDateFormat(bookletDone.get(listPosition).getDate(), "yyyy-MM-dd", "dd/MM/yyyy");
         textViewDate.setText(dateDone);
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
+        applyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Libretto page = bookletToDo.get(listPosition);
+                page.setDate("");
+                page.setDone(VakcinoDbManager.NOT_DONE);
+                page.setStatus(VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
+                VakcinoDbManager dbManager = new VakcinoDbManager(v.getContext());
+                dbManager.updateBooklet(page);
+                new SyncDBLocalToRemote().execute(v.getContext());
+                bookletDone.remove(listPosition);
+                notifyItemRemoved(imageID);
+                notifyItemRangeChanged(imageID, imageID);
+                notifyDataSetChanged();
+            }
+        });
         imageID++;
     }
 
@@ -157,11 +177,46 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
             textViewDate.setText(dateDa + " - " + dateA);
         if (isLateThan(dateA)) {
             cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), R.color.fab_material_red_500));
+        } else {
+            cardView.setCardBackgroundColor(Color.WHITE);
         }
         imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_action_time));
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
-        applyButton.setOnClickListener(new OnApplyVacButtonClickListener(bookletToDo.get(listPosition), this, imageID));
+        applyButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Calendar c = Calendar.getInstance();
+                        int year = c.get(Calendar.YEAR);
+                        int month = c.get(Calendar.MONTH);
+                        int day = c.get(Calendar.DAY_OF_MONTH);
+
+
+                        DatePickerDialog datePickerDialog = new DatePickerDialog(v.getContext(), AlertDialog.THEME_HOLO_LIGHT,
+                                new DatePickerDialog.OnDateSetListener() {
+
+                                    @Override
+                                    public void onDateSet(DatePicker view, int year,
+                                                          int monthOfYear, int dayOfMonth) {
+                                        Libretto page = bookletToDo.get(listPosition);
+                                        page.setDate(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                                        page.setDone(VakcinoDbManager.DONE);
+                                        page.setStatus(VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
+                                        VakcinoDbManager dbManager = new VakcinoDbManager(view.getContext());
+                                        dbManager.updateBooklet(page);
+                                        new SyncDBLocalToRemote().execute(view.getContext());
+                                        bookletToDo.remove(listPosition);
+
+                                        notifyItemRemoved(imageID);
+                                        notifyItemRangeChanged(imageID, imageID);
+                                        notifyDataSetChanged();
+
+                                    }
+                                }, year, month, day);
+                        datePickerDialog.setTitle(R.string.date_vaccination_question);
+                        datePickerDialog.show();
+                    }
+                });
         imageID++;
     }
     @Override
@@ -176,22 +231,20 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date strDate = null;
         Date today = new Date();
+        String currentDateString = sdf.format(today);
         try {
             strDate = sdf.parse(date);
+            today = sdf.parse(currentDateString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (today.after(strDate)) {
-            return true;
-        }
-        else{
-            return false;
-        }
+        return today.after(strDate);
+
     }
 
-    public String changeDateFormat(String time) {
-        String inputPattern = "yyyy-MM-dd";
-        String outputPattern = "dd/MM/yyyy";
+    private String changeDateFormat(String dateIn, String inputPattern, String outputPattern) {
+        /*String inputPattern = "yyyy-MM-dd";
+        String outputPattern = "dd/MM/yyyy";*/
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
 
@@ -199,7 +252,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         String str = null;
 
         try {
-            date = inputFormat.parse(time);
+            date = inputFormat.parse(dateIn);
             str = outputFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
