@@ -30,8 +30,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static com.example.loren.vaccinebooklet.R.drawable.ic_menu;
-
 public class VaccinationsBookletAdapter extends RecyclerView.Adapter<VaccinationsBookletAdapter.MyViewHolder> {
 
     public static final int CHOICE_TO_DO = 0;
@@ -119,6 +117,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         TextView textViewVacName = holder.textViewVaccinationName;
         TextView textViewDate = holder.textViewDate;
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
+        ImageView imageTime = holder.imageTime;
         Button applyButton = holder.button_apply;
         applyButton.setText(R.string.remove_button);
         final ImageView imageInfo = holder.imageInfo;
@@ -132,6 +131,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(bookletDone.get(listPosition).getIdTipoVac() - 1).getNumRichiamo()));
         String dateDone = changeDateFormat(bookletDone.get(listPosition).getDate(), "yyyy-MM-dd", "dd/MM/yyyy");
         textViewDate.setText(dateDone);
+        imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_calendar_done));
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
         applyButton.setOnClickListener(new View.OnClickListener() {
@@ -176,11 +176,14 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         else
             textViewDate.setText(dateDa + " - " + dateA);
         if (isLateThan(dateA)) {
-            cardView.setCardBackgroundColor(ContextCompat.getColor(cardView.getContext(), R.color.fab_material_red_500));
+            imageTime.setColorFilter(Color.RED);
+            imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_calendar_late));
+            textViewDate.setTextColor(Color.RED);
         } else {
-            cardView.setCardBackgroundColor(Color.WHITE);
+            imageTime.clearColorFilter();
+            imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_action_date));
+            textViewDate.setTextColor(Color.DKGRAY);
         }
-        imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_action_time));
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
         applyButton.setOnClickListener(new View.OnClickListener() {

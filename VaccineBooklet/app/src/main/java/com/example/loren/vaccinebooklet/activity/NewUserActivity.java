@@ -41,13 +41,14 @@ public class NewUserActivity extends AppCompatActivity implements
 
     @Bind(R.id.input_name) EditText etName;
     @Bind(R.id.input_surname) EditText etSurname;
-    @Bind(R.id.new_user_button) Button createButton;
+    @Bind(R.id.back_button) ImageButton backButton;
+    @Bind(R.id.tick_button) ImageButton createButton;
     @Bind(R.id.input_birth_date) EditText etBirthDate;
-    @Bind(R.id.link_cancel) TextView cancelButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         ImageButton backButton;
+        ImageButton tickButton;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
@@ -60,11 +61,9 @@ public class NewUserActivity extends AppCompatActivity implements
         etBirthDate.setClickable(true);
         etBirthDate.setOnClickListener(this);
         backButton = (ImageButton) findViewById(R.id.back_button);
-        backButton.setOnClickListener(cancelClickListener);
-        cancelButton = (TextView) findViewById(R.id.link_cancel);
-        cancelButton.setOnClickListener(cancelClickListener);
-        createButton = (Button) findViewById(R.id.new_user_button);
-        createButton.setOnClickListener(new View.OnClickListener() {
+        backButton.setOnClickListener(new cancelClickListener());
+        tickButton = (ImageButton) findViewById(R.id.tick_button);
+        tickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (validate()) {
@@ -105,7 +104,7 @@ public class NewUserActivity extends AppCompatActivity implements
         return returnDate;
     }
 
-    private View.OnClickListener cancelClickListener = new View.OnClickListener() {
+    private class cancelClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             setResult(RESULT_CANCELED);

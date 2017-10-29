@@ -20,13 +20,17 @@
         fab:menu_colorPressed="@color/colorPrimaryOpacity"
         fab:menu_colorRipple="#99d4d4d4"
         fab:menu_labels_ellipsize="end"
-        fab:menu_labels_singleLine="true">
+        fab:menu_labels_singleLine="true"
+        fab:menu_labels_textColor="@color/fab_material_white"
+        fab:menu_labels_colorNormal="@color/colorPrimary"
+        fab:menu_labels_colorPressed="@color/colorPrimaryOpacity"
+        fab:menu_labels_colorRipple="#99d4d4d4">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/material_design_floating_action_menu_item1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_time"
+            android:src="@drawable/ic_calendar_todo_white"
             fab:fab_colorNormal="@color/colorPrimary"
             fab:fab_colorPressed="@color/colorPrimaryOpacity"
             fab:fab_colorRipple="#99d4d4d4"
@@ -37,7 +41,7 @@
             android:id="@+id/material_design_floating_action_menu_item2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_date"
+            android:src="@drawable/ic_calendar_done_white"
             fab:fab_colorNormal="@color/colorPrimary"
             fab:fab_colorPressed="@color/colorPrimaryOpacity"
             fab:fab_colorRipple="#99d4d4d4"
