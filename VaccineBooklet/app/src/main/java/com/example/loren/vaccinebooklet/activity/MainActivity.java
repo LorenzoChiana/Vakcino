@@ -1,54 +1,31 @@
 package com.example.loren.vaccinebooklet.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.ColorStateList;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.loren.vaccinebooklet.R;
 import com.example.loren.vaccinebooklet.adapter.VaccinationsBookletAdapter;
 
@@ -64,7 +41,6 @@ import com.example.loren.vaccinebooklet.model.Vaccinazione;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
 import com.example.loren.vaccinebooklet.utils.NetworkStateReceiver;
 import com.example.loren.vaccinebooklet.utils.Utils;
-import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 
@@ -131,18 +107,6 @@ public class MainActivity extends AppCompatActivity
 
         View headerView = navigationView.getHeaderView(0);
         twEmailUser = (TextView) headerView.findViewById(R.id.tw_email);
-        /*final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage(getString(R.string.waiting));
-        progressDialog.show();*/
-        /*
-            Se ho appena fatto il login/sign up
-            allora setto la sharedpreference con l'email dell'account
-            altrimenti prendo l'email direttamente dal sharedpreference
-         */
-        /*setAfterOpenApp(true);
-        setAfterLogin(false);*/
 
         final String extraEmail;
         try {
@@ -265,9 +229,9 @@ public class MainActivity extends AppCompatActivity
                     updateNavigationUI(navigationView.getMenu(), getApplicationContext());
                 }
             };
-
         }
     }
+
 
     @Override
     protected void onResume() {
@@ -287,17 +251,9 @@ public class MainActivity extends AppCompatActivity
     public void updateNavigationUI(Menu menu, Context context) {
         int i = USER_ID;
         for (Utente u: users) {
-            try {
-                menu.removeItem(i);
-                menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person)).setCheckable(true);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person)).setCheckable(true);
-            }
-
+            menu.removeItem(i);
+            menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person)).setCheckable(true);
             i++;
-
         }
     }
 
@@ -371,7 +327,7 @@ public class MainActivity extends AppCompatActivity
             item.setChecked(true);
             adapterToDo = new VaccinationsBookletAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList, VaccinationsBookletAdapter.CHOICE_TO_DO);
             mRecyclerView.setAdapter(adapterToDo);
-            //mFab = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
+            mFab.getMenuIconView().setImageResource(R.drawable.ic_visibility);
             mFab.setVisibility(View.VISIBLE);
             View toDoChoice = findViewById(R.id.material_design_floating_action_menu_item1);
             View doneChoice = findViewById(R.id.material_design_floating_action_menu_item2);

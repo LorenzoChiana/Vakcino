@@ -118,8 +118,8 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         TextView textViewDate = holder.textViewDate;
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
         ImageView imageTime = holder.imageTime;
-        Button applyButton = holder.button_apply;
-        applyButton.setText(R.string.remove_button);
+        Button removeButton = holder.button_apply;
+        removeButton.setText(R.string.remove_button);
         final ImageView imageInfo = holder.imageInfo;
         int i = 0;
         while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(bookletDone.get(listPosition).getIdTipoVac() - 1).getAntigen())) {
@@ -134,10 +134,10 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_calendar_done));
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
-        applyButton.setOnClickListener(new View.OnClickListener() {
+        removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Libretto page = bookletToDo.get(listPosition);
+                Libretto page = bookletDone.get(listPosition);
                 page.setDate("");
                 page.setDone(VakcinoDbManager.NOT_DONE);
                 page.setStatus(VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
