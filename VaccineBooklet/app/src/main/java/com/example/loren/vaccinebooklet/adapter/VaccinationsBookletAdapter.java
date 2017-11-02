@@ -21,6 +21,7 @@ import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
 import com.example.loren.vaccinebooklet.tasks.SyncDBLocalToRemote;
+import com.example.loren.vaccinebooklet.utils.DateInteractions;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -129,7 +130,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         Vaccinazione currentVac = vaccinations.get(i);
         textViewVacName.setText(currentVac.getName());
         textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(bookletDone.get(listPosition).getIdTipoVac() - 1).getNumRichiamo()));
-        String dateDone = changeDateFormat(bookletDone.get(listPosition).getDate(), "yyyy-MM-dd", "dd/MM/yyyy");
+        String dateDone = DateInteractions.changeDateFormat(bookletDone.get(listPosition).getDate(), "yyyy-MM-dd", "dd/MM/yyyy");
         textViewDate.setText(dateDone);
         imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_calendar_done));
         imageInfo.setId(imageID);
@@ -169,13 +170,13 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         Vaccinazione currentVac = vaccinations.get(i);
         textViewVacName.setText(currentVac.getName());
         textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1).getNumRichiamo()));
-        String dateDa = translateDate(user.getbirthdayDate(), vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1).getDa());
-        String dateA = translateDate(user.getbirthdayDate(), vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1).getA());
+        String dateDa = DateInteractions.translateDate(user.getbirthdayDate(), vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1).getDa());
+        String dateA = DateInteractions.translateDate(user.getbirthdayDate(), vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1).getA());
         if (dateA.equals(dateDa))
             textViewDate.setText(dateA);
         else
             textViewDate.setText(dateDa + " - " + dateA);
-        if (isLateThan(dateA)) {
+        if (DateInteractions.isLateThan(dateA)) {
             imageTime.setColorFilter(Color.RED);
             imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_calendar_late));
             textViewDate.setTextColor(Color.RED);
@@ -230,50 +231,4 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
             return bookletToDo.size();
     }
 
-    private boolean isLateThan(String date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date strDate = null;
-        Date today = new Date();
-        String currentDateString = sdf.format(today);
-        try {
-            strDate = sdf.parse(date);
-            today = sdf.parse(currentDateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return today.after(strDate);
-
-    }
-
-    private String changeDateFormat(String dateIn, String inputPattern, String outputPattern) {
-        /*String inputPattern = "yyyy-MM-dd";
-        String outputPattern = "dd/MM/yyyy";*/
-        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
-        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
-
-        Date date = null;
-        String str = null;
-
-        try {
-            date = inputFormat.parse(dateIn);
-            str = outputFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return str;
-    }
-
-    private String translateDate(String birthDate, int da) {
-        //String dt = "2012-01-04";  // Start date
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar c = Calendar.getInstance();
-        try {
-            c.setTime(sdf.parse(birthDate));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        c.add(Calendar.MONTH, da);
-        SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
-        return sdf1.format(c.getTime());
-    }
 }
