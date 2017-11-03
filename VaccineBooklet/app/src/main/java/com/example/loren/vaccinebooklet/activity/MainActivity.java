@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -280,7 +281,7 @@ public class MainActivity extends AppCompatActivity
         //menu.add(R.id.nav_users, 0, Menu.FIRST, "aggiungi").setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_input_add));
         menu.getItem(0).setCheckable(false);
 
-        menu.add(R.id.drawer_options, CALENDAR_ID, Menu.CATEGORY_SECONDARY, getString(R.string.notice_settings)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_idle_alarm));
+        menu.add(R.id.drawer_options, CALENDAR_ID, Menu.CATEGORY_SECONDARY, getString(R.string.export)).setIcon(R.drawable.ic_export);
         menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_power_off));
 
     }
@@ -337,7 +338,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == CALENDAR_ID) {
             final List<Utente> selectedUsers = new ArrayList<>();
             new MaterialDialog.Builder(this)
-                    .title("Titolo")
+                    .title(R.string.export_calendar_question)
                     .items(users)
                     .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
                         @Override
@@ -345,9 +346,19 @@ public class MainActivity extends AppCompatActivity
                             for (Integer i: which) {
                                 selectedUsers.add(users.get(i));
                             }
-                            /*AsyncTask<Void, Void, Boolean> po = new AsyncTask<Void, Void, Boolean>(){
+
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    exportVacIntoCalendar(selectedUsers);
+                                }
+                            });
+
+
+                            /*new AsyncTask<Void, Void, Boolean>(){
                                 ProgressDialog progressDialog = null;
-                                Context context = getApplication();
+                                Context context = MainActivity;
                                 @Override
                                 protected void onPreExecute() {
                                     super.onPreExecute();
@@ -365,44 +376,14 @@ public class MainActivity extends AppCompatActivity
 
                                 @Override
                                 protected Boolean doInBackground(Void... params) {
-                                    VakcinoDbManager dbManager = new VakcinoDbManager(context);
-                                    List<TipoVaccinazione> listVacType = dbManager.getVaccinationType();
-                                    List<Vaccinazione> listVac = dbManager.getVaccinations();
-                                    int cont = 0;
-                                    for (Utente user : selectedUsers) {
-                                        List<Libretto> toDoList = dbManager.getToDoList(user);
-                                        for (Libretto page : toDoList) {
-                                            TipoVaccinazione vacType = listVacType.get(page.getIdTipoVac());
-                                            int i = 0;
-                                            while (listVac.iterator().hasNext() && !listVac.get(i).getAntigen().equals(listVacType.get(toDoList.get(cont).getIdTipoVac() - 1).getAntigen())) {
-                                                listVac.iterator().next();
-                                                i++;
-                                            }
-                                            Vaccinazione vac = listVac.get(i);
-                                            Calendar beginTime = Calendar.getInstance();
-                                            String dateDa = DateInteractions.translateDate(user.getbirthdayDate(), vacType.getDa());
-                                            beginTime.set(DateInteractions.getYear(dateDa),
-                                                    DateInteractions.getMonth(dateDa),
-                                                    DateInteractions.getDay(dateDa),
-                                                    0, 0);
-                                            Calendar endTime = Calendar.getInstance();
-                                            String dateA = DateInteractions.translateDate(user.getbirthdayDate(), vacType.getA());
-                                            endTime.set(DateInteractions.getYear(dateA),
-                                                    DateInteractions.getMonth(dateA),
-                                                    DateInteractions.getDay(dateA),
-                                                    0, 0);
-                                            addCalendarEvent(beginTime, endTime, vac.getName(), vac.getDescription());
-                                            cont++;
-                                        }
-                                    }
+                                    exportVacIntoCalendar(selectedUsers);
                                     return null;
                                 }
                             };*/
-                            exportVacIntoCalendar(selectedUsers);
                             return true;
                         }
                     })
-                    .positiveText("scegli")
+                    .positiveText(R.string.choose)
                     .show();
         } else {
             VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
@@ -429,8 +410,9 @@ public class MainActivity extends AppCompatActivity
         VakcinoDbManager dbManager = new VakcinoDbManager(this);
         List<TipoVaccinazione> listVacType = dbManager.getVaccinationType();
         List<Vaccinazione> listVac = dbManager.getVaccinations();
-        int cont = 0;
+
         for (Utente user : selectedUsers) {
+            int cont = 0;
             List<Libretto> toDoList = dbManager.getToDoList(user);
             for (Libretto page : toDoList) {
                 int i = 0;
@@ -453,7 +435,7 @@ public class MainActivity extends AppCompatActivity
                         DateInteractions.getMonth(dateA) - 1,
                         DateInteractions.getDay(dateA),
                         0, 0);
-                addCalendarEvent(beginTime, endTime, vac.getName(), vac.getDescription());
+                addCalendarEvent(beginTime, endTime, user.toString() + " - " + vac.getName(), vac.getDescription());
                 cont++;
             }
         }
@@ -477,6 +459,7 @@ public class MainActivity extends AppCompatActivity
         values.put(CalendarContract.Events.TITLE, title);
         values.put(CalendarContract.Events.DESCRIPTION, description);
         values.put(CalendarContract.Events.CALENDAR_ID, calID);
+        values.put(CalendarContract.Events.HAS_ALARM, 0);
         values.put(CalendarContract.Events.EVENT_TIMEZONE, "America/New_York");
 
         if (ContextCompat.checkSelfPermission(this,
