@@ -2,7 +2,6 @@ package com.example.loren.vaccinebooklet.activity;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -21,7 +20,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,7 +29,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.ProgressBar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +41,8 @@ import com.example.loren.vaccinebooklet.adapter.VaccinationsBookletAdapter;
 
 import com.example.loren.vaccinebooklet.database.VakcinoDbHelper;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
+import com.example.loren.vaccinebooklet.fragment.HomePageFragment;
+import com.example.loren.vaccinebooklet.fragment.VaccinesListFragment;
 import com.example.loren.vaccinebooklet.listeners.MyOnScrollListener;
 import com.example.loren.vaccinebooklet.listeners.OnViewVacDoneClickListener;
 import com.example.loren.vaccinebooklet.listeners.OnViewVacToDoClickListener;
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity
     private String email;
 
     //private ViewPager mViewPager;
-    public RecyclerView mRecyclerView;
+    //public RecyclerView mRecyclerView;
     private TextView twEmailUser;
     private NavigationView navigationView;
     private NetworkStateReceiver receiverConnectivity;
@@ -92,7 +94,7 @@ public class MainActivity extends AppCompatActivity
     private List<TipoVaccinazione> vacTypeList;
     public static MaterialStyledDialog.Builder dialogInfoVac;
 
-    private FloatingActionMenu mFab;
+    //private FloatingActionMenu mFab;
 
     private boolean afterLogin = false;
 
@@ -139,12 +141,12 @@ public class MainActivity extends AppCompatActivity
         email = Utils.getAccount(MainActivity.this);
         twEmailUser.setText(email);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
+       // mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+/*        mRecyclerView.setHasFixedSize(true);
 
         layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());*/
 
         receiverConnectivity = new NetworkStateReceiver();
         receiverConnectivity.setAfterLogin(afterLogin);
@@ -155,7 +157,7 @@ public class MainActivity extends AppCompatActivity
         intentFilter.addAction(INTENT_ACTION_INT);
         initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
 
-        mFab = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
+        /*mFab = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
         mFab.setVisibility(View.INVISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -164,9 +166,15 @@ public class MainActivity extends AppCompatActivity
                 mFab.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.md_styled_slide_down_normal));
 
             }
-        }, 300);
+        }, 300);*/
 
-        mRecyclerView.addOnScrollListener(new MyOnScrollListener(mFab));
+//        mRecyclerView.addOnScrollListener(new MyOnScrollListener(mFab));
+
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        HomePageFragment fragment = HomePageFragment.newInstance();
+        transaction.add(R.id.activity_main, fragment);
+        transaction.commit();
     }
 
 
@@ -389,16 +397,24 @@ public class MainActivity extends AppCompatActivity
             VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
             Utente user = users.get(id - USER_ID);
             item.setChecked(true);
-            adapterToDo = new VaccinationsBookletAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList, VaccinationsBookletAdapter.CHOICE_TO_DO);
-            mRecyclerView.setAdapter(adapterToDo);
-            mFab.getMenuIconView().setImageResource(R.drawable.ic_visibility);
-            mFab.setVisibility(View.VISIBLE);
-            View toDoChoice = findViewById(R.id.material_design_floating_action_menu_item1);
-            View doneChoice = findViewById(R.id.material_design_floating_action_menu_item2);
-            TextView appBarTitle = (TextView) findViewById(R.id.appbar_title);
-            appBarTitle.setText(R.string.bookletToDo);
-            toDoChoice.setOnClickListener(new OnViewVacToDoClickListener(mRecyclerView, user, mFab, appBarTitle));
-            doneChoice.setOnClickListener(new OnViewVacDoneClickListener(mRecyclerView, user, mFab, appBarTitle));
+            //adapterToDo = new VaccinationsBookletAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList, VaccinationsBookletAdapter.CHOICE_TO_DO);
+            //mRecyclerView.setAdapter(adapterToDo);
+            //mFab.getMenuIconView().setImageResource(R.drawable.ic_visibility);
+            //mFab.setVisibility(View.VISIBLE);
+            //View toDoChoice = findViewById(R.id.material_design_floating_action_menu_item1);
+            //View doneChoice = findViewById(R.id.material_design_floating_action_menu_item2);
+            /*TextView appBarTitle = (TextView) findViewById(R.id.appbar_title);
+            appBarTitle.setText(R.string.bookletToDo);*/
+            /*toDoChoice.setOnClickListener(new OnViewVacToDoClickListener(mRecyclerView, user, mFab, appBarTitle));
+            doneChoice.setOnClickListener(new OnViewVacDoneClickListener(mRecyclerView, user, mFab, appBarTitle));*/
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+
+            //Viene istanziato un oggetto della classe ShowFragment, a cui vengono passati i valori richiesti dal metodo statico per crearlo
+            VaccinesListFragment fragment = VaccinesListFragment.newInstance(user);
+            transaction.replace(R.id.activity_main, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
