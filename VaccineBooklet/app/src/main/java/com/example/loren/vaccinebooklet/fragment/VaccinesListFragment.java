@@ -57,7 +57,7 @@ public class VaccinesListFragment extends Fragment {
         VakcinoDbManager dbManager = new VakcinoDbManager(view.getContext());
         List<Vaccinazione> vaccinations = dbManager.getVaccinations();
         List<TipoVaccinazione> vacTypeList = dbManager.getVaccinationType();
-        VaccinationsBookletAdapter adapterToDo = new VaccinationsBookletAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList, VaccinationsBookletAdapter.CHOICE_TO_DO);
+        VaccinationsBookletAdapter adapterToDo = new VaccinationsBookletAdapter(dbManager.getToDoList(user), dbManager.getDoneList(user), user, vaccinations, vacTypeList, VaccinationsBookletAdapter.CHOICE_TO_DO);
         mRecyclerView.setAdapter(adapterToDo);
         final FloatingActionMenu mFab = (FloatingActionMenu) view.findViewById(R.id.material_design_android_floating_action_menu);
         mFab.getMenuIconView().setImageResource(R.drawable.ic_visibility);

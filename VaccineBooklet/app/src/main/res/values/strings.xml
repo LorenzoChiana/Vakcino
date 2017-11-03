@@ -80,4 +80,6 @@
     <string name="choose">Choose</string>
     <string name="export_calendar_question">Which user you want to export the vaccines?</string>
     <string name="export">Export into calendar</string>
+    <string name="congrats">Congratulations!</string>
+    <string name="congrats_text">you\'ve finished all vaccinations</string>
 </resources>

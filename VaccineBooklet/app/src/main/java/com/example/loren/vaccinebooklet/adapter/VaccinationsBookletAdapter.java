@@ -3,7 +3,10 @@ package com.example.loren.vaccinebooklet.adapter;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.graphics.Color;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,13 +25,8 @@ import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
 import com.example.loren.vaccinebooklet.tasks.SyncDBLocalToRemote;
 import com.example.loren.vaccinebooklet.utils.DateInteractions;
-
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class VaccinationsBookletAdapter extends RecyclerView.Adapter<VaccinationsBookletAdapter.MyViewHolder> {
@@ -57,6 +55,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         ImageView imageInfo;
         ImageView imageTime;
         CardView cardView;
+        TextView yearMonth;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -66,22 +65,16 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
             this.textViewDate = (TextView) itemView.findViewById(R.id.textViewDate);
             this.button_apply = (Button) itemView.findViewById(R.id.button_apply);
             this.cardView = (CardView) itemView.findViewById(R.id.card_view);
+            this.yearMonth = (TextView) itemView.findViewById(R.id.month_year);
             this.imageInfo = (ImageView) itemView.findViewById(R.id.imageInfo);
             this.imageTime = (ImageView) itemView.findViewById(R.id.imageTemp);
         }
     }
 
-    public VaccinationsBookletAdapter(List<Libretto> booklet, Utente user, List<Vaccinazione> vaccinations, List<TipoVaccinazione> vacTypeList, int choice) {
+    public VaccinationsBookletAdapter(List<Libretto> bookletToDo, List<Libretto> bookletDone, Utente user, List<Vaccinazione> vaccinations, List<TipoVaccinazione> vacTypeList, int choice) {
         this.choice = choice;
-        this.bookletToDo = new ArrayList<>();
-        this.bookletDone = new ArrayList<>();
-        for (Libretto l: booklet) {
-            if(l.getDone() == VakcinoDbManager.DONE) {
-                this.bookletDone.add(l);
-            } else {
-                this.bookletToDo.add(l);
-            }
-        }
+        this.bookletToDo = bookletToDo;
+        this.bookletDone = bookletDone;
         this.user = user;
         this.vaccinations = vaccinations;
         this.vacTypeList = vacTypeList;
@@ -149,6 +142,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
                 notifyItemRemoved(imageID);
                 notifyItemRangeChanged(imageID, imageID);
                 notifyDataSetChanged();
+
             }
         });
         imageID++;
@@ -160,7 +154,6 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
         ImageView imageTime = holder.imageTime;
         Button applyButton = holder.button_apply;
-        final CardView cardView = holder.cardView;
         final ImageView imageInfo = holder.imageInfo;
         int i = 0;
         while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1).getAntigen())) {

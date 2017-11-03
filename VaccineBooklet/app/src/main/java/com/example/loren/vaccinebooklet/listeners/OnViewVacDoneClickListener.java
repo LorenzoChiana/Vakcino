@@ -33,7 +33,7 @@ public class OnViewVacDoneClickListener implements View.OnClickListener {
         VakcinoDbManager dbManager = new VakcinoDbManager(v.getContext());
         List<Vaccinazione> vaccinations = dbManager.getVaccinations();
         List<TipoVaccinazione> vacTypeList = dbManager.getVaccinationType();
-        mRecyclerView.setAdapter(new VaccinationsBookletAdapter(dbManager.getAllBooklet(currentUser), currentUser, vaccinations, vacTypeList, VaccinationsBookletAdapter.CHOICE_DONE));
+        mRecyclerView.setAdapter(new VaccinationsBookletAdapter(dbManager.getToDoList(currentUser), dbManager.getDoneList(currentUser), currentUser, vaccinations, vacTypeList, VaccinationsBookletAdapter.CHOICE_DONE));
         //appBarTitle.setText(R.string.bookletDone);
     }
 }
