@@ -82,4 +82,6 @@
     <string name="export">Export into calendar</string>
     <string name="congrats">Congratulations!</string>
     <string name="congrats_text">you\'ve finished all vaccinations</string>
+    <string name="drawer_open">Menu open</string>
+    <string name="drawer_close">Menu close</string>
 </resources>

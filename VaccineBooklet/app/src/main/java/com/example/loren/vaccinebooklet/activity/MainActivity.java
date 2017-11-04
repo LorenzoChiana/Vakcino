@@ -9,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -56,6 +58,10 @@ import com.example.loren.vaccinebooklet.utils.NetworkStateReceiver;
 import com.example.loren.vaccinebooklet.utils.Utils;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.heinrichreimersoftware.materialdrawer.DrawerView;
+import com.heinrichreimersoftware.materialdrawer.structure.DrawerHeaderItem;
+import com.heinrichreimersoftware.materialdrawer.structure.DrawerItem;
+import com.heinrichreimersoftware.materialdrawer.structure.DrawerProfile;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,11 +73,12 @@ import java.util.Locale;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        /*implements NavigationView.OnNavigationItemSelectedListener*/ {
 
-    private static final int LOGOUT_ID = 1;
-    private static final int CALENDAR_ID = 2;
-    private static final int USER_ID = 3;
+    private static final int LOGOUT_ID = 2;
+    private static final int CALENDAR_ID = 1;
+    private static final int ADD_USER = 0;
+    //private static final int USER_ID = 3;
 
     public static final String INTENT_EXTRA = "finish";
     public static final String INTENT_ACTION_INT = "com.example.loren.vaccinebooklet.intent.action.TEST.int";
@@ -94,7 +101,9 @@ public class MainActivity extends AppCompatActivity
     private List<TipoVaccinazione> vacTypeList;
     public static MaterialStyledDialog.Builder dialogInfoVac;
 
-    //private FloatingActionMenu mFab;
+    private DrawerView drawer;
+
+    private ActionBarDrawerToggle drawerToggle;
 
     private boolean afterLogin = false;
 
@@ -112,22 +121,22 @@ public class MainActivity extends AppCompatActivity
         this.message = null;
         this.doubleBackToExitPressedOnce = false;
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        toggle.syncState();*/
 
         dialogInfoVac = new MaterialStyledDialog.Builder(MainActivity.this);
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        /*navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);*/
 
-        View headerView = navigationView.getHeaderView(0);
-        twEmailUser = (TextView) headerView.findViewById(R.id.tw_email);
+        /*View headerView = navigationView.getHeaderView(0);
+        twEmailUser = (TextView) headerView.findViewById(R.id.tw_email);*/
 
         final String extraEmail;
         try {
@@ -139,14 +148,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         email = Utils.getAccount(MainActivity.this);
-        twEmailUser.setText(email);
-
-       // mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-/*        mRecyclerView.setHasFixedSize(true);
-
-        layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());*/
+        //twEmailUser.setText(email);
 
         receiverConnectivity = new NetworkStateReceiver();
         receiverConnectivity.setAfterLogin(afterLogin);
@@ -155,26 +157,155 @@ public class MainActivity extends AppCompatActivity
         registerReceiver(receiverConnectivity, filter);
         intentFilter = new IntentFilter();
         intentFilter.addAction(INTENT_ACTION_INT);
-        initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
+        //initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
 
-        /*mFab = (FloatingActionMenu) findViewById(R.id.material_design_android_floating_action_menu);
-        mFab.setVisibility(View.INVISIBLE);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mFab.setMenuButtonShowAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.md_styled_slide_up_normal));
-                mFab.setMenuButtonHideAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.md_styled_slide_down_normal));
-
-            }
-        }, 300);*/
-
-//        mRecyclerView.addOnScrollListener(new MyOnScrollListener(mFab));
 
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         HomePageFragment fragment = HomePageFragment.newInstance();
         transaction.add(R.id.activity_main, fragment);
         transaction.commit();
+
+        drawerInitialize();
+    }
+
+    private void drawerInitialize() {
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerView) findViewById(R.id.drawer);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+
+
+        drawerToggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                toolbar,
+                R.string.drawer_open,
+                R.string.drawer_close
+        ) {
+
+            public void onDrawerClosed(View view) {
+                invalidateOptionsMenu();
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                invalidateOptionsMenu();
+            }
+        };
+
+        drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerLayout.closeDrawer(drawer);
+        drawer.addItem(new DrawerItem()
+                .setTextPrimary("Qualcosa primary 1")
+                .setTextSecondary("Qualcosa secondary 1")
+        );
+
+        drawer.addItem(new DrawerItem()
+                .setImage(ContextCompat.getDrawable(this, R.drawable.ic_edit))
+                .setTextPrimary("Modifica")
+        );
+        drawer.addItem(new DrawerItem()
+                .setImage(ContextCompat.getDrawable(this, R.drawable.ic_delete))
+                .setTextPrimary("Elimina")
+        );
+
+
+        drawer.selectItem(1);
+        drawer.setOnItemClickListener(new DrawerItem.OnItemClickListener() {
+            @Override
+            public void onClick(DrawerItem item, long id, int position) {
+                drawer.selectItem(position);
+                Toast.makeText(MainActivity.this, "Clicked item #" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        drawer.addFixedItem(new DrawerItem()
+                .setRoundedImage((BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ic_add_person), DrawerItem.SMALL_AVATAR)
+                .setTextPrimary(getString(R.string.add_user))
+        );
+
+        drawer.addFixedItem(new DrawerItem()
+                .setImage(ContextCompat.getDrawable(this, R.drawable.ic_export))
+                .setTextPrimary(getString(R.string.export))
+        );
+
+        drawer.addFixedItem(new DrawerItem()
+                .setImage(ContextCompat.getDrawable(this, R.drawable.ic_log_out))
+                .setTextPrimary(getString(R.string.log_out))
+        );
+
+        drawer.setOnFixedItemClickListener(new DrawerItem.OnItemClickListener() {
+            @Override
+            public void onClick(DrawerItem item, long id, int position) {
+                drawer.selectFixedItem(position);
+                switch (position) {
+                    case ADD_USER:
+                        Intent intent = new Intent(MainActivity.this, NewUserActivity.class);
+                        startActivity(intent);
+                        break;
+                    case LOGOUT_ID:
+                        logOut();
+                        break;
+                    case CALENDAR_ID:
+                        break;
+                }
+                Toast.makeText(MainActivity.this, "Clicked fixed item #" + position, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        int i = 0;
+        for (Utente u : users) {
+            addUserToDrawerView(drawer, i, u.toString(), "Description person " + i);
+            i++;
+        }
+        drawer.setOnProfileClickListener(new DrawerProfile.OnProfileClickListener() {
+            @Override
+            public void onClick(DrawerProfile profile, long id) {
+                Toast.makeText(MainActivity.this, "Clicked profile *" + id, Toast.LENGTH_SHORT).show();
+            }
+        });
+        drawer.setOnProfileSwitchListener(new DrawerProfile.OnProfileSwitchListener() {
+            @Override
+            public void onSwitch(DrawerProfile oldProfile, long oldId, DrawerProfile newProfile, long newId) {
+                Toast.makeText(MainActivity.this, "Switched from profile *" + oldId + " to profile *" + newId, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void addUserToDrawerView(DrawerView drawer, int idUser, String name, String description) {
+        drawer.addProfile(new DrawerProfile()
+                .setId(idUser)
+                .setRoundedAvatar((BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ic_person))
+                .setBackground(ContextCompat.getDrawable(this, R.drawable.header_1))
+                .setName(name)
+                .setDescription(description)
+        );
+    }
+
+    private void logOut() {
+        Utils.setLogged(MainActivity.this, false);
+        Utils.setAccount(MainActivity.this, "");
+        VakcinoDbHelper dbHelper = new VakcinoDbHelper(getApplicationContext());
+        this.deleteDatabase(dbHelper.getDatabaseName());
+        Intent returnToLogin = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(returnToLogin);
+        Toast.makeText(MainActivity.this, message != null ? message : getString(R.string.logout_successfully), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        /*switch (item.getItemId()) {
+
+        }*/
+
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -197,9 +328,13 @@ public class MainActivity extends AppCompatActivity
                 updateUsersList();
                 updateVacList();
                 updateVacTypeList();
-                //if(sync > 0)
-                updateNavigationUI(navigationView.getMenu(), context);
-                //else
+
+                drawer.clearProfiles();
+                int i = 0;
+                for (Utente u : users) {
+                    addUserToDrawerView(drawer, i, u.toString(), "Description person " + i);
+                    i++;
+                }
 
                 VakcinoDbManager dbManager = new VakcinoDbManager(context);
                 users = dbManager.getUsers(Utils.getAccount(context));
@@ -209,6 +344,19 @@ public class MainActivity extends AppCompatActivity
             }
         }
     };
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
 
     private void updateUsersList() {
         VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
@@ -252,7 +400,7 @@ public class MainActivity extends AppCompatActivity
 
                 @Override
                 protected void onPostExecute(Boolean result) {
-                    updateNavigationUI(navigationView.getMenu(), getApplicationContext());
+                    //updateNavigationUI(navigationView.getMenu(), getApplicationContext());
                 }
             };
         }
@@ -274,25 +422,23 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
     }
 
-    public void updateNavigationUI(Menu menu, Context context) {
+   /* public void updateNavigationUI(Menu menu, Context context) {
         int i = USER_ID;
         for (Utente u : users) {
             menu.removeItem(i);
             menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person)).setCheckable(true);
             i++;
         }
-    }
+    }*/
 
-    private void initializeNavigationUI(Menu menu, Context context) {
-       /* VakcinoDbManager dbManager = new VakcinoDbManager(context);
-        List<Utente> users = dbManager.getUsers(email);*/
-        //menu.add(R.id.nav_users, 0, Menu.FIRST, "aggiungi").setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_input_add));
+    /*private void initializeNavigationUI(Menu menu, Context context) {
+
         menu.getItem(0).setCheckable(false);
 
         menu.add(R.id.drawer_options, CALENDAR_ID, Menu.CATEGORY_SECONDARY, getString(R.string.export)).setIcon(R.drawable.ic_export);
         menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_power_off));
 
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -324,7 +470,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
+    /*@Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -388,7 +534,7 @@ public class MainActivity extends AppCompatActivity
                                     return null;
                                 }
                             };*/
-                            return true;
+       /*                     return true;
                         }
                     })
                     .positiveText(R.string.choose)
@@ -407,7 +553,7 @@ public class MainActivity extends AppCompatActivity
             appBarTitle.setText(R.string.bookletToDo);*/
             /*toDoChoice.setOnClickListener(new OnViewVacToDoClickListener(mRecyclerView, user, mFab, appBarTitle));
             doneChoice.setOnClickListener(new OnViewVacDoneClickListener(mRecyclerView, user, mFab, appBarTitle));*/
-            FragmentManager manager = getSupportFragmentManager();
+         /*   FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
 
             //Viene istanziato un oggetto della classe ShowFragment, a cui vengono passati i valori richiesti dal metodo statico per crearlo
@@ -420,7 +566,7 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
+    }*/
 
     private void exportVacIntoCalendar(List<Utente> selectedUsers) {
         VakcinoDbManager dbManager = new VakcinoDbManager(this);
