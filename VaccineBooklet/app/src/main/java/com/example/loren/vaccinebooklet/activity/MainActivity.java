@@ -83,6 +83,9 @@ public class MainActivity extends AppCompatActivity
     public static final String INTENT_EXTRA = "finish";
     public static final String INTENT_ACTION_INT = "com.example.loren.vaccinebooklet.intent.action.TEST.int";
     private static final int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR = 123;
+    private static final int VIEW_VAC = 0;
+    private static final int EDIT_USER = 1;
+    private static final int DELETE_USER = 2;
     private boolean doubleBackToExitPressedOnce;
     private String message;
     private String email;
@@ -106,6 +109,7 @@ public class MainActivity extends AppCompatActivity
     private ActionBarDrawerToggle drawerToggle;
 
     private boolean afterLogin = false;
+    private int idSelectedUser = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +120,6 @@ public class MainActivity extends AppCompatActivity
         users = dbManager.getUsers(Utils.getAccount(getApplicationContext()));
         vaccinations = dbManager.getVaccinations();
         vacTypeList = dbManager.getVaccinationType();
-
 
         this.message = null;
         this.doubleBackToExitPressedOnce = false;
@@ -197,27 +200,38 @@ public class MainActivity extends AppCompatActivity
         drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         drawerLayout.addDrawerListener(drawerToggle);
         drawerLayout.closeDrawer(drawer);
-        drawer.addItem(new DrawerItem()
+        /*drawer.addItem(new DrawerItem()
                 .setTextPrimary("Qualcosa primary 1")
                 .setTextSecondary("Qualcosa secondary 1")
-        );
+        );*/
 
         drawer.addItem(new DrawerItem()
+                .setImage(ContextCompat.getDrawable(this, R.drawable.ic_vac))
+                .setTextPrimary(getString(R.string.menu_view_vac))
+        );
+        drawer.addItem(new DrawerItem()
                 .setImage(ContextCompat.getDrawable(this, R.drawable.ic_edit))
-                .setTextPrimary("Modifica")
+                .setTextPrimary(getString(R.string.menu_edit))
         );
         drawer.addItem(new DrawerItem()
                 .setImage(ContextCompat.getDrawable(this, R.drawable.ic_delete))
-                .setTextPrimary("Elimina")
+                .setTextPrimary(getString(R.string.menu_delete))
         );
 
 
-        drawer.selectItem(1);
+        //drawer.selectItem(1);
         drawer.setOnItemClickListener(new DrawerItem.OnItemClickListener() {
             @Override
             public void onClick(DrawerItem item, long id, int position) {
                 drawer.selectItem(position);
                 Toast.makeText(MainActivity.this, "Clicked item #" + position, Toast.LENGTH_SHORT).show();
+                switch (position) {
+                    case VIEW_VAC:
+                        viewVac(idSelectedUser);
+                        break;
+                    case EDIT_USER: break;
+                    case DELETE_USER: break;
+                }
             }
         });
 
@@ -271,11 +285,26 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onSwitch(DrawerProfile oldProfile, long oldId, DrawerProfile newProfile, long newId) {
                 Toast.makeText(MainActivity.this, "Switched from profile *" + oldId + " to profile *" + newId, Toast.LENGTH_SHORT).show();
+                idSelectedUser = (int) newId - 1;
+                viewVac(idSelectedUser);
             }
         });
     }
 
-    private void addUserToDrawerView(DrawerView drawer, int idUser, String name, String description) {
+    private void viewVac(int userId) {
+        Utente user = users.get(userId);
+
+        FragmentManager manager = getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+
+        VaccinesListFragment fragment = VaccinesListFragment.newInstance(user);
+        transaction.replace(R.id.activity_main, fragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    private void addUserToDrawerView(DrawerView drawer, long idUser, String name, String description) {
         drawer.addProfile(new DrawerProfile()
                 .setId(idUser)
                 .setRoundedAvatar((BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ic_person))
@@ -283,6 +312,9 @@ public class MainActivity extends AppCompatActivity
                 .setName(name)
                 .setDescription(description)
         );
+        //drawer.getItem(0).getId();
+        //Toast.makeText(MainActivity.this, "creato: " +
+               // drawer.getProfiles().get(0).getId(), Toast.LENGTH_SHORT).show();
     }
 
     private void logOut() {
@@ -330,7 +362,7 @@ public class MainActivity extends AppCompatActivity
                 updateVacTypeList();
 
                 drawer.clearProfiles();
-                int i = 0;
+                int i = 1;
                 for (Utente u : users) {
                     addUserToDrawerView(drawer, i, u.toString(), "Description person " + i);
                     i++;

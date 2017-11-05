@@ -4,9 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
-import com.example.loren.vaccinebooklet.model.DeveFare;
-import com.example.loren.vaccinebooklet.model.HaFatto;
 import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
