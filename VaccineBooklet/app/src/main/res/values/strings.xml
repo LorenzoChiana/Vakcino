@@ -82,7 +82,14 @@
     <string name="export">Export into calendar</string>
     <string name="congrats">Congratulations!</string>
     <string name="congrats_text">you\'ve finished all vaccinations</string>
+    <string name="noVac">:(</string>
+    <string name="noVac_text">No vaccinations yet!</string>
     <string name="drawer_open">Menu open</string>
     <string name="drawer_close">Menu close</string>
     <string name="menu_view_vac">View vaccinations</string>
+    <string name="warning">WARNING!</string>
+    <string name="delete_question">Are you sure to delete this user?</string>
+    <string name="label_positive">Yes</string>
+    <string name="undo_request">Are you sure to undo user creation?</string>
+    <string name="undo_description">If you continue to lose the data you just entered, do you still want to continue?</string>
 </resources>

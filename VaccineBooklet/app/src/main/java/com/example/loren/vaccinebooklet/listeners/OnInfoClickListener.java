@@ -18,13 +18,13 @@ public class OnInfoClickListener implements View.OnClickListener {
     public void onClick(View v) {
 
 
-        MainActivity.dialogInfoVac.setHeaderDrawable(R.drawable.header_2)
+        MainActivity.materialStyleDialog.setHeaderDrawable(R.drawable.header_2)
             .setTitle(vac.getName())
             .setDescription(vac.getDescription() +
             "\n\nAntigene: " + vac.getAntigen() +
             "\nGruppo: " + vac.getGroup())
             .setPositiveText("Ok");
 
-        MainActivity.dialogInfoVac.show();
+        MainActivity.materialStyleDialog.show();
     }
 }

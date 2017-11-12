@@ -55,7 +55,8 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         ImageView imageInfo;
         ImageView imageTime;
         CardView cardView;
-        TextView yearMonth;
+        TextView bigText;
+        TextView smallText;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -65,9 +66,10 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
             this.textViewDate = (TextView) itemView.findViewById(R.id.textViewDate);
             this.button_apply = (Button) itemView.findViewById(R.id.button_apply);
             this.cardView = (CardView) itemView.findViewById(R.id.card_view);
-            this.yearMonth = (TextView) itemView.findViewById(R.id.month_year);
             this.imageInfo = (ImageView) itemView.findViewById(R.id.imageInfo);
             this.imageTime = (ImageView) itemView.findViewById(R.id.imageTemp);
+            this.bigText = (TextView) itemView.findViewById(R.id.big_text);
+            this.smallText = (TextView) itemView.findViewById(R.id.small_text);
         }
     }
 
@@ -113,6 +115,8 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
         ImageView imageTime = holder.imageTime;
         Button removeButton = holder.button_apply;
+        TextView bigText = holder.bigText;
+        TextView smallText = holder.smallText;
         removeButton.setText(R.string.remove_button);
         final ImageView imageInfo = holder.imageInfo;
         int i = 0;
@@ -128,6 +132,11 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_calendar_done));
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
+
+        if(bookletDone.size() == 0) {
+            bigText.setText(R.string.noVac);
+            smallText.setText(R.string.noVac_text);
+        }
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,6 +151,12 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
                 notifyItemRemoved(imageID);
                 notifyItemRangeChanged(imageID, imageID);
                 notifyDataSetChanged();
+                if(bookletDone.size() == 0) {
+                    TextView bigText = (TextView) v.findViewById(R.id.big_text);
+                    TextView smallText = (TextView) v.findViewById(R.id.small_text);
+                    bigText.setText(R.string.noVac);
+                    smallText.setText(R.string.noVac_text);
+                }
 
             }
         });
@@ -154,6 +169,8 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
         ImageView imageTime = holder.imageTime;
         Button applyButton = holder.button_apply;
+        TextView bigText = holder.bigText;
+        TextView smallText = holder.smallText;
         final ImageView imageInfo = holder.imageInfo;
         int i = 0;
         while (vaccinations.iterator().hasNext() && !vaccinations.get(i).getAntigen().equals(vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1).getAntigen())) {
@@ -180,6 +197,10 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         }
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
+        if(bookletToDo.size() == 0) {
+            bigText.setText(R.string.congrats);
+            smallText.setText(R.string.congrats_text);
+        }
         applyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -207,6 +228,13 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
                                         notifyItemRemoved(imageID);
                                         notifyItemRangeChanged(imageID, imageID);
                                         notifyDataSetChanged();
+
+                                        if(bookletToDo.size() == 0) {
+                                            TextView bigText = (TextView) view.findViewById(R.id.big_text);
+                                            TextView smallText = (TextView) view.findViewById(R.id.small_text);
+                                            bigText.setText(R.string.congrats);
+                                            smallText.setText(R.string.congrats_text);
+                                        }
 
                                     }
                                 }, year, month, day);

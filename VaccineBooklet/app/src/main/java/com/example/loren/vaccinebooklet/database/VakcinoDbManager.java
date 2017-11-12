@@ -18,6 +18,7 @@ import java.util.List;
  * richiamare in diverse parti del codice.
  */
 public class VakcinoDbManager {
+    public static final int DELETED = 2;
     //Riferimento alla classe di helper.
     private final VakcinoDbHelper dbHelper;
 
@@ -457,9 +458,37 @@ public class VakcinoDbManager {
         return bookletList;
     }
 
+    public List<Libretto> getUnsyncedToDoBooklet(Utente user) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        List<Libretto> bookletList = new ArrayList<>();
+
+        Cursor cursor = null;
+        try {
+            String query = "SELECT * FROM " + Libretto.TABLE_NAME +
+                    " WHERE " + Libretto.COLUMN_IDUTENTE + " = " + user.getId() +
+                    " AND " + Libretto.COLUMN_DONE + " = " + NOT_DONE +
+                    " AND " + Libretto.COLUMN_STATUS + " = " + NOT_SYNCED_WITH_SERVER;
+            Log.d("DBMANAGER", query);
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                Libretto booklet = new Libretto(cursor);
+                bookletList.add(booklet);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+
+        return bookletList;
+    }
+
     public void deleteTable(String tableName) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(tableName, null, null);
     }
-
 }

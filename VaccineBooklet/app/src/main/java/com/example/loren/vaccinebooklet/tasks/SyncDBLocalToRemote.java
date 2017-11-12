@@ -25,7 +25,7 @@ public class SyncDBLocalToRemote extends AsyncTask<Context, Void, Void> {
         }
 
         for (Utente user : dbManager.getUsers(Utils.getAccount(context[0]))) {
-            List<Libretto> unsyncedBooklet = dbManager.getUnsyncedBooklet(user);
+            List<Libretto> unsyncedBooklet = dbManager.getUnsyncedToDoBooklet(user);
             for (Libretto booklet : unsyncedBooklet) {
                 RemoteDBInteractions.syncBookletLocalToRemote(booklet, Utils.getAccount(context[0]));
                 booklet.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);

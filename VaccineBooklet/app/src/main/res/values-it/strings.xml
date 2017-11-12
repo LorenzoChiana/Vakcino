@@ -81,4 +81,11 @@
     <string name="export">Esporta in calendario</string>
     <string name="congrats">Congratulazione!</string>
     <string name="congrats_text">Hai finito tutte le vaccinazioni</string>
+    <string name="noVac">:(</string>
+    <string name="noVac_text">Ancora nessuna vaccinazione!</string>
+    <string name="warning">ATTENZIONE!</string>
+    <string name="delete_question">Sei dicuro di voler cancellare questo utente?</string>
+    <string name="label_positive">Sì</string>
+    <string name="undo_request">Sei sicuro di voler annullare la creazione dell\'utente?</string>
+    <string name="undo_description">Se procedi perderai i dati appena immessi, vuoi continuare comunque?</string>
 </resources>

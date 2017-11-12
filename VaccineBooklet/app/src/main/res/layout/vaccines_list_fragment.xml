@@ -5,15 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/my_recycler_view"
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="56dp"
-        android:scrollbars="vertical" />
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/my_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="56dp"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/big_text"
+            android:layout_width="325dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/my_recycler_view"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text=""
+            android:textSize="40sp" />
+
+        <TextView
+            android:id="@+id/small_text"
+            android:layout_width="323dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text=""
+            android:textSize="20sp" />
+    </LinearLayout>
 
     <include layout="@layout/material_design_android_floating_action_menu"/>
 </RelativeLayout>

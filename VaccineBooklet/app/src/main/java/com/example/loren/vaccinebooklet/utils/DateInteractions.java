@@ -82,6 +82,20 @@ public class DateInteractions {
         return -1;
     }
 
+    public static String convertToDate(String dateString){
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+        Date originDate;
+        String returnDate = "";
+        try {
+            originDate = dateFormat1.parse(dateString);
+            returnDate = dateFormat2.format(originDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return returnDate;
+    }
+
     public static int getDay(String dateIn) {
         try {
             Date date = stringToDate(dateIn);

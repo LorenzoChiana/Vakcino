@@ -16,38 +16,31 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.CalendarContract;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.example.loren.vaccinebooklet.R;
-import com.example.loren.vaccinebooklet.adapter.VaccinationsBookletAdapter;
 
 import com.example.loren.vaccinebooklet.database.VakcinoDbHelper;
 import com.example.loren.vaccinebooklet.database.VakcinoDbManager;
 import com.example.loren.vaccinebooklet.fragment.HomePageFragment;
 import com.example.loren.vaccinebooklet.fragment.VaccinesListFragment;
-import com.example.loren.vaccinebooklet.listeners.MyOnScrollListener;
-import com.example.loren.vaccinebooklet.listeners.OnViewVacDoneClickListener;
-import com.example.loren.vaccinebooklet.listeners.OnViewVacToDoClickListener;
 import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
@@ -56,21 +49,15 @@ import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
 import com.example.loren.vaccinebooklet.utils.DateInteractions;
 import com.example.loren.vaccinebooklet.utils.NetworkStateReceiver;
 import com.example.loren.vaccinebooklet.utils.Utils;
-import com.github.clans.fab.FloatingActionMenu;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.heinrichreimersoftware.materialdrawer.DrawerView;
-import com.heinrichreimersoftware.materialdrawer.structure.DrawerHeaderItem;
 import com.heinrichreimersoftware.materialdrawer.structure.DrawerItem;
 import com.heinrichreimersoftware.materialdrawer.structure.DrawerProfile;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class MainActivity extends AppCompatActivity
         /*implements NavigationView.OnNavigationItemSelectedListener*/ {
@@ -84,8 +71,8 @@ public class MainActivity extends AppCompatActivity
     public static final String INTENT_ACTION_INT = "com.example.loren.vaccinebooklet.intent.action.TEST.int";
     private static final int MY_PERMISSIONS_REQUEST_WRITE_CALENDAR = 123;
     private static final int VIEW_VAC = 0;
-    private static final int EDIT_USER = 1;
-    private static final int DELETE_USER = 2;
+    private static final int EDIT_USER = 0;
+    private static final int DELETE_USER = 1;
     private boolean doubleBackToExitPressedOnce;
     private String message;
     private String email;
@@ -102,7 +89,7 @@ public class MainActivity extends AppCompatActivity
     private List<Utente> users;
     private List<Vaccinazione> vaccinations;
     private List<TipoVaccinazione> vacTypeList;
-    public static MaterialStyledDialog.Builder dialogInfoVac;
+    public static MaterialStyledDialog.Builder materialStyleDialog;
 
     private DrawerView drawer;
 
@@ -133,7 +120,7 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();*/
 
-        dialogInfoVac = new MaterialStyledDialog.Builder(MainActivity.this);
+        materialStyleDialog = new MaterialStyledDialog.Builder(MainActivity.this);
 
         /*navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);*/
@@ -173,7 +160,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void drawerInitialize() {
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer = (DrawerView) findViewById(R.id.drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -206,10 +193,6 @@ public class MainActivity extends AppCompatActivity
         );*/
 
         drawer.addItem(new DrawerItem()
-                .setImage(ContextCompat.getDrawable(this, R.drawable.ic_vac))
-                .setTextPrimary(getString(R.string.menu_view_vac))
-        );
-        drawer.addItem(new DrawerItem()
                 .setImage(ContextCompat.getDrawable(this, R.drawable.ic_edit))
                 .setTextPrimary(getString(R.string.menu_edit))
         );
@@ -218,19 +201,33 @@ public class MainActivity extends AppCompatActivity
                 .setTextPrimary(getString(R.string.menu_delete))
         );
 
-
-        //drawer.selectItem(1);
         drawer.setOnItemClickListener(new DrawerItem.OnItemClickListener() {
             @Override
             public void onClick(DrawerItem item, long id, int position) {
                 drawer.selectItem(position);
-                Toast.makeText(MainActivity.this, "Clicked item #" + position, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Clicked item #" + position, Toast.LENGTH_SHORT).show();
                 switch (position) {
-                    case VIEW_VAC:
-                        viewVac(idSelectedUser);
+                    case EDIT_USER:
+                        Intent intent = new Intent(MainActivity.this, UserActivity.class);
+                        intent.putExtra(UserActivity.USER_INTERACTION, UserActivity.EDIT_USER);
+                        intent.putExtra("Utente", users.get(idSelectedUser));
+                        startActivity(intent);
                         break;
-                    case EDIT_USER: break;
-                    case DELETE_USER: break;
+                    case DELETE_USER:
+                        materialStyleDialog.setHeaderDrawable(R.drawable.header_2_waring)
+                                .setTitle(R.string.warning)
+                                .setDescription(R.string.delete_question)
+                                .setNegativeText(R.string.label_cancel)
+                                .setPositiveText(R.string.label_positive)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        //deleteUser(users.get(drawer.getProfiles().));
+                                        Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .show();
+                        break;
                 }
             }
         });
@@ -257,24 +254,45 @@ public class MainActivity extends AppCompatActivity
                 drawer.selectFixedItem(position);
                 switch (position) {
                     case ADD_USER:
-                        Intent intent = new Intent(MainActivity.this, NewUserActivity.class);
+                        Intent intent = new Intent(MainActivity.this, UserActivity.class);
+                        intent.putExtra(UserActivity.USER_INTERACTION, UserActivity.CREATE_USER);
                         startActivity(intent);
                         break;
                     case LOGOUT_ID:
                         logOut();
                         break;
                     case CALENDAR_ID:
+                        final List<Utente> selectedUsers = new ArrayList<>();
+                        new MaterialDialog.Builder(MainActivity.this)
+                                .title(R.string.export_calendar_question)
+                                .items(users)
+                                .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                                    @Override
+                                    public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                                        for (Integer i: which) {
+                                            selectedUsers.add(users.get(i));
+                                        }
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                exportVacIntoCalendar(selectedUsers);
+                                            }
+                                        });
+                            return true;
+                        }
+                    })
+                    .positiveText(R.string.choose)
+                    .show();
                         break;
                 }
                 Toast.makeText(MainActivity.this, "Clicked fixed item #" + position, Toast.LENGTH_SHORT).show();
             }
         });
 
-        int i = 0;
         for (Utente u : users) {
-            addUserToDrawerView(drawer, i, u.toString(), "Description person " + i);
-            i++;
+            addUserToDrawerView(drawer, u.getId(), u.toString(), u.getbirthdayDate());
         }
+
         drawer.setOnProfileClickListener(new DrawerProfile.OnProfileClickListener() {
             @Override
             public void onClick(DrawerProfile profile, long id) {
@@ -284,7 +302,8 @@ public class MainActivity extends AppCompatActivity
         drawer.setOnProfileSwitchListener(new DrawerProfile.OnProfileSwitchListener() {
             @Override
             public void onSwitch(DrawerProfile oldProfile, long oldId, DrawerProfile newProfile, long newId) {
-                Toast.makeText(MainActivity.this, "Switched from profile *" + oldId + " to profile *" + newId, Toast.LENGTH_SHORT).show();
+                drawerLayout.closeDrawer(GravityCompat.START);
+                //Toast.makeText(MainActivity.this, "Switched from profile *" + oldId + " to profile *" + newId, Toast.LENGTH_SHORT).show();
                 idSelectedUser = (int) newId - 1;
                 viewVac(idSelectedUser);
             }
@@ -302,6 +321,12 @@ public class MainActivity extends AppCompatActivity
         transaction.replace(R.id.activity_main, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    private void deleteUser(Utente user) {
+        VakcinoDbManager vakcinoDbManager = new VakcinoDbManager(this);
+        user.setStatus(VakcinoDbManager.DELETED);
+        vakcinoDbManager.updateUser(user);
     }
 
     private void addUserToDrawerView(DrawerView drawer, long idUser, String name, String description) {
@@ -408,7 +433,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            AsyncTask<Void, Void, Boolean> sync = new AsyncTask<Void, Void, Boolean>() {
+            new AsyncTask<Void, Void, Boolean>() {
 
                 @Override
                 protected Boolean doInBackground(Void... params) {
@@ -510,7 +535,7 @@ public class MainActivity extends AppCompatActivity
 
         // Sezione aggiunta utente
         if (id == R.id.add_user) {
-            Intent intent = new Intent(MainActivity.this, NewUserActivity.class);
+            Intent intent = new Intent(MainActivity.this, UserActivity.class);
             startActivity(intent);
         } // sezione logout
         else if (id == LOGOUT_ID) {
