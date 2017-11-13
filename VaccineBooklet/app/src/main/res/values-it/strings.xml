@@ -88,4 +88,5 @@
     <string name="label_positive">Sì</string>
     <string name="undo_request">Sei sicuro di voler annullare la creazione dell\'utente?</string>
     <string name="undo_description">Se procedi perderai i dati appena immessi, vuoi continuare comunque?</string>
+    <string name="label_other_users">Other users</string>
 </resources>

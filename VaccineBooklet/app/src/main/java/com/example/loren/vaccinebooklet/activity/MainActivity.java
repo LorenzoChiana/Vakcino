@@ -30,6 +30,7 @@ import android.view.View;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +52,7 @@ import com.example.loren.vaccinebooklet.utils.NetworkStateReceiver;
 import com.example.loren.vaccinebooklet.utils.Utils;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.heinrichreimersoftware.materialdrawer.DrawerView;
+import com.heinrichreimersoftware.materialdrawer.structure.DrawerHeaderItem;
 import com.heinrichreimersoftware.materialdrawer.structure.DrawerItem;
 import com.heinrichreimersoftware.materialdrawer.structure.DrawerProfile;
 
@@ -97,6 +99,8 @@ public class MainActivity extends AppCompatActivity
 
     private boolean afterLogin = false;
     private int idSelectedUser = 0;
+
+    int flagProfile = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,46 +196,19 @@ public class MainActivity extends AppCompatActivity
                 .setTextSecondary("Qualcosa secondary 1")
         );*/
 
-        drawer.addItem(new DrawerItem()
-                .setImage(ContextCompat.getDrawable(this, R.drawable.ic_edit))
-                .setTextPrimary(getString(R.string.menu_edit))
-        );
-        drawer.addItem(new DrawerItem()
-                .setImage(ContextCompat.getDrawable(this, R.drawable.ic_delete))
-                .setTextPrimary(getString(R.string.menu_delete))
-        );
 
-        drawer.setOnItemClickListener(new DrawerItem.OnItemClickListener() {
-            @Override
-            public void onClick(DrawerItem item, long id, int position) {
-                drawer.selectItem(position);
-                //Toast.makeText(MainActivity.this, "Clicked item #" + position, Toast.LENGTH_SHORT).show();
-                switch (position) {
-                    case EDIT_USER:
-                        Intent intent = new Intent(MainActivity.this, UserActivity.class);
-                        intent.putExtra(UserActivity.USER_INTERACTION, UserActivity.EDIT_USER);
-                        intent.putExtra("Utente", users.get(idSelectedUser));
-                        startActivity(intent);
-                        break;
-                    case DELETE_USER:
-                        materialStyleDialog.setHeaderDrawable(R.drawable.header_2_waring)
-                                .setTitle(R.string.warning)
-                                .setDescription(R.string.delete_question)
-                                .setNegativeText(R.string.label_cancel)
-                                .setPositiveText(R.string.label_positive)
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        //deleteUser(users.get(drawer.getProfiles().));
-                                        Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .show();
-                        break;
-                }
-            }
-        });
+        /*drawer.addDivider();
 
+        drawer.addItem(new DrawerHeaderItem().setTitle(getString(R.string.label_other_users)));
+
+        for (Utente user: users) {
+            drawer.addItem(new DrawerItem()
+                    .setRoundedImage((BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ic_person), DrawerItem.SMALL_AVATAR)
+                    .setTextPrimary(user.toString())
+            );
+        }*/
+
+        updateUsersDrawer();
 
         drawer.addFixedItem(new DrawerItem()
                 .setRoundedImage((BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ic_add_person), DrawerItem.SMALL_AVATAR)
@@ -278,11 +255,11 @@ public class MainActivity extends AppCompatActivity
                                                 exportVacIntoCalendar(selectedUsers);
                                             }
                                         });
-                            return true;
-                        }
-                    })
-                    .positiveText(R.string.choose)
-                    .show();
+                                        return true;
+                                    }
+                                })
+                                .positiveText(R.string.choose)
+                                .show();
                         break;
                 }
                 Toast.makeText(MainActivity.this, "Clicked fixed item #" + position, Toast.LENGTH_SHORT).show();
@@ -339,7 +316,7 @@ public class MainActivity extends AppCompatActivity
         );
         //drawer.getItem(0).getId();
         //Toast.makeText(MainActivity.this, "creato: " +
-               // drawer.getProfiles().get(0).getId(), Toast.LENGTH_SHORT).show();
+        // drawer.getProfiles().get(0).getId(), Toast.LENGTH_SHORT).show();
     }
 
     private void logOut() {
@@ -398,6 +375,7 @@ public class MainActivity extends AppCompatActivity
                 vaccinations = dbManager.getVaccinations();
                 vacTypeList = dbManager.getVaccinationType();
 
+                updateUsersDrawer();
             }
         }
     };
@@ -413,6 +391,61 @@ public class MainActivity extends AppCompatActivity
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
+    }
+
+    private void updateUsersDrawer() {
+        if (users.size() > 0) {
+            if(drawer.findItemById(EDIT_USER) == null && drawer.findItemById(DELETE_USER) == null) {
+                drawer.addItem(new DrawerItem()
+                        .setId(EDIT_USER)
+                        .setImage(ContextCompat.getDrawable(this, R.drawable.ic_edit))
+                        .setTextPrimary(getString(R.string.menu_edit))
+                );
+                drawer.addItem(new DrawerItem()
+                        .setId(DELETE_USER)
+                        .setImage(ContextCompat.getDrawable(this, R.drawable.ic_delete))
+                        .setTextPrimary(getString(R.string.menu_delete))
+                );
+            }
+        }else if(flagProfile == 0) {
+            drawer.addProfile(new DrawerProfile()
+                    .setName("")
+                    .setDescription("")
+                    .setBackground(ContextCompat.getDrawable(this, R.drawable.header_1))
+            );
+            flagProfile++;
+        }
+
+        drawer.setOnItemClickListener(new DrawerItem.OnItemClickListener() {
+            @Override
+            public void onClick(DrawerItem item, long id, int position) {
+                drawer.selectItem(position);
+                //Toast.makeText(MainActivity.this, "Clicked item #" + position, Toast.LENGTH_SHORT).show();
+                switch (position) {
+                    case EDIT_USER:
+                        Intent intent = new Intent(MainActivity.this, UserActivity.class);
+                        intent.putExtra(UserActivity.USER_INTERACTION, UserActivity.EDIT_USER);
+                        intent.putExtra("Utente", users.get(idSelectedUser));
+                        startActivity(intent);
+                        break;
+                    case DELETE_USER:
+                        materialStyleDialog.setHeaderDrawable(R.drawable.header_2_waring)
+                                .setTitle(R.string.warning)
+                                .setDescription(R.string.delete_question)
+                                .setNegativeText(R.string.label_cancel)
+                                .setPositiveText(R.string.label_positive)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        //deleteUser(users.get(drawer.getProfiles().));
+                                        Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .show();
+                        break;
+                }
+            }
+        });
     }
 
     private void updateUsersList() {
@@ -467,9 +500,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        //updateNavigationUI(navigationView.getMenu(), getApplicationContext());
         registerReceiver(receiverConnectivity, filter);
         registerReceiver(receiverSync, intentFilter);
+        //updateNavigationUI(navigationView.getMenu(), getApplicationContext());
     }
 
     @Override
