@@ -27,6 +27,7 @@ public class RemoteDBInteractions {
     private static final java.lang.String URL_SET_SYNC_REMOTE_VACCINATIONTYPE = "http://vakcinoapp.altervista.org/setSyncRemoteVaccinationType.php";
     private static final java.lang.String URL_SET_BOOKLET = "http://vakcinoapp.altervista.org/setBooklet.php";
     private static final java.lang.String URL_GET_BOOKLET = "http://vakcinoapp.altervista.org/getBooklet.php";
+    private static final java.lang.String URL_DELETE_USER = "http://vakcinoapp.altervista.org/setSyncDeleteUser.php";
 
     /*
     * --- UTENTE ---
@@ -64,6 +65,12 @@ public class RemoteDBInteractions {
         hm.put("Email", user.getEmail());
         hm.put("Status", Integer.toString(user.getStatus()));
         HTTPHelper.connectPost(URL_SET_USER, hm);
+    }
+
+    public static void syncDeleteUserLocalToRemote(Utente user) {
+        HashMap<String,String> hm = new HashMap<>();
+        hm.put("id", Integer.toString(user.getId()));
+        HTTPHelper.connectPost(URL_DELETE_USER, hm);
     }
 
     public static void syncUsersRemoteToLocal(Context context) {

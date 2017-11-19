@@ -17,11 +17,21 @@ public class SyncDBLocalToRemote extends AsyncTask<Context, Void, Void> {
     @Override
     protected Void doInBackground(Context... context) {
         VakcinoDbManager dbManager = new VakcinoDbManager(context[0]);
-        List<Utente> unsyncedUsers = dbManager.getUnsyncedUsers(Utils.getAccount(context[0]));
+        List<Utente> unsyncedUsers = dbManager.getLocalUnsyncedUsers();
         for (Utente user : unsyncedUsers) {
             RemoteDBInteractions.syncUserLocalToRemote(user);
             user.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
             dbManager.updateUser(user);
+        }
+
+        List<Utente> deletedUsers = dbManager.getLocalDeletedUsers();
+        for (Utente user : deletedUsers) {
+            RemoteDBInteractions.syncDeleteUserLocalToRemote(user);
+            List<Libretto> booklet = dbManager.getAllBooklet(user);
+            for (Libretto l: booklet) {
+                dbManager.deleteBooklet(l);
+            }
+            dbManager.deleteUser(user);
         }
 
         for (Utente user : dbManager.getUsers(Utils.getAccount(context[0]))) {

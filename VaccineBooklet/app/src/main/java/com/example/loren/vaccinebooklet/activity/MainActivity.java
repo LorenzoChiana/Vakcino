@@ -16,9 +16,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.CalendarContract;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -97,10 +99,8 @@ public class MainActivity extends AppCompatActivity
 
     private ActionBarDrawerToggle drawerToggle;
 
-    private boolean afterLogin = false;
-    private int idSelectedUser = 0;
-
-    int flagProfile = 0;
+    private boolean afterLogin = false, afterDelete = false;
+    private int idSelectedUser = 0, flagProfile = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,12 +147,12 @@ public class MainActivity extends AppCompatActivity
         receiverConnectivity = new NetworkStateReceiver();
         receiverConnectivity.setAfterLogin(afterLogin);
         filter = new IntentFilter();
+        filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(receiverConnectivity, filter);
         intentFilter = new IntentFilter();
         intentFilter.addAction(INTENT_ACTION_INT);
         //initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
-
 
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity
         drawer.setOnFixedItemClickListener(new DrawerItem.OnItemClickListener() {
             @Override
             public void onClick(DrawerItem item, long id, int position) {
-                drawer.selectFixedItem(position);
+                //drawer.selectFixedItem(position);
                 switch (position) {
                     case ADD_USER:
                         Intent intent = new Intent(MainActivity.this, UserActivity.class);
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity
 
         VaccinesListFragment fragment = VaccinesListFragment.newInstance(user);
         transaction.replace(R.id.activity_main, fragment);
-        transaction.addToBackStack(null);
+        //transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -304,6 +304,7 @@ public class MainActivity extends AppCompatActivity
         VakcinoDbManager vakcinoDbManager = new VakcinoDbManager(this);
         user.setStatus(VakcinoDbManager.DELETED);
         vakcinoDbManager.updateUser(user);
+        afterDelete = true;
     }
 
     private void addUserToDrawerView(DrawerView drawer, long idUser, String name, String description) {
@@ -359,26 +360,27 @@ public class MainActivity extends AppCompatActivity
 
             if (intent.getAction().equals(INTENT_ACTION_INT)) {
                 //sync = intent.getIntExtra(INTENT_EXTRA, 0);
-                updateUsersList();
-                updateVacList();
-                updateVacTypeList();
-
-                drawer.clearProfiles();
-                int i = 1;
-                for (Utente u : users) {
-                    addUserToDrawerView(drawer, i, u.toString(), "Description person " + i);
-                    i++;
-                }
-
-                VakcinoDbManager dbManager = new VakcinoDbManager(context);
-                users = dbManager.getUsers(Utils.getAccount(context));
-                vaccinations = dbManager.getVaccinations();
-                vacTypeList = dbManager.getVaccinationType();
-
-                updateUsersDrawer();
+                updateAmbient();
             }
         }
     };
+
+    private void updateAmbient() {
+        updateUsersList();
+        updateVacList();
+        updateVacTypeList();
+        drawer.clearProfiles();
+        int i = 1;
+        for (Utente u : users) {
+            addUserToDrawerView(drawer, i, u.toString(), "Description person " + i);
+            i++;
+        }
+        /*if(afterDelete){
+            flagProfile = 0;
+            afterDelete = false;
+        }*/
+        updateUsersDrawer();
+    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -394,7 +396,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void updateUsersDrawer() {
-        if (users.size() > 0) {
+         if (users.size() > 0) {
             if(drawer.findItemById(EDIT_USER) == null && drawer.findItemById(DELETE_USER) == null) {
                 drawer.addItem(new DrawerItem()
                         .setId(EDIT_USER)
@@ -409,17 +411,27 @@ public class MainActivity extends AppCompatActivity
             }
         }else if(flagProfile == 0) {
             drawer.addProfile(new DrawerProfile()
+                    .setId(1234)
                     .setName("")
                     .setDescription("")
                     .setBackground(ContextCompat.getDrawable(this, R.drawable.header_1))
             );
             flagProfile++;
-        }
+        } else if(afterDelete){
+             drawer.clearItems();
+             drawer.removeViewAt(0);
+             FragmentManager manager = getSupportFragmentManager();
+             FragmentTransaction transaction = manager.beginTransaction();
+             HomePageFragment fragment = HomePageFragment.newInstance();
+             transaction.add(R.id.activity_main, fragment);
+             transaction.commit();
+             afterDelete = false;
+         }
 
         drawer.setOnItemClickListener(new DrawerItem.OnItemClickListener() {
             @Override
             public void onClick(DrawerItem item, long id, int position) {
-                drawer.selectItem(position);
+                //drawer.selectItem(position);
                 //Toast.makeText(MainActivity.this, "Clicked item #" + position, Toast.LENGTH_SHORT).show();
                 switch (position) {
                     case EDIT_USER:
@@ -437,8 +449,8 @@ public class MainActivity extends AppCompatActivity
                                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                                     @Override
                                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        //deleteUser(users.get(drawer.getProfiles().));
-                                        Toast.makeText(MainActivity.this, "ok", Toast.LENGTH_SHORT).show();
+                                        deleteUser(users.get(idSelectedUser));
+                                        updateAmbient();
                                     }
                                 })
                                 .show();
@@ -471,7 +483,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 protected Boolean doInBackground(Void... params) {
                     VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
-                    List<Utente> unsyncedUsers = dbManager.getUnsyncedUsers(Utils.getAccount(getApplicationContext()));
+                    List<Utente> unsyncedUsers = dbManager.getLocalUnsyncedUsers();
 
                     for (Utente user : unsyncedUsers) {
                         RemoteDBInteractions.syncUserLocalToRemote(user);

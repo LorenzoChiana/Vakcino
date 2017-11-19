@@ -114,6 +114,7 @@ public class UserActivity extends AppCompatActivity implements
         user.setName(etName.getText().toString());
         user.setSurname(etSurname.getText().toString());
         user.setBirthdayDate(etBirthDate.getText().toString());
+        user.setStatus(VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
         new VakcinoDbManager(getApplicationContext()).updateUser(user);
     }
 

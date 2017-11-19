@@ -18,7 +18,6 @@ import java.util.List;
  * richiamare in diverse parti del codice.
  */
 public class VakcinoDbManager {
-    public static final int DELETED = 2;
     //Riferimento alla classe di helper.
     private final VakcinoDbHelper dbHelper;
 
@@ -27,6 +26,7 @@ public class VakcinoDbManager {
 
     public static final int DONE = 0;
     public static final int NOT_DONE = 1;
+    public static final int DELETED = 2;
 
 
     //Costruttore
@@ -111,7 +111,8 @@ public class VakcinoDbManager {
         try {
             String query = "SELECT * FROM " + Utente.TABLE_NAME +
                     " WHERE email = '" + email +
-                    "' ORDER BY " + Utente.COLUMN_NAME + ", " + Utente.COLUMN_SURNAME + " ASC";
+                    "' AND STATUS <> " + DELETED +
+                    " ORDER BY " + Utente.COLUMN_NAME + ", " + Utente.COLUMN_SURNAME + " ASC";
             Log.d("DBMANAGER", query);
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
@@ -130,7 +131,15 @@ public class VakcinoDbManager {
         return users;
     }
 
-    public List<Utente> getUnsyncedUsers(String email) {
+    public List<Utente> getLocalUnsyncedUsers() {
+        return getLocalUsers(NOT_SYNCED_WITH_SERVER);
+    }
+
+    public List<Utente> getLocalDeletedUsers() {
+       return getLocalUsers(DELETED);
+    }
+
+    private List<Utente> getLocalUsers(int flag) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         List<Utente> users = new ArrayList<>();
@@ -138,7 +147,7 @@ public class VakcinoDbManager {
         Cursor cursor = null;
         try {
             String query = "SELECT * FROM " + Utente.TABLE_NAME +
-                    " WHERE " + Utente.COLUMN_STATUS + " = " + NOT_SYNCED_WITH_SERVER;
+                    " WHERE " + Utente.COLUMN_STATUS + " = " + flag;
             Log.d("DBMANAGER", query);
             cursor = db.rawQuery(query, null);
             while (cursor.moveToNext()) {
@@ -153,7 +162,6 @@ public class VakcinoDbManager {
             }
             db.close();
         }
-
         return users;
     }
 

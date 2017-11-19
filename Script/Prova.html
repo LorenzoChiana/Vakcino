@@ -9,70 +9,76 @@
 
 	<p>REGISTER</p>
 	<br>
-  	<form method="post" action="Register.php">
-    	<input type="email" name="email" value="email">
-    	<input type="password" name="password" value="password">
-    	<input type="submit">
-	</form>
-	<p>GET USER</p>
-  <br>
-  <form method="post" action="getUsers.php">
-      <input type="email" name="email" value="email">
-      <input type="submit">
-  </form>
-  <p>GET UNSYNCED USER</p>
-  <br>
-  <form method="post" action="getUnsyncedUsers.php">
-      <input type="email" name="email" value="email">
-      <input type="submit">
-  </form>
-  <p>SET UNSYNCED USER</p>
-  <br>
-  <form method="post" action="setUser.php">
-      <input type="text" name="ID" value="ID">
-      <input type="text" name="Nome" value="Nome">
-      <input type="text" name="Cognome" value="Cognome">
-      <input type="text" name="DataNascita" value="DataNascita">
-      <input type="text" name="Tipo" value="Tipo">
-      <input type="email" name="Email" value="Email">
-      <input type="text" name="Status" value="Status">
-      <input type="submit">
-  </form>
-  <p>SET UNSYNCED TODO</p>
-  <br>
-  <form method="post" action="setToDo.php">
-      <input type="text" name="IDUtente" value="IDUtente">
-      <input type="email" name="Email" value="Email">
-      <input type="text" name="IDTipoVac" value="IDTipoVac">
-      <input type="text" name="Status" value="Status">
-      <input type="submit">
-  </form>
+ <form method="post" action="Register.php">
+   <input type="email" name="email" value="email">
+   <input type="password" name="password" value="password">
+   <input type="submit">
+ </form>
+ <p>GET USER</p>
+ <br>
+ <form method="post" action="getUsers.php">
+  <input type="email" name="email" value="email">
+  <input type="submit">
+</form>
+<p>GET UNSYNCED USER</p>
+<br>
+<form method="post" action="getUnsyncedUsers.php">
+  <input type="email" name="email" value="email">
+  <input type="submit">
+</form>
+<p>SET UNSYNCED USER</p>
+<br>
+<form method="post" action="setUser.php">
+  <input type="text" name="ID" value="ID">
+  <input type="text" name="Nome" value="Nome">
+  <input type="text" name="Cognome" value="Cognome">
+  <input type="text" name="DataNascita" value="DataNascita">
+  <input type="text" name="Tipo" value="Tipo">
+  <input type="email" name="Email" value="Email">
+  <input type="text" name="Status" value="Status">
+  <input type="submit">
+</form>
+<p>SET UNSYNCED TODO</p>
+<br>
+<form method="post" action="setToDo.php">
+  <input type="text" name="IDUtente" value="IDUtente">
+  <input type="email" name="Email" value="Email">
+  <input type="text" name="IDTipoVac" value="IDTipoVac">
+  <input type="text" name="Status" value="Status">
+  <input type="submit">
+</form>
 
-  <p>SET UNSYNCED BOOKLET</p>
-  <br>
-  <form method="post" action="setBooklet.php">
-      <input type="text" name="IDUtente" value="IDUtente">
-      <input type="email" name="Email" value="Email">
-      <input type="text" name="IDTipoVac" value="IDTipoVac">
-      <input type="text" name="Fatto" value="Fatto">
-      <input type="text" name="InData" value="InData">
-      <input type="text" name="Status" value="Status">
-      <input type="submit">
-  </form>
+<p>SET UNSYNCED BOOKLET</p>
+<br>
+<form method="post" action="setBooklet.php">
+  <input type="text" name="IDUtente" value="IDUtente">
+  <input type="email" name="Email" value="Email">
+  <input type="text" name="IDTipoVac" value="IDTipoVac">
+  <input type="text" name="Fatto" value="Fatto">
+  <input type="text" name="InData" value="InData">
+  <input type="text" name="Status" value="Status">
+  <input type="submit">
+</form>
 
-  <p>GET BOOKLET</p>
-  <br>
-  <form method="post" action="getBooklet.php">
-      <input type="email" name="email" value="email">
-      <input type="submit">
-  </form>
+<p>GET BOOKLET</p>
+<br>
+<form method="post" action="getBooklet.php">
+  <input type="email" name="email" value="email">
+  <input type="submit">
+</form>
 
-  <p>GET TODO</p>
-  <br>
-  <form method="post" action="getToDo.php">
-      <input type="email" name="email" value="email">
-      <input type="submit">
-  </form>
+<p>GET TODO</p>
+<br>
+<form method="post" action="getToDo.php">
+  <input type="email" name="email" value="email">
+  <input type="submit">
+</form>
 
+<p>DELETE USER</p>
+<br>
+<form method="post" action="setSyncDeleteUser.php">
+  <input type="text" name="id" value="id">
+  <input type="submit">
+</form>
 </body>
 </html>

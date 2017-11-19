@@ -133,10 +133,10 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
 
-        if(bookletDone.size() == 0) {
+        /*if(bookletDone.size() == 0) {
             bigText.setText(R.string.noVac);
             smallText.setText(R.string.noVac_text);
-        }
+        }*/
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,12 +151,12 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
                 notifyItemRemoved(imageID);
                 notifyItemRangeChanged(imageID, imageID);
                 notifyDataSetChanged();
-                if(bookletDone.size() == 0) {
+                /*if(bookletDone.size() == 0) {
                     TextView bigText = (TextView) v.findViewById(R.id.big_text);
                     TextView smallText = (TextView) v.findViewById(R.id.small_text);
                     bigText.setText(R.string.noVac);
                     smallText.setText(R.string.noVac_text);
-                }
+                }*/
 
             }
         });
@@ -197,10 +197,10 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         }
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
-        if(bookletToDo.size() == 0) {
+        /*if(bookletToDo.size() == 0) {
             bigText.setText(R.string.congrats);
             smallText.setText(R.string.congrats_text);
-        }
+        }*/
         applyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -229,12 +229,12 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
                                         notifyItemRangeChanged(imageID, imageID);
                                         notifyDataSetChanged();
 
-                                        if(bookletToDo.size() == 0) {
+                                        /*if(bookletToDo.size() == 0) {
                                             TextView bigText = (TextView) view.findViewById(R.id.big_text);
                                             TextView smallText = (TextView) view.findViewById(R.id.small_text);
                                             bigText.setText(R.string.congrats);
                                             smallText.setText(R.string.congrats_text);
-                                        }
+                                        }*/
 
                                     }
                                 }, year, month, day);
