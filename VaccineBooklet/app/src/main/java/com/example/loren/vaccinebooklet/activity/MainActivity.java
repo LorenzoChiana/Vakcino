@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity
     private List<Utente> users;
     private List<Vaccinazione> vaccinations;
     private List<TipoVaccinazione> vacTypeList;
-    public static MaterialStyledDialog.Builder materialStyleDialog;
+    public static MaterialStyledDialog.Builder materialStyleDialog, materialInfoStyleDialog;
 
     private DrawerView drawer;
 
@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();*/
 
         materialStyleDialog = new MaterialStyledDialog.Builder(MainActivity.this);
+        materialInfoStyleDialog = new MaterialStyledDialog.Builder(MainActivity.this);
 
         /*navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);*/

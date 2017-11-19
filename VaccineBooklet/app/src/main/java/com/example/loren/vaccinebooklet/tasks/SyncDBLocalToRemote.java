@@ -25,13 +25,14 @@ public class SyncDBLocalToRemote extends AsyncTask<Context, Void, Void> {
         }
 
         List<Utente> deletedUsers = dbManager.getLocalDeletedUsers();
-        for (Utente user : deletedUsers) {
-            RemoteDBInteractions.syncDeleteUserLocalToRemote(user);
-            List<Libretto> booklet = dbManager.getAllBooklet(user);
+        int size = deletedUsers.size();
+        for (int i = 0; i < size; i++) {
+            RemoteDBInteractions.syncDeleteUserLocalToRemote(deletedUsers.get(i));
+            List<Libretto> booklet = dbManager.getAllBooklet(deletedUsers.get(i));
             for (Libretto l: booklet) {
                 dbManager.deleteBooklet(l);
             }
-            dbManager.deleteUser(user);
+            dbManager.deleteUser(deletedUsers.get(i));
         }
 
         for (Utente user : dbManager.getUsers(Utils.getAccount(context[0]))) {
