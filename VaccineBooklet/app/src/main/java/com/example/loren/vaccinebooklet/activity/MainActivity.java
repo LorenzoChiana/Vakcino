@@ -58,6 +58,7 @@ import com.heinrichreimersoftware.materialdrawer.structure.DrawerHeaderItem;
 import com.heinrichreimersoftware.materialdrawer.structure.DrawerItem;
 import com.heinrichreimersoftware.materialdrawer.structure.DrawerProfile;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -247,7 +248,7 @@ public class MainActivity extends AppCompatActivity
                                 .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
                                     @Override
                                     public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                                        for (Integer i: which) {
+                                        for (Integer i : which) {
                                             selectedUsers.add(users.get(i));
                                         }
                                         runOnUiThread(new Runnable() {
@@ -268,15 +269,9 @@ public class MainActivity extends AppCompatActivity
         });
 
         for (Utente u : users) {
-            addUserToDrawerView(drawer, u.getId(), u.toString(), u.getbirthdayDate());
+            addUserToDrawerView(drawer, u.getId(), u.toString(), DateInteractions.changeDateFormat(u.getbirthdayDate(), "yyyy-MM-dd", "dd/MM/yyyy"));
         }
 
-        drawer.setOnProfileClickListener(new DrawerProfile.OnProfileClickListener() {
-            @Override
-            public void onClick(DrawerProfile profile, long id) {
-                Toast.makeText(MainActivity.this, "Clicked profile *" + id, Toast.LENGTH_SHORT).show();
-            }
-        });
         drawer.setOnProfileSwitchListener(new DrawerProfile.OnProfileSwitchListener() {
             @Override
             public void onSwitch(DrawerProfile oldProfile, long oldId, DrawerProfile newProfile, long newId) {
@@ -373,7 +368,7 @@ public class MainActivity extends AppCompatActivity
         drawer.clearProfiles();
         int i = 1;
         for (Utente u : users) {
-            addUserToDrawerView(drawer, i, u.toString(), "Description person " + i);
+            addUserToDrawerView(drawer, i, u.toString(), u.getbirthdayDate());
             i++;
         }
         /*if(afterDelete){
@@ -397,8 +392,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void updateUsersDrawer() {
-         if (users.size() > 0) {
-            if(drawer.findItemById(EDIT_USER) == null && drawer.findItemById(DELETE_USER) == null) {
+        if (users.size() > 0) {
+            if (drawer.findItemById(EDIT_USER) == null && drawer.findItemById(DELETE_USER) == null) {
                 drawer.addItem(new DrawerItem()
                         .setId(EDIT_USER)
                         .setImage(ContextCompat.getDrawable(this, R.drawable.ic_edit))
@@ -410,24 +405,26 @@ public class MainActivity extends AppCompatActivity
                         .setTextPrimary(getString(R.string.menu_delete))
                 );
             }
-        }else if(flagProfile == 0) {
+        } else if (flagProfile == 0) {
             drawer.addProfile(new DrawerProfile()
-                    .setId(1234)
-                    .setName("")
-                    .setDescription("")
+                    .setId(1)
                     .setBackground(ContextCompat.getDrawable(this, R.drawable.header_1))
+                    .setName(getString(R.string.app_name))
+                    .setDescription(email)
+                    .setRoundedAvatar((BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ic_person))
             );
             flagProfile++;
-        } else if(afterDelete){
-             drawer.clearItems();
-             drawer.removeViewAt(0);
-             FragmentManager manager = getSupportFragmentManager();
-             FragmentTransaction transaction = manager.beginTransaction();
-             HomePageFragment fragment = HomePageFragment.newInstance();
-             transaction.add(R.id.activity_main, fragment);
-             transaction.commit();
-             afterDelete = false;
-         }
+        } else if (afterDelete) {
+            drawer.clearItems();
+            int size = drawer.getProfiles().size();
+            for (int i = 0; i < size; i++){
+                DrawerProfile profile = drawer.getProfiles().get(i);
+                profile.removeName();
+                profile.removeDescription();
+            }
+            drawer.clearProfiles();
+            afterDelete = false;
+        }
 
         drawer.setOnItemClickListener(new DrawerItem.OnItemClickListener() {
             @Override
