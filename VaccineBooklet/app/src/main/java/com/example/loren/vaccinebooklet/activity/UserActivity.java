@@ -124,7 +124,7 @@ public class UserActivity extends AppCompatActivity implements
         String email = Utils.getAccount(getApplicationContext());
         final Utente newUser = new Utente(dbManager.getUsers(email).size() + 1,
                 etName.getText().toString(), etSurname.getText().toString(),
-                DateInteractions.convertToDate(etBirthDate.getText().toString()), "p", email, VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
+                DateInteractions.changeDateFormat(etBirthDate.getText().toString(), "dd/MM/yyyy", "yyyy-MM-dd"), "p", email, VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
         dbManager.addUser(newUser);
         List<TipoVaccinazione> vt = dbManager.getVaccinationType();
         for (int i = 0; i < vt.size(); i++) {

@@ -368,7 +368,7 @@ public class MainActivity extends AppCompatActivity
         drawer.clearProfiles();
         int i = 1;
         for (Utente u : users) {
-            addUserToDrawerView(drawer, i, u.toString(), u.getbirthdayDate());
+            addUserToDrawerView(drawer, i, u.toString(), DateInteractions.changeDateFormat(u.getbirthdayDate(), "yyyy-MM-dd", "dd/MM/yyyy"));
             i++;
         }
         /*if(afterDelete){
@@ -411,7 +411,7 @@ public class MainActivity extends AppCompatActivity
                     .setBackground(ContextCompat.getDrawable(this, R.drawable.header_1))
                     .setName(getString(R.string.app_name))
                     .setDescription(email)
-                    .setRoundedAvatar((BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ic_person))
+                    .setRoundedAvatar((BitmapDrawable) ContextCompat.getDrawable(this, R.mipmap.ic_launcher))
             );
             flagProfile++;
         } else if (afterDelete) {
