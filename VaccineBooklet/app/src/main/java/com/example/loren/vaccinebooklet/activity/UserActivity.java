@@ -27,6 +27,7 @@ import com.example.loren.vaccinebooklet.model.Libretto;
 import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
+import com.example.loren.vaccinebooklet.tasks.SyncDBLocalToRemote;
 import com.example.loren.vaccinebooklet.utils.DateInteractions;
 import com.example.loren.vaccinebooklet.utils.InternetConnection;
 import com.example.loren.vaccinebooklet.utils.Utils;
@@ -82,7 +83,7 @@ public class UserActivity extends AppCompatActivity implements
             Utente user = (Utente) getIntent().getSerializableExtra("Utente");
             etName.setText(user.getName());
             etSurname.setText(user.getSurname());
-            etBirthDate.setText(user.getbirthdayDate());
+            etBirthDate.setText(DateInteractions.changeDateFormat(user.getbirthdayDate(), "yyyy-MM-dd", "dd/MM/yyyy"));
         }
         backButton = (ImageButton) findViewById(R.id.back_button);
         backButton.setOnClickListener(new cancelClickListener());
@@ -113,9 +114,12 @@ public class UserActivity extends AppCompatActivity implements
     private void editUser(Utente user) {
         user.setName(etName.getText().toString());
         user.setSurname(etSurname.getText().toString());
-        user.setBirthdayDate(etBirthDate.getText().toString());
+        user.setBirthdayDate(DateInteractions.changeDateFormat(etBirthDate.getText().toString(), "dd/MM/yyyy", "yyyy-MM-dd"));
         user.setStatus(VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
-        new VakcinoDbManager(getApplicationContext()).updateUser(user);
+        VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
+        dbManager.updateUser(user);
+        if(InternetConnection.haveInternetConnection(getApplicationContext()))
+            new SyncDBLocalToRemote();
     }
 
     private void createNewUser() {
@@ -124,7 +128,7 @@ public class UserActivity extends AppCompatActivity implements
         String email = Utils.getAccount(getApplicationContext());
         final Utente newUser = new Utente(dbManager.getUsers(email).size() + 1,
                 etName.getText().toString(), etSurname.getText().toString(),
-                DateInteractions.changeDateFormat(etBirthDate.getText().toString(), "dd/MM/yyyy", "yyyy-MM-dd"), "p", email, VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
+                DateInteractions.changeDateFormat(etBirthDate.getText().toString(), "dd/MM/yyyy", "yyyy-MM-ddd"), "p", email, VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
         dbManager.addUser(newUser);
         List<TipoVaccinazione> vt = dbManager.getVaccinationType();
         for (int i = 0; i < vt.size(); i++) {

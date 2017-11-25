@@ -49,7 +49,9 @@ import com.example.loren.vaccinebooklet.model.TipoVaccinazione;
 import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
 import com.example.loren.vaccinebooklet.request.RemoteDBInteractions;
+import com.example.loren.vaccinebooklet.tasks.SyncDBLocalToRemote;
 import com.example.loren.vaccinebooklet.utils.DateInteractions;
+import com.example.loren.vaccinebooklet.utils.InternetConnection;
 import com.example.loren.vaccinebooklet.utils.NetworkStateReceiver;
 import com.example.loren.vaccinebooklet.utils.Utils;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
@@ -116,23 +118,8 @@ public class MainActivity extends AppCompatActivity
         this.message = null;
         this.doubleBackToExitPressedOnce = false;
 
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);*/
-
-        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();*/
-
         materialStyleDialog = new MaterialStyledDialog.Builder(MainActivity.this);
         materialInfoStyleDialog = new MaterialStyledDialog.Builder(MainActivity.this);
-
-        /*navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);*/
-
-        /*View headerView = navigationView.getHeaderView(0);
-        twEmailUser = (TextView) headerView.findViewById(R.id.tw_email);*/
 
         final String extraEmail;
         try {
@@ -144,7 +131,6 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         email = Utils.getAccount(MainActivity.this);
-        //twEmailUser.setText(email);
 
         receiverConnectivity = new NetworkStateReceiver();
         receiverConnectivity.setAfterLogin(afterLogin);
@@ -154,7 +140,6 @@ public class MainActivity extends AppCompatActivity
         registerReceiver(receiverConnectivity, filter);
         intentFilter = new IntentFilter();
         intentFilter.addAction(INTENT_ACTION_INT);
-        //initializeNavigationUI(navigationView.getMenu(), getApplicationContext());
 
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
@@ -193,22 +178,6 @@ public class MainActivity extends AppCompatActivity
         drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         drawerLayout.addDrawerListener(drawerToggle);
         drawerLayout.closeDrawer(drawer);
-        /*drawer.addItem(new DrawerItem()
-                .setTextPrimary("Qualcosa primary 1")
-                .setTextSecondary("Qualcosa secondary 1")
-        );*/
-
-
-        /*drawer.addDivider();
-
-        drawer.addItem(new DrawerHeaderItem().setTitle(getString(R.string.label_other_users)));
-
-        for (Utente user: users) {
-            drawer.addItem(new DrawerItem()
-                    .setRoundedImage((BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.ic_person), DrawerItem.SMALL_AVATAR)
-                    .setTextPrimary(user.toString())
-            );
-        }*/
 
         updateUsersDrawer();
 
@@ -292,7 +261,6 @@ public class MainActivity extends AppCompatActivity
 
         VaccinesListFragment fragment = VaccinesListFragment.newInstance(user);
         transaction.replace(R.id.activity_main, fragment);
-        //transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -311,9 +279,6 @@ public class MainActivity extends AppCompatActivity
                 .setName(name)
                 .setDescription(description)
         );
-        //drawer.getItem(0).getId();
-        //Toast.makeText(MainActivity.this, "creato: " +
-        // drawer.getProfiles().get(0).getId(), Toast.LENGTH_SHORT).show();
     }
 
     private void logOut() {
@@ -365,6 +330,8 @@ public class MainActivity extends AppCompatActivity
         updateUsersList();
         updateVacList();
         updateVacTypeList();
+        if(InternetConnection.haveInternetConnection(getApplicationContext()))
+            new SyncDBLocalToRemote();
         drawer.clearProfiles();
         int i = 1;
         for (Utente u : users) {
@@ -522,24 +489,6 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
     }
 
-   /* public void updateNavigationUI(Menu menu, Context context) {
-        int i = USER_ID;
-        for (Utente u : users) {
-            menu.removeItem(i);
-            menu.add(R.id.nav_users, i, Menu.FIRST, u.getName() + " " + u.getSurname()).setIcon(ContextCompat.getDrawable(context, R.drawable.ic_person)).setCheckable(true);
-            i++;
-        }
-    }*/
-
-    /*private void initializeNavigationUI(Menu menu, Context context) {
-
-        menu.getItem(0).setCheckable(false);
-
-        menu.add(R.id.drawer_options, CALENDAR_ID, Menu.CATEGORY_SECONDARY, getString(R.string.export)).setIcon(R.drawable.ic_export);
-        menu.add(R.id.drawer_options, LOGOUT_ID, Menu.CATEGORY_SECONDARY, getString(R.string.log_out)).setIcon(ContextCompat.getDrawable(context, android.R.drawable.ic_lock_power_off));
-
-    }*/
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -569,104 +518,6 @@ public class MainActivity extends AppCompatActivity
             }, 2000);
         }
     }
-
-    /*@Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        Log.d("ID_DEBUG", Integer.toString(id));
-
-        // Sezione aggiunta utente
-        if (id == R.id.add_user) {
-            Intent intent = new Intent(MainActivity.this, UserActivity.class);
-            startActivity(intent);
-        } // sezione logout
-        else if (id == LOGOUT_ID) {
-            Utils.setLogged(MainActivity.this, false);
-            Utils.setAccount(MainActivity.this, "");
-            VakcinoDbHelper dbHelper = new VakcinoDbHelper(getApplicationContext());
-            this.deleteDatabase(dbHelper.getDatabaseName());
-            Intent returnToLogin = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(returnToLogin);
-            Toast.makeText(MainActivity.this, message != null ? message : getString(R.string.logout_successfully), Toast.LENGTH_SHORT).show();
-        } else if (id == CALENDAR_ID) {
-            final List<Utente> selectedUsers = new ArrayList<>();
-            new MaterialDialog.Builder(this)
-                    .title(R.string.export_calendar_question)
-                    .items(users)
-                    .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
-                        @Override
-                        public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
-                            for (Integer i: which) {
-                                selectedUsers.add(users.get(i));
-                            }
-
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    exportVacIntoCalendar(selectedUsers);
-                                }
-                            });
-
-
-                            /*new AsyncTask<Void, Void, Boolean>(){
-                                ProgressDialog progressDialog = null;
-                                Context context = MainActivity;
-                                @Override
-                                protected void onPreExecute() {
-                                    super.onPreExecute();
-                                    progressDialog = new ProgressDialog(context,
-                                            R.style.AppTheme_Dark_Dialog);
-                                    progressDialog.setIndeterminate(true);
-                                    progressDialog.setMessage(context.getString(R.string.waiting));
-                                    progressDialog.show();
-                                }
-
-                                @Override
-                                protected void onPostExecute(final Boolean success) {
-                                    progressDialog.dismiss();
-                                }
-
-                                @Override
-                                protected Boolean doInBackground(Void... params) {
-                                    exportVacIntoCalendar(selectedUsers);
-                                    return null;
-                                }
-                            };*/
-       /*                     return true;
-                        }
-                    })
-                    .positiveText(R.string.choose)
-                    .show();
-        } else {
-            VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
-            Utente user = users.get(id - USER_ID);
-            item.setChecked(true);
-            //adapterToDo = new VaccinationsBookletAdapter(dbManager.getAllBooklet(user), user, vaccinations, vacTypeList, VaccinationsBookletAdapter.CHOICE_TO_DO);
-            //mRecyclerView.setAdapter(adapterToDo);
-            //mFab.getMenuIconView().setImageResource(R.drawable.ic_visibility);
-            //mFab.setVisibility(View.VISIBLE);
-            //View toDoChoice = findViewById(R.id.material_design_floating_action_menu_item1);
-            //View doneChoice = findViewById(R.id.material_design_floating_action_menu_item2);
-            /*TextView appBarTitle = (TextView) findViewById(R.id.appbar_title);
-            appBarTitle.setText(R.string.bookletToDo);*/
-            /*toDoChoice.setOnClickListener(new OnViewVacToDoClickListener(mRecyclerView, user, mFab, appBarTitle));
-            doneChoice.setOnClickListener(new OnViewVacDoneClickListener(mRecyclerView, user, mFab, appBarTitle));*/
-         /*   FragmentManager manager = getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-
-            //Viene istanziato un oggetto della classe ShowFragment, a cui vengono passati i valori richiesti dal metodo statico per crearlo
-            VaccinesListFragment fragment = VaccinesListFragment.newInstance(user);
-            transaction.replace(R.id.activity_main, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }*/
 
     private void exportVacIntoCalendar(List<Utente> selectedUsers) {
         VakcinoDbManager dbManager = new VakcinoDbManager(this);
@@ -707,11 +558,7 @@ public class MainActivity extends AppCompatActivity
         long calID = 1;
         long startMillis = 0;
         long endMillis = 0;
-        /*Calendar beginTime = Calendar.getInstance();
-        beginTime.set(2017, 11, 9, 7, 30);*/
         startMillis = beginTime.getTimeInMillis();
-        /*Calendar endTime = Calendar.getInstance();
-        endTime.set(2017, 11, 9, 8, 45);*/
         endMillis = endTime.getTimeInMillis();
 
         ContentResolver cr = getContentResolver();
@@ -728,30 +575,17 @@ public class MainActivity extends AppCompatActivity
                 Manifest.permission.WRITE_CALENDAR)
                 != PackageManager.PERMISSION_GRANTED) {
 
-// Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.WRITE_CALENDAR)) {
 
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
             } else {
-
-                // No explanation needed, we can request the permission.
 
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_CALENDAR},
                         MY_PERMISSIONS_REQUEST_WRITE_CALENDAR);
-
-                // MY_PERMISSIONS_REQUEST_READ_CALENDAR is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
         } else {
             Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
         }
-
     }
-
 }

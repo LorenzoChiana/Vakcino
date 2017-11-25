@@ -93,4 +93,5 @@
     <string name="undo_request">Are you sure to undo user creation?</string>
     <string name="undo_description">If you continue to lose the data you just entered, do you still want to continue?</string>
     <string name="label_other_users">Other users</string>
+    <string name="immunization_type">Immunization type</string>
 </resources>

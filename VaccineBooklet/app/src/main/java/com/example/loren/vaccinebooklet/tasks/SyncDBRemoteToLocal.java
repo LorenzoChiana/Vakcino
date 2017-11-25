@@ -40,6 +40,7 @@ public class SyncDBRemoteToLocal extends AsyncTask<Void, Void, Boolean> {
                 RemoteDBInteractions.createVaccinationTypeRemoteToLocal(context);
                 RemoteDBInteractions.createBookletRemoteToLocal(context);
             }
+            //RemoteDBInteractions.createBookletRemoteToLocal(context);
             RemoteDBInteractions.syncUsersRemoteToLocal(context);
             RemoteDBInteractions.syncVaccinationsRemoteToLocal(context);
             RemoteDBInteractions.syncVaccinationTypeRemoteToLocal(context);
