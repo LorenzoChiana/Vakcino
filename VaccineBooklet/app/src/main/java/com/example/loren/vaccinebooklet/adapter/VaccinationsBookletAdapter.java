@@ -2,6 +2,7 @@ package com.example.loren.vaccinebooklet.adapter;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.v4.app.FragmentManager;
@@ -58,12 +59,12 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         CardView cardView;
         TextView bigText;
         TextView smallText;
+        Context context;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             this.textViewVaccinationName = (TextView) itemView.findViewById(R.id.textViewVaccinationName);
             this.textImunizationType = (TextView) itemView.findViewById(R.id.textViewUserName);
-            this.textImunizationType.setText(itemView.getContext().getString(R.string.immunization_type));
             this.textViewNumRichiamo = (TextView) itemView.findViewById(R.id.numRichiamo);
             this.textViewDate = (TextView) itemView.findViewById(R.id.textViewDate);
             this.button_apply = (Button) itemView.findViewById(R.id.button_apply);
@@ -72,6 +73,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
             this.imageTime = (ImageView) itemView.findViewById(R.id.imageTemp);
             this.bigText = (TextView) itemView.findViewById(R.id.big_text);
             this.smallText = (TextView) itemView.findViewById(R.id.small_text);
+            this.context = itemView.getContext();
         }
     }
 
@@ -98,17 +100,11 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int listPosition) {
-
-        /*TextView textViewUserName = holder.textViewUserName;
-
-        textViewUserName.setText(user.toString());*/
-
         if (choice == CHOICE_TO_DO) {
             initializeUIToDoBooklet(holder, listPosition);
         } else {
             initializeUIDoneBooklet(holder, listPosition);
         }
-
     }
 
     private void initializeUIDoneBooklet(MyViewHolder holder, final int listPosition) {
@@ -116,6 +112,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         TextView textViewDate = holder.textViewDate;
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
         TextView textViewImmunizzazione = holder.textImunizationType;
+        Context context = holder.context;
 
 
         ImageView imageTime = holder.imageTime;
@@ -128,14 +125,15 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
             i++;
         }
         Vaccinazione currentVac = vaccinations.get(i);
-        textViewImmunizzazione.append(": " + vacTypeList.get(i).getTipoImmunizzazione());
+        textViewImmunizzazione.setText(context.getString(R.string.immunization_type) + ": " + vacTypeList.get(i).getTipoImmunizzazione());
         textViewVacName.setText(currentVac.getName());
-        textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(bookletDone.get(listPosition).getIdTipoVac() - 1).getNumRichiamo()));
+        TipoVaccinazione currentVt = vacTypeList.get(bookletDone.get(listPosition).getIdTipoVac() - 1);
+        textViewNumRichiamo.setText(Integer.toString(currentVt.getNumRichiamo()));
         String dateDone = DateInteractions.changeDateFormat(bookletDone.get(listPosition).getDate(), "yyyy-MM-dd", "dd/MM/yyyy");
         textViewDate.setText(dateDone);
         imageTime.setImageDrawable(ContextCompat.getDrawable(imageTime.getContext(), R.drawable.ic_calendar_done));
         imageInfo.setId(imageID);
-        imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
+        imageInfo.setOnClickListener(new OnInfoClickListener(currentVac, currentVt));
 
         /*if(bookletDone.size() == 0) {
             bigText.setText(R.string.noVac);
@@ -172,6 +170,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         TextView textViewDate = holder.textViewDate;
         TextView textViewNumRichiamo = holder.textViewNumRichiamo;
         TextView textViewImmunizzazione = holder.textImunizationType;
+        Context context = holder.context;
 
         ImageView imageTime = holder.imageTime;
         Button applyButton = holder.button_apply;
@@ -182,9 +181,10 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
             i++;
         }
         Vaccinazione currentVac = vaccinations.get(i);
-        textViewImmunizzazione.append(": " + vacTypeList.get(i).getTipoImmunizzazione());
+        textViewImmunizzazione.setText(context.getString(R.string.immunization_type) + ": " + vacTypeList.get(i).getTipoImmunizzazione());
         textViewVacName.setText(currentVac.getName());
-        textViewNumRichiamo.setText(Integer.toString(vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1).getNumRichiamo()));
+        TipoVaccinazione currentVt = vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1);
+        textViewNumRichiamo.setText(Integer.toString(currentVt.getNumRichiamo()));
         String dateDa = DateInteractions.translateDate(user.getbirthdayDate(), vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1).getDa());
         String dateA = DateInteractions.translateDate(user.getbirthdayDate(), vacTypeList.get(bookletToDo.get(listPosition).getIdTipoVac() - 1).getA());
         if (dateA.equals(dateDa))
@@ -201,7 +201,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
             textViewDate.setTextColor(Color.DKGRAY);
         }
         imageInfo.setId(imageID);
-        imageInfo.setOnClickListener(new OnInfoClickListener(currentVac));
+        imageInfo.setOnClickListener(new OnInfoClickListener(currentVac, currentVt));
         /*if(bookletToDo.size() == 0) {
             bigText.setText(R.string.congrats);
             smallText.setText(R.string.congrats_text);

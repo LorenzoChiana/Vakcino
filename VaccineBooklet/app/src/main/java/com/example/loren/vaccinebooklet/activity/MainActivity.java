@@ -373,23 +373,25 @@ public class MainActivity extends AppCompatActivity
                 );
             }
         } else if (flagProfile == 0) {
-            drawer.addProfile(new DrawerProfile()
-                    .setId(1)
-                    .setBackground(ContextCompat.getDrawable(this, R.drawable.header_1))
-                    .setName(getString(R.string.app_name))
-                    .setDescription(email)
-                    .setRoundedAvatar((BitmapDrawable) ContextCompat.getDrawable(this, R.mipmap.ic_launcher))
-            );
+            drawer.addProfile(newEmptyProfile());
             flagProfile++;
-        } else if (afterDelete) {
+        } else if (afterDelete && users.size()==0) {
             drawer.clearItems();
-            int size = drawer.getProfiles().size();
+            /*int size = drawer.getProfiles().size();
             for (int i = 0; i < size; i++){
                 DrawerProfile profile = drawer.getProfiles().get(i);
                 profile.removeName();
                 profile.removeDescription();
             }
             drawer.clearProfiles();
+            drawer.addProfile(newEmptyProfile());*/
+            HomePageFragment fragmentHome = HomePageFragment.newInstance();
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.replace(R.id.activity_main, fragmentHome);
+            transaction.commit();
+            drawer.clearProfiles();
+            //drawerInitialize();
             afterDelete = false;
         }
 
@@ -423,6 +425,15 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    private DrawerProfile newEmptyProfile() {
+        return new DrawerProfile()
+                .setId(1)
+                .setBackground(ContextCompat.getDrawable(this, R.drawable.header_1))
+                .setName(getString(R.string.app_name))
+                .setDescription(email)
+                .setRoundedAvatar((BitmapDrawable) ContextCompat.getDrawable(this, R.mipmap.ic_launcher));
     }
 
     private void updateUsersList() {
