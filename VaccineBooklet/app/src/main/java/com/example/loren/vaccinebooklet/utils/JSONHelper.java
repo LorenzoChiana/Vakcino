@@ -49,7 +49,7 @@ public class JSONHelper {
         }
     }
 
-    /**
+     /**
      * Method that parse a {@link Vaccinazione}
      * @param result {@link String} of the response from the server
      * @return the object of the result user

@@ -126,7 +126,12 @@ public class UserActivity extends AppCompatActivity implements
         //creo l'untente nel db e sincronizzo
         final VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
         String email = Utils.getAccount(getApplicationContext());
-        final Utente newUser = new Utente(dbManager.getUsers(email).size() + 1,
+        List<Utente> users = dbManager.getAllUsers(email);
+        int newID = 1;
+        if (users.size() > 0) {
+            newID = users.get(users.size() -1).getId() + 1;
+        }
+        final Utente newUser = new Utente(newID,
                 etName.getText().toString(), etSurname.getText().toString(),
                 DateInteractions.changeDateFormat(etBirthDate.getText().toString(), "dd/MM/yyyy", "yyyy-MM-ddd"), "p", email, VakcinoDbManager.NOT_SYNCED_WITH_SERVER);
         dbManager.addUser(newUser);

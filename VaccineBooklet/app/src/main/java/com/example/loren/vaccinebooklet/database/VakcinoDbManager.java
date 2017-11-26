@@ -131,6 +131,34 @@ public class VakcinoDbManager {
         return users;
     }
 
+    public List<Utente> getAllUsers(String email) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        List<Utente> users = new ArrayList<>();
+
+        Cursor cursor = null;
+        try {
+            String query = "SELECT * FROM " + Utente.TABLE_NAME +
+                    " WHERE email = '" + email +
+                    "' ORDER BY " + Utente.COLUMN_NAME + ", " + Utente.COLUMN_SURNAME + " ASC";
+            Log.d("DBMANAGER", query);
+            cursor = db.rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                Utente user = new Utente(cursor);
+                users.add(user);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+
+        return users;
+    }
+
     public List<Utente> getLocalUnsyncedUsers() {
         return getLocalUsers(NOT_SYNCED_WITH_SERVER);
     }
