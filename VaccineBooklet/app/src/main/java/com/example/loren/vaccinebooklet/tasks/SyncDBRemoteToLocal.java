@@ -33,21 +33,25 @@ public class SyncDBRemoteToLocal extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... args) {
-        if (InternetConnection.haveInternetConnection(context)) {
-            if (isAfterLogin) {
-                RemoteDBInteractions.createUsersRemoteToLocal(context);
-                RemoteDBInteractions.createVaccinationsRemoteToLocal(context);
-                RemoteDBInteractions.createVaccinationTypeRemoteToLocal(context);
-                RemoteDBInteractions.createBookletRemoteToLocal(context);
-            }
-            //RemoteDBInteractions.createBookletRemoteToLocal(context);
-            RemoteDBInteractions.syncUsersRemoteToLocal(context);
-            RemoteDBInteractions.syncVaccinationsRemoteToLocal(context);
-            RemoteDBInteractions.syncVaccinationTypeRemoteToLocal(context);
-            //RemoteDBInteractions.syncToDoRemoteToLocal(context);
-            //get unsync users per ogni users
-            new SyncDBLocalToRemote().execute(context);
+        if(MainActivity.canIGo()) {
+            MainActivity.stop();
+            if (InternetConnection.haveInternetConnection(context)) {
+                if (isAfterLogin) {
+                    RemoteDBInteractions.createUsersRemoteToLocal(context);
+                    RemoteDBInteractions.createVaccinationsRemoteToLocal(context);
+                    RemoteDBInteractions.createVaccinationTypeRemoteToLocal(context);
+                    RemoteDBInteractions.createBookletRemoteToLocal(context);
+                }
+                //RemoteDBInteractions.createBookletRemoteToLocal(context);
+                RemoteDBInteractions.syncUsersRemoteToLocal(context);
+                RemoteDBInteractions.syncVaccinationsRemoteToLocal(context);
+                RemoteDBInteractions.syncVaccinationTypeRemoteToLocal(context);
+                //RemoteDBInteractions.syncToDoRemoteToLocal(context);
+                //get unsync users per ogni users
+                new SyncDBLocalToRemote().execute(context);
 
+            }
+            MainActivity.go();
         }
         return true;
     }

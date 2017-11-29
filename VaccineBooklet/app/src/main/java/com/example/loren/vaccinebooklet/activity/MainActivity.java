@@ -104,6 +104,19 @@ public class MainActivity extends AppCompatActivity
 
     private boolean afterLogin = false, afterDelete = false;
     private int idSelectedUser = 0, flagProfile = 0;
+    private static boolean govar = true;
+
+    public static boolean canIGo(){
+        return govar;
+    }
+
+    public static void stop(){
+        govar = false;
+    }
+
+    public static void go(){
+        govar = true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -330,8 +343,10 @@ public class MainActivity extends AppCompatActivity
         updateUsersList();
         updateVacList();
         updateVacTypeList();
-        if(InternetConnection.haveInternetConnection(getApplicationContext()))
+        if(InternetConnection.haveInternetConnection(getApplicationContext())){
             new SyncDBLocalToRemote();
+        }
+
         drawer.clearProfiles();
         int i = 1;
         for (Utente u : users) {
@@ -385,14 +400,17 @@ public class MainActivity extends AppCompatActivity
             }
             drawer.clearProfiles();
             drawer.addProfile(newEmptyProfile());*/
+            drawer.clearProfiles();
+
             HomePageFragment fragmentHome = HomePageFragment.newInstance();
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.activity_main, fragmentHome);
             transaction.commit();
-            drawer.clearProfiles();
-            //drawerInitialize();
+            //drawer.clearProfiles();
             afterDelete = false;
+           // drawer.addProfile(newEmptyProfile());
+            //drawerInitialize();
         }
 
         drawer.setOnItemClickListener(new DrawerItem.OnItemClickListener() {
