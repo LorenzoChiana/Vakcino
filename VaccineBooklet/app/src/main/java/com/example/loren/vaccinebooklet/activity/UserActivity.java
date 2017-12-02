@@ -119,7 +119,7 @@ public class UserActivity extends AppCompatActivity implements
         VakcinoDbManager dbManager = new VakcinoDbManager(getApplicationContext());
         dbManager.updateUser(user);
         if(InternetConnection.haveInternetConnection(getApplicationContext()))
-            new SyncDBLocalToRemote();
+            new SyncDBLocalToRemote().execute(getApplicationContext());
     }
 
     private void createNewUser() {

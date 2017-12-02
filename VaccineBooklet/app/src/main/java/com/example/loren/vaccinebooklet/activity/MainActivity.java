@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity
             extraEmail = getIntent().getExtras().getString("email");
             Utils.setAccount(MainActivity.this, extraEmail);
             // significa inoltre che si è appena loggato quindi devo scaricarmi localmente il db remoto
+
             afterLogin = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -344,7 +345,7 @@ public class MainActivity extends AppCompatActivity
         updateVacList();
         updateVacTypeList();
         if(InternetConnection.haveInternetConnection(getApplicationContext())){
-            new SyncDBLocalToRemote();
+            new SyncDBLocalToRemote().execute(getApplicationContext());
         }
 
         drawer.clearProfiles();
