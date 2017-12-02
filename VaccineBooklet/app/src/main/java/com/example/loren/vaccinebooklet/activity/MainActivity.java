@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity
     public static MaterialStyledDialog.Builder materialStyleDialog, materialInfoStyleDialog;
 
     private DrawerView drawer;
+    private DrawerLayout drawerLayout;
 
     private ActionBarDrawerToggle drawerToggle;
 
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void drawerInitialize() {
-        final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer = (DrawerView) findViewById(R.id.drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -246,7 +247,6 @@ public class MainActivity extends AppCompatActivity
                                 .show();
                         break;
                 }
-                Toast.makeText(MainActivity.this, "Clicked fixed item #" + position, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -401,14 +401,15 @@ public class MainActivity extends AppCompatActivity
             drawer.clearProfiles();
             drawer.addProfile(newEmptyProfile());*/
             drawer.clearProfiles();
-
+            afterDelete = false;
+            drawerLayout.closeDrawer(drawer);;
             HomePageFragment fragmentHome = HomePageFragment.newInstance();
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.activity_main, fragmentHome);
             transaction.commit();
             //drawer.clearProfiles();
-            afterDelete = false;
+
            // drawer.addProfile(newEmptyProfile());
             //drawerInitialize();
         }
