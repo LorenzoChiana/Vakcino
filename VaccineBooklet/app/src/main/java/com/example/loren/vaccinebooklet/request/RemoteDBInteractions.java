@@ -49,7 +49,7 @@ public class RemoteDBInteractions {
         VakcinoDbManager dbManager = new VakcinoDbManager(context);
         for (Utente ru: remoteUsers) {
             ru.setStatus(VakcinoDbManager.SYNCED_WITH_SERVER);
-            if(!dbManager.updateUser(ru)){
+            if (!dbManager.updateUser(ru)) {
                 dbManager.addUser(ru);
             }
         }

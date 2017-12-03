@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -79,6 +80,7 @@ public class UserActivity extends AppCompatActivity implements
         etBirthDate.setFocusable(true);
         etBirthDate.setClickable(true);
         etBirthDate.setOnClickListener(this);
+        etBirthDate.setFocusable(false);
         if(getIntent().getStringExtra(USER_INTERACTION).equals(EDIT_USER)) {
             Utente user = (Utente) getIntent().getSerializableExtra("Utente");
             etName.setText(user.getName());

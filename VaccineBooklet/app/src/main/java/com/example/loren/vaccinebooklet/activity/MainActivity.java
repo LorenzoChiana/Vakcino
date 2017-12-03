@@ -380,33 +380,19 @@ public class MainActivity extends AppCompatActivity
             flagProfile++;
         } else if (afterDelete && users.size()==0) {
             drawer.clearItems();
-            /*int size = drawer.getProfiles().size();
-            for (int i = 0; i < size; i++){
-                DrawerProfile profile = drawer.getProfiles().get(i);
-                profile.removeName();
-                profile.removeDescription();
-            }
-            drawer.clearProfiles();
-            drawer.addProfile(newEmptyProfile());*/
             drawer.clearProfiles();
             afterDelete = false;
-            drawerLayout.closeDrawer(drawer);;
+            drawerLayout.closeDrawer(drawer);
             HomePageFragment fragmentHome = HomePageFragment.newInstance();
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.replace(R.id.activity_main, fragmentHome);
             transaction.commit();
-            //drawer.clearProfiles();
-
-           // drawer.addProfile(newEmptyProfile());
-            //drawerInitialize();
         }
 
         drawer.setOnItemClickListener(new DrawerItem.OnItemClickListener() {
             @Override
             public void onClick(DrawerItem item, long id, int position) {
-                //drawer.selectItem(position);
-                //Toast.makeText(MainActivity.this, "Clicked item #" + position, Toast.LENGTH_SHORT).show();
                 switch (position) {
                     case EDIT_USER:
                         Intent intent = new Intent(MainActivity.this, UserActivity.class);

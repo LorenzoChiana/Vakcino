@@ -137,10 +137,6 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac, currentVt));
 
-        /*if(bookletDone.size() == 0) {
-            bigText.setText(R.string.noVac);
-            smallText.setText(R.string.noVac_text);
-        }*/
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,12 +155,6 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
                 if(InternetConnection.haveInternetConnection(v.getContext())){
                     new SyncDBLocalToRemote().execute(v.getContext());
                 }
-                /*if(bookletDone.size() == 0) {
-                    TextView bigText = (TextView) v.findViewById(R.id.big_text);
-                    TextView smallText = (TextView) v.findViewById(R.id.small_text);
-                    bigText.setText(R.string.noVac);
-                    smallText.setText(R.string.noVac_text);
-                }*/
 
             }
         });
@@ -208,10 +198,7 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
         }
         imageInfo.setId(imageID);
         imageInfo.setOnClickListener(new OnInfoClickListener(currentVac, currentVt));
-        /*if(bookletToDo.size() == 0) {
-            bigText.setText(R.string.congrats);
-            smallText.setText(R.string.congrats_text);
-        }*/
+
         applyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -242,12 +229,6 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
                                         if(InternetConnection.haveInternetConnection(view.getContext())){
                                             new SyncDBLocalToRemote().execute(view.getContext());
                                         }
-                                        /*if(bookletToDo.size() == 0) {
-                                            TextView bigText = (TextView) view.findViewById(R.id.big_text);
-                                            TextView smallText = (TextView) view.findViewById(R.id.small_text);
-                                            bigText.setText(R.string.congrats);
-                                            smallText.setText(R.string.congrats_text);
-                                        }*/
 
                                     }
                                 }, year, month, day);

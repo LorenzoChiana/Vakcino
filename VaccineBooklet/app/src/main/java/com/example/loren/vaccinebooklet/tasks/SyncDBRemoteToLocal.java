@@ -46,8 +46,6 @@ public class SyncDBRemoteToLocal extends AsyncTask<Void, Void, Boolean> {
                 RemoteDBInteractions.syncVaccinationTypeRemoteToLocal(context);
                 //RemoteDBInteractions.syncToDoRemoteToLocal(context);
                 //get unsync users per ogni users
-                new SyncDBLocalToRemote().execute(context);
-
             }
         return true;
     }
@@ -62,5 +60,6 @@ public class SyncDBRemoteToLocal extends AsyncTask<Void, Void, Boolean> {
         nsr.nextIteration();
         context.sendBroadcast(broadcastIntent);
         progressDialog.dismiss();
+        new SyncDBLocalToRemote().execute(context);
     }
 }
