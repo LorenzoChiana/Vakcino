@@ -17,8 +17,6 @@ public class SyncDBLocalToRemote extends AsyncTask<Context, Void, Void> {
 
     @Override
     protected Void doInBackground(Context... context) {
-        if(MainActivity.canIGo()) {
-            MainActivity.stop();
             VakcinoDbManager dbManager = new VakcinoDbManager(context[0]);
             List<Utente> unsyncedUsers = dbManager.getLocalUnsyncedUsers();
             for (Utente user : unsyncedUsers) {
@@ -47,8 +45,13 @@ public class SyncDBLocalToRemote extends AsyncTask<Context, Void, Void> {
                 }
             }
 
-            MainActivity.go();
+        for (Utente user : dbManager.getUsers(Utils.getAccount(context[0]))) {
+            List<Libretto> unsyncedBooklet = dbManager.getUnsyncedBooklet(user);
+            for (Libretto booklet : unsyncedBooklet) {
+                RemoteDBInteractions.syncBookletLocalToRemote(booklet, Utils.getAccount(context[0]));
+            }
         }
+
         return null;
     }
 }

@@ -27,6 +27,8 @@ import com.example.loren.vaccinebooklet.model.Utente;
 import com.example.loren.vaccinebooklet.model.Vaccinazione;
 import com.example.loren.vaccinebooklet.tasks.SyncDBLocalToRemote;
 import com.example.loren.vaccinebooklet.utils.DateInteractions;
+import com.example.loren.vaccinebooklet.utils.InternetConnection;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -153,6 +155,10 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
                 notifyItemRemoved(imageID);
                 notifyItemRangeChanged(imageID, imageID);
                 notifyDataSetChanged();
+
+                if(InternetConnection.haveInternetConnection(v.getContext())){
+                    new SyncDBLocalToRemote().execute(v.getContext());
+                }
                 /*if(bookletDone.size() == 0) {
                     TextView bigText = (TextView) v.findViewById(R.id.big_text);
                     TextView smallText = (TextView) v.findViewById(R.id.small_text);
@@ -233,7 +239,9 @@ public class VaccinationsBookletAdapter extends RecyclerView.Adapter<Vaccination
                                         notifyItemRemoved(imageID);
                                         notifyItemRangeChanged(imageID, imageID);
                                         notifyDataSetChanged();
-
+                                        if(InternetConnection.haveInternetConnection(view.getContext())){
+                                            new SyncDBLocalToRemote().execute(view.getContext());
+                                        }
                                         /*if(bookletToDo.size() == 0) {
                                             TextView bigText = (TextView) view.findViewById(R.id.big_text);
                                             TextView smallText = (TextView) view.findViewById(R.id.small_text);

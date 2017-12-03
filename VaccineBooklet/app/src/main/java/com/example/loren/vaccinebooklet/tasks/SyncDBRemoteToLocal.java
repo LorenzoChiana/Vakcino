@@ -33,8 +33,6 @@ public class SyncDBRemoteToLocal extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... args) {
-        if(MainActivity.canIGo()) {
-            MainActivity.stop();
             if (InternetConnection.haveInternetConnection(context)) {
                 if (isAfterLogin) {
                     RemoteDBInteractions.createUsersRemoteToLocal(context);
@@ -51,8 +49,6 @@ public class SyncDBRemoteToLocal extends AsyncTask<Void, Void, Boolean> {
                 new SyncDBLocalToRemote().execute(context);
 
             }
-            MainActivity.go();
-        }
         return true;
     }
 

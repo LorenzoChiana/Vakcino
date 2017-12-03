@@ -105,19 +105,6 @@ public class MainActivity extends AppCompatActivity
 
     private boolean afterLogin = false, afterDelete = false;
     private int idSelectedUser = 0, flagProfile = 0;
-    private static boolean govar = true;
-
-    public static boolean canIGo(){
-        return govar;
-    }
-
-    public static void stop(){
-        govar = false;
-    }
-
-    public static void go(){
-        govar = true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -474,7 +461,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            new AsyncTask<Void, Void, Boolean>() {
+            new SyncDBLocalToRemote().execute(getApplicationContext());
+            /*new AsyncTask<Void, Void, Boolean>() {
 
                 @Override
                 protected Boolean doInBackground(Void... params) {
@@ -500,7 +488,7 @@ public class MainActivity extends AppCompatActivity
                 protected void onPostExecute(Boolean result) {
                     //updateNavigationUI(navigationView.getMenu(), getApplicationContext());
                 }
-            };
+            };*/
         }
     }
 
@@ -510,7 +498,6 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         registerReceiver(receiverConnectivity, filter);
         registerReceiver(receiverSync, intentFilter);
-        //updateNavigationUI(navigationView.getMenu(), getApplicationContext());
     }
 
     @Override
@@ -583,6 +570,7 @@ public class MainActivity extends AppCompatActivity
                 cont++;
             }
         }
+        Toast.makeText(MainActivity.this, message != null ? message : getString(R.string.export_successfully), Toast.LENGTH_SHORT).show();
     }
 
     public void addCalendarEvent(Calendar beginTime, Calendar endTime, String title, String description) {

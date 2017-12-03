@@ -86,8 +86,9 @@
     <string name="warning">ATTENZIONE!</string>
     <string name="delete_question">Sei dicuro di voler cancellare questo utente?</string>
     <string name="label_positive">Sì</string>
-    <string name="undo_request">Sei sicuro di voler annullare la creazione dell\'utente?</string>
-    <string name="undo_description">Se procedi perderai i dati appena immessi, vuoi continuare comunque?</string>
-    <string name="label_other_users">Other users</string>
-    <string name="immunization_type">Tipo di immunizzazione</string>
+    <string name="undo_request">Sei sicuro di voler annullare l\'operazione?</string>
+    <string name="undo_description">Se procedi perderai i dati appena immessi</string>
+    <string name="label_other_users">Altri utenti</string>
+    <string name="immunization_type">Tipo immunizzazione</string>
+    <string name="export_successfully">Esportazione avvenuta con successo</string>
 </resources>
