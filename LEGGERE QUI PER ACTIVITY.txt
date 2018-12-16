@@ -1,1 +1,0 @@
-Per passare da una activity di tipo pet o una di tipo person utilizzare putExtra per passare all'activity TYPE_USER (pet o person) in modo da avere solo una activity e non due e in essa va a fare divverente query a seconda se è pet o person -> alla fine cambiano solo i tipi di vaccini non l'interfaccia grafica
